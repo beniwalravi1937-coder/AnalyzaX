@@ -1,6 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import React, { useState, useEffect, useCallback } from "react";
-import { Link } from "@/lib/next-compat";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { SectionCard } from "@/components/ui/SectionCard";
 import { FileDropzone } from "@/components/ui/FileDropzone";

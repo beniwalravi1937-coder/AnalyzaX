@@ -1,6 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import React, { useEffect, useState, useCallback } from "react";
-import { Link } from "@/lib/next-compat";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDataset } from "@/context/DatasetContext";
 import { apiClient, ApiError } from "@/services/api";
 import {
