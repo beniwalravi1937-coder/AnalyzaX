@@ -1,0 +1,40 @@
+# Git & CI
+.git
+.github
+.gitignore
+
+# Environment & Secret files (CRITICAL: NEVER BUNDLE SECRETS INTO IMAGES)
+.env
+.env.*
+!.env.production.example
+!.env.staging.example
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Node.js caches
+node_modules/
+.next/
+npm-debug.log*
+
+# AnalyzaX persistent runtime data
+data/
+data/*
+*.db
+*.parquet
+
+# IDE and temporary files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+scratch/
+tmp/

@@ -1,0 +1,65 @@
+"""
+Usage domain engine exports.
+"""
+
+from backend.app.engines.usage.catalog import Features, get_default_entitlements, get_default_plans
+from backend.app.engines.usage.metrics import METRIC_REGISTRY, UsageMetrics, get_metric_definition, list_metric_definitions
+from backend.app.engines.usage.models import (
+    FeatureType,
+    LimitPolicy,
+    MetricUnit,
+    MetricUsageDetail,
+    Plan,
+    PlanComparisonItem,
+    PlanComparisonResponse,
+    PlanEntitlement,
+    PlanStatus,
+    PlanTier,
+    QuotaDecision,
+    QuotaHealthStatus,
+    QuotaPeriod,
+    ReservationStatus,
+    UsageAggregation,
+    UsageEvent,
+    UsageHistoryItem,
+    UsageHistoryResponse,
+    UsageReconciliationReport,
+    UsageReservation,
+    UsageSummaryResponse,
+    WorkspacePlan,
+)
+from backend.app.engines.usage.repository import UsageRepository, usage_repo
+
+__all__ = [
+    "PlanTier",
+    "PlanStatus",
+    "FeatureType",
+    "QuotaPeriod",
+    "LimitPolicy",
+    "ReservationStatus",
+    "MetricUnit",
+    "QuotaHealthStatus",
+    "Plan",
+    "PlanEntitlement",
+    "WorkspacePlan",
+    "UsageEvent",
+    "UsageReservation",
+    "UsageAggregation",
+    "QuotaDecision",
+    "MetricUsageDetail",
+    "UsageSummaryResponse",
+    "UsageHistoryItem",
+    "UsageHistoryResponse",
+    "PlanComparisonItem",
+    "PlanComparisonResponse",
+    "UsageReconciliationReport",
+    "Features",
+    "UsageMetrics",
+    "METRIC_REGISTRY",
+    "get_metric_definition",
+    "list_metric_definitions",
+    "get_default_plans",
+    "get_default_entitlements",
+    "UsageRepository",
+    "usage_repo",
+]

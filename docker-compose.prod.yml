@@ -1,0 +1,122 @@
+# ==============================================================================
+# AnalyzaX — Production Docker Compose Topology
+# Non-root container topology: Nginx -> Frontend + Backend API + Worker + Postgres + Redis
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  # 1. Reverse Proxy & Edge Router
+  proxy:
+    image: nginx:1.25-alpine
+    container_name: analyzax-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - analyzax-network
+
+  # 2. Next.js Frontend Presentation Layer
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: analyzax-frontend
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://backend:8000/api/v1
+    depends_on:
+      - backend
+    networks:
+      - analyzax-network
+
+  # 3. FastAPI Analytical Core & REST API
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: analyzax-backend
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - analyzax_data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - analyzax-network
+
+  # 4. Asynchronous Background Job Worker
+  worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: analyzax-worker
+    restart: always
+    command: ["python", "-m", "backend.app.engines.jobs.worker"]
+    env_file:
+      - .env
+    volumes:
+      - analyzax_data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - analyzax-network
+
+  # 5. Metadata Database (PostgreSQL)
+  postgres:
+    image: postgres:16-alpine
+    container_name: analyzax-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-analyzax_prod}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-analyzax_secure_password}
+      POSTGRES_DB: ${POSTGRES_DB:-analyzax_production}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-analyzax_prod} -d ${POSTGRES_DB:-analyzax_production}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - analyzax-network
+
+  # 6. In-Memory Queue & Cache (Redis)
+  redis:
+    image: redis:7-alpine
+    container_name: analyzax-redis
+    restart: always
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - analyzax-network
+
+networks:
+  analyzax-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  analyzax_data:
