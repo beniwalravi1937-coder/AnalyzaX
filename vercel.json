@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd Frontend_Lovable && npm install && npm run build",
+  "outputDirectory": "Frontend_Lovable/dist",
+  "framework": "vite"
+}
