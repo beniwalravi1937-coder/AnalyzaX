@@ -32,7 +32,7 @@
 
 </div>
 
-## 🌟 Overview
+##  Overview
 
 **AnalyzaX** is a next-generation autonomous data analytics platform engineered to bridge the gap between raw, messy enterprise datasets and production-ready decision intelligence.
 
@@ -48,7 +48,7 @@ Raw Dataset ➔ Ingestion & Parquet ➔ 6D Quality Audit ➔ Lineage Cleaning �
 
 ---
 
-## ⚡ Why AnalyzaX? The Paradigm Shift
+##  Why AnalyzaX? The Paradigm Shift
 
 Traditional analytics tools force teams to choose between manual BI dashboard fatigue, steep SQL learning curves, or risky generative AI tools that hallucinate statistics.
 
@@ -64,23 +64,23 @@ Traditional analytics tools force teams to choose between manual BI dashboard fa
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 AnalyzaX strictly enforces a **4-tier layered architecture** separating presentation, routing, application orchestration, domain computation engines, and data storage.
 
 ```mermaid
 flowchart TD
-    subgraph Presentation["🎨 Presentation Layer (Dual Frontend)"]
+    subgraph Presentation[" Presentation Layer (Dual Frontend)"]
         FE1["Next.js 14 Enterprise (App Router)"]
         FE2["Frontend_Lovable (TanStack Start & Router)"]
     end
 
-    subgraph Transport["🚀 Transport & Routing (FastAPI)"]
+    subgraph Transport[" Transport & Routing (FastAPI)"]
         API["FastAPI REST & SSE Router (/api/v1)"]
         CORS["Security & CORS Middleware"]
     end
 
-    subgraph Services["⚙️ Application Services"]
+    subgraph Services[" Application Services"]
         SVC1["Dataset Service"]
         SVC2["SQL Query Service"]
         SVC3["Data Quality Service"]
@@ -88,7 +88,7 @@ flowchart TD
         SVC5["AI Analyst Copilot Service"]
     end
 
-    subgraph Engines["🧩 11 Deterministic Analytical Engines"]
+    subgraph Engines[" 11 Deterministic Analytical Engines"]
         E1["Ingestion Engine (MIME, Parquet)"]
         E2["Profiling Engine (Column Types, Stats)"]
         E3["Quality Engine (6D Audit, Anomaly)"]
@@ -102,7 +102,7 @@ flowchart TD
         E11["Export Engine (PDF, Excel, Parquet)"]
     end
 
-    subgraph Data["💾 Storage & Execution Layer"]
+    subgraph Data[" Storage & Execution Layer"]
         DuckDB[("DuckDB Vectorized In-Memory / File")]
         Polars["Polars High-Performance DataFrames"]
         Postgres[("PostgreSQL Metadata & DAG")]
@@ -118,13 +118,13 @@ flowchart TD
 
 ---
 
-## 🚀 Key Features & Capabilities
+##  Key Features & Capabilities
 
-### 1. 📥 Ingestion & Columnar Profiling
+### 1.  Ingestion & Columnar Profiling
 - Multi-format ingestion: CSV, Excel (`.xlsx`), JSON, Parquet, and TSV.
 - Automatic schema inference, null detection, cardinality scoring, memory footprint estimation, and zero-copy conversion to versioned Parquet storage.
 
-### 2. 🔍 6-Dimensional Data Quality Engine
+### 2.  6-Dimensional Data Quality Engine
 Audits datasets across 6 foundational quality dimensions:
 - **Completeness**: Missing values, null ratios, and column drop thresholds.
 - **Uniqueness**: Primary key candidate detection and duplicate row tracking.
@@ -133,49 +133,49 @@ Audits datasets across 6 foundational quality dimensions:
 - **Timeliness**: Temporal freshness, interval gaps, and datetime validation.
 - **Accuracy**: Z-Score, IQR, and Isolation Forest statistical outlier detection.
 
-### 3. 🧹 Interactive Cleaning & Immutable Lineage
+### 3.  Interactive Cleaning & Immutable Lineage
 - **The Analytical Handshake**: *Detect ➔ Explain ➔ Suggest ➔ Approve ➔ Apply ➔ Log*.
 - Step-by-step transformation recipes with before-and-after preview diffs.
 - Immutable dataset versioning (`v1`, `v2`, `v3`) with complete audit trails and undo capabilities.
 
-### 4. ⚡ Vectorized DuckDB SQL Workbench
+### 4.  Vectorized DuckDB SQL Workbench
 - Sub-millisecond SQL analytics powered by **DuckDB**.
 - **AST Security Sandboxing**: Analyzes SQL queries at the AST level to enforce read-only execution, prevent injections, and block dangerous filesystem commands.
 - Interactive schema tree, query execution statistics (run time, scanned rows, memory bytes), and tabular data grid.
 
-### 5. 📊 Polars Exploratory Data Analysis & Statistics
+### 5.  Polars Exploratory Data Analysis & Statistics
 - Ultra-fast univariate distribution metrics (skewness, kurtosis, quantiles).
 - Bivariate correlation matrices (Pearson, Spearman, Kendall) computed via Polars.
 - Hypothesis testing suite: Independent Student's t-test, Paired t-test, One-way ANOVA, Mann-Whitney U, and Chi-Square contingency analysis.
 
-### 6. 🤖 Autonomous AI Analyst Copilot
+### 6.  Autonomous AI Analyst Copilot
 - Equipped with **16 deterministic tools** to inspect schemas, execute sandboxed SQL, request statistical tests, run chart recommendations, and generate forecasts.
 - Context-bounded prompt assembler that prevents token bloat and never sends raw row dumps to LLMs.
 - Streams real-time insights, explanations, and follow-up query suggestions.
 
-### 7. 🧠 Machine Learning Studio (AutoML)
+### 7.  Machine Learning Studio (AutoML)
 - Automated task detection: Binary Classification, Multi-class Classification, and Regression.
 - Automated feature preprocessing: One-hot encoding, target imputation, standard scaling.
 - Benchmark leaderboards comparing Logistic Regression, Random Forest, Gradient Boosting, Ridge, and Lasso.
 - Production evaluation curves: Confusion Matrices, ROC/AUC, Precision-Recall curves, and Feature Importance rankings.
 
-### 8. 🔮 Time-Series Forecasting
+### 8.  Time-Series Forecasting
 - Automated datetime column resolution and frequency detection (hourly, daily, weekly, monthly).
 - Augmented Dickey-Fuller (ADF) and KPSS stationarity testing.
 - Seasonal decomposition (Trend, Seasonal, Residual) and ARIMA/ETS forecasting with confidence intervals.
 
-### 9. 🎨 Chart Advisor & Apache ECharts Builder
+### 9.  Chart Advisor & Apache ECharts Builder
 - AI-assisted chart recommendation based on variable types, distributions, and cardinalities.
 - Produces declarative Apache ECharts specifications: Bar, Line, Scatter, Heatmap, Boxplot, Radar, Treemap, and Candlestick.
 - Responsive, dark-mode native, and interactive zoom/pan controls.
 
-### 10. 📄 Multi-Format Export Center
+### 10.  Multi-Format Export Center
 - Export cleaned datasets to Parquet, Excel (with auto-formatted tabs and headers), or CSV.
 - Download production executive PDF analytical briefs complete with summary KPIs, data quality scorecards, and high-resolution chart snapshots.
 
 ---
 
-## 🎨 Dual Frontend Experience
+##  Dual Frontend Experience
 
 AnalyzaX includes two complete, state-of-the-art frontend experiences:
 
@@ -196,7 +196,7 @@ Frontend_Lovable/                 # Option B: TanStack Router & Start
 
 ---
 
-## 📜 The AnalyzaX Constitution (AGENTS.md)
+##  The AnalyzaX Constitution (AGENTS.md)
 
 Every line of code in AnalyzaX adheres to strict architectural principles:
 
@@ -210,7 +210,7 @@ Every line of code in AnalyzaX adheres to strict architectural principles:
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 | Category | Technology | Purpose |
 | :--- | :--- | :--- |
@@ -230,7 +230,7 @@ Every line of code in AnalyzaX adheres to strict architectural principles:
 
 ---
 
-## 🚀 Quickstart
+##  Quickstart
 
 ### Prerequisites
 - **Python 3.11+**
@@ -295,7 +295,7 @@ docker-compose up --build
 
 ---
 
-## 📡 API Reference
+##  API Reference
 
 AnalyzaX exposes a RESTful API with automated OpenAPI / Swagger documentation:
 
@@ -318,7 +318,7 @@ Explore the interactive API explorer at `http://127.0.0.1:8000/docs`.
 
 ---
 
-## 🗺️ Master Roadmap
+##  Master Roadmap
 
 - [x] **Phase 0: Architecture & Constitution** (System specs, AGENTS.md, schema contracts)
 - [x] **Phase 1: Foundation & Health** (FastAPI app, DuckDB in-process engine, health diagnostics)
@@ -343,7 +343,7 @@ Explore the interactive API explorer at `http://127.0.0.1:8000/docs`.
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions make the open-source community an incredible place to learn, inspire, and create:
 
@@ -366,6 +366,6 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more informa
 
 **Built with precision for the future of data intelligence.**
 
-⭐ **Star this repository if AnalyzaX helped accelerate your analytics workflow!** ⭐
+ **Star this repository if AnalyzaX helped accelerate your analytics workflow!** ⭐
 
 </div>
