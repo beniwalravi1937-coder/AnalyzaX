@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && node -e \"const fs=require('fs'); if (fs.existsSync('.output/public')) fs.cpSync('.output/public', 'dist', {recursive: true}); else if (!fs.existsSync('dist')) fs.mkdirSync('dist', {recursive: true});\"",
+    "build": "vite build && node -e \"const fs=require('fs'); if (fs.existsSync('.output/public')) fs.cpSync('.output/public', 'dist', {recursive: true}); if (fs.existsSync('public')) fs.cpSync('public', 'dist', {recursive: true}); if (!fs.existsSync('dist')) fs.mkdirSync('dist', {recursive: true});\"",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",

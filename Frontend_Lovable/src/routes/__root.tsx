@@ -40,6 +40,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { DatasetProvider, useDataset } from "@/context/DatasetContext";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { WorkspaceProvider } from "@/context/WorkspaceContext";
+import { AnalyzaXLogo } from "@/components/brand/AnalyzaXLogo";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, section: "Overview" },
@@ -178,10 +179,7 @@ function AppShell() {
       <aside className={open ? "sidebar open" : "sidebar"}>
         <div className="sidebar-header">
           <Link to="/" className="brand" onClick={() => setOpen(false)}>
-            <img src="/logo.png" alt="AnalyzaX Logo" className="brand-icon" />
-            <span className="brand-text">
-              Analyza<span className="brand-accent">X</span>
-            </span>
+            <AnalyzaXLogo size={28} showText={true} />
           </Link>
           <button className="icon-btn md-hide" onClick={() => setOpen(false)} aria-label="Close menu">
             <X className="w-4 h-4" />
