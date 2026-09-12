@@ -67,13 +67,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const res = await authApi.login(email, password);
       setUser(res.user);
       await refreshUser();
-      // Redirect to intended route or default dataset overview
-      const returnUrl = new URLSearchParams(window.location.search).get("returnUrl");
-      if (returnUrl && returnUrl.startsWith("/") && !returnUrl.startsWith("//")) {
-        router.push(returnUrl);
-      } else {
-        router.push("/dataset");
-      }
     } catch (err: any) {
       setError(err.message || "Failed to sign in");
       throw err;
@@ -89,7 +82,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const res = await authApi.register(email, password, displayName);
       setUser(res.user);
       await refreshUser();
-      router.push("/dataset");
     } catch (err: any) {
       setError(err.message || "Failed to create account");
       throw err;
@@ -112,6 +104,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (typeof window !== "undefined") {
         sessionStorage.clear();
         localStorage.removeItem("analyzax_current_project");
+        localStorage.removeItem("analyzax_token");
+        localStorage.removeItem("analyzax_local_user");
       }
       router.push("/login");
     }
