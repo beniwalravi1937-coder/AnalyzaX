@@ -7,6 +7,18 @@
 
 **Deterministic Data Intelligence • Zero Numerical Hallucinations • Enterprise-Grade Analytical Engines**
 
+<p align="center">
+  <a href="https://analyzaxab-vp.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/🚀_LIVE_PRODUCTION_WORKSPACE-OPEN_APP-0070F3?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+  </a>
+  <a href="https://analyzaxab-vp.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/📱_MOBILE_%26_DESKTOP-READY-10B981?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Mobile Ready" />
+  </a>
+  <a href="https://github.com/beniwalravi1937-coder/AnalyzaX" target="_blank">
+    <img src="https://img.shields.io/badge/GITHUB-STAR_REPOSITORY-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+  </a>
+</p>
+
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![DuckDB](https://img.shields.io/badge/DuckDB-v1.5.5-FFF000.svg?style=for-the-badge&logo=duckdb&logoColor=black)](https://duckdb.org)
 [![Polars](https://img.shields.io/badge/Polars-Columnar-CD792C.svg?style=for-the-badge&logo=polars&logoColor=white)](https://pola.rs)
@@ -17,15 +29,35 @@
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
+<br/>
+
+<table>
+  <tr>
+    <td align="center" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 22px; border-radius: 12px; border: 1px solid #334155;">
+      <h3>⚡ Instant Cloud Access — No Installation Required</h3>
+      <p style="font-size: 15px; margin: 10px 0;">
+        Experience AnalyzaX's complete autonomous analytics workspace live on web & mobile:
+      </p>
+      <a href="https://analyzaxab-vp.vercel.app/" target="_blank">
+        <img src="https://img.shields.io/badge/👉_LAUNCH_ANALYZAX_LIVE_DASHBOARD-https%3A%2F%2Fanalyzaxab--vp.vercel.app-0070F3?style=for-the-badge&logo=vercel&logoColor=white" alt="Launch Live Dashboard" height="42" />
+      </a>
+      <p style="font-size: 13px; color: #94a3b8; margin-top: 10px; margin-bottom: 0;">
+        ✅ Live Interactive Demo &nbsp;|&nbsp; 📱 iOS & Android Optimized &nbsp;|&nbsp; ⚡ Sub-Second Vectorized DuckDB Analytics
+      </p>
+    </td>
+  </tr>
+</table>
+
+<br/>
+
 <p align="center">
-  <a href="#key-features">Key Features</a> •
-  <a href="#why-analyzax">Why AnalyzaX?</a> •
-  <a href="#architecture">Architecture</a> •
-  <a href="#dual-frontend-experience">Dual Frontend</a> •
-  <a href="#quickstart">Quickstart</a> •
-  <a href="#the-analyzax-constitution">Engineering Constitution</a> •
-  <a href="#api-reference">API Reference</a> •
-  <a href="#roadmap">Roadmap</a>
+  <a href="https://analyzaxab-vp.vercel.app/"><b>🚀 Launch Live App</b></a> •
+  <a href="#-live-cloud-workspace--mobile-access">Cloud Workspace</a> •
+  <a href="#-key-features--capabilities">Key Features</a> •
+  <a href="#-why-analyzax-the-paradigm-shift">Why AnalyzaX?</a> •
+  <a href="#-architecture">Architecture</a> •
+  <a href="#-quickstart">Quickstart</a> •
+  <a href="#-the-analyzax-constitution-agentsmd">Constitution</a>
 </p>
 
 ---
@@ -45,6 +77,38 @@ AnalyzaX orchestrates **11 high-performance analytical engines** (powered by Duc
 ```text
 Raw Dataset ➔ Ingestion & Parquet ➔ 6D Quality Audit ➔ Lineage Cleaning ➔ Vectorized SQL ➔ EDA & Stats ➔ AutoML ➔ Forecasting ➔ AI Analyst Copilot ➔ Executive Dashboards & Exports
 ```
+
+---
+
+## 🌐 Live Cloud Workspace & Mobile Access
+
+AnalyzaX is deployed to production and accessible directly in your web or mobile browser:
+
+<div align="center">
+
+| 🚀 **Direct Production URL** | 📱 **Supported Formats** | ⚡ **Cloud Deployment** |
+| :---: | :---: | :---: |
+| [**`https://analyzaxab-vp.vercel.app`**](https://analyzaxab-vp.vercel.app/) | Mobile (iOS / Android), Tablet, Desktop | Vercel Edge Global Network |
+
+</div>
+
+<br/>
+
+| Module | Live Features & Capabilities | Engine |
+| :--- | :--- | :--- |
+| 📊 **Dataset Profiling** | Schema inference, null ratios, cardinality scoring, memory footprint | **Polars** |
+| 🛡️ **6D Quality Audit** | Automated scoring across Completeness, Uniqueness, Validity, Consistency, Timeliness, Accuracy | **Vectorized Profiler** |
+| 🧹 **Data Cleaning & Lineage** | Detect ➔ Explain ➔ Suggest ➔ Approve ➔ Apply recipe lineage DAG with before/after diffs | **Polars Lineage** |
+| ⚡ **DuckDB SQL Studio** | Sandboxed in-browser SQL editor, schema explorer, execution time, result grid | **DuckDB** |
+| 📈 **Exploratory Data Analysis** | Univariate distributions, skewness, quantiles, bivariate Pearson/Spearman correlation matrices | **Polars + SciPy** |
+| 🔬 **Statistical Hypothesis Lab** | Independent & Paired t-tests, One-way ANOVA, Mann-Whitney U, Chi-Square contingency | **SciPy + statsmodels** |
+| 🧠 **AutoML Studio** | Classification & regression benchmarks, ROC/AUC, Precision-Recall curves, Feature Importance | **scikit-learn** |
+| 🔮 **Time-Series Forecasting** | ADF/KPSS stationarity tests, seasonal decomposition, ARIMA & Holt-Winters ETS projections | **statsmodels** |
+| 🤖 **Autonomous AI Copilot** | Conversational assistant with 16 analytical tools to inspect, query, chart, and explain data | **Multi-Tool Agent** |
+| 📱 **Mobile Responsive Design** | Optimized touch interactions, collapsible navigation drawers, dark-mode native layout | **Tailwind + TanStack** |
+
+> [!TIP]
+> **Mobile Web App:** AnalyzaX is fully responsive. On iOS Safari tap **Share ➔ Add to Home Screen** or on Android Chrome tap **Settings ➔ Add to Home screen** to install AnalyzaX as a standalone PWA dashboard.
 
 ---
 
