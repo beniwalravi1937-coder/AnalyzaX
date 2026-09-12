@@ -40,11 +40,19 @@ function ForgotPasswordPage() {
     <div className="auth-shell">
       <div className="auth-card">
         <div className="auth-brand">
-          <Link to="/" style={{ display: "inline-flex", justifyContent: "center", marginBottom: "0.75rem" }}>
-            <img src="/logo.png" alt="AnalyzaX Logo" style={{ width: "52px", height: "52px", objectFit: "contain", filter: "drop-shadow(0 4px 14px rgba(59, 130, 246, 0.45))" }} />
+          <Link to="/" className="auth-brand-logo-wrap" title="AnalyzaX Home">
+            <img
+              src="/logo.png"
+              alt="AnalyzaX Logo"
+              style={{
+                width: "56px",
+                height: "56px",
+                objectFit: "contain",
+                filter: "drop-shadow(0 4px 16px rgba(59, 130, 246, 0.5))",
+              }}
+            />
           </Link>
           <div className="auth-brand-badge">
-            <img src="/logo.png" alt="" style={{ width: "14px", height: "14px", objectFit: "contain" }} />
             <span>FastAPI Security Gate</span>
           </div>
           <h1 className="auth-title">Reset your password</h1>
