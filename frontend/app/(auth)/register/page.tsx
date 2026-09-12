@@ -46,11 +46,11 @@ export default function RegisterPage() {
         <div className="auth-header">
           <div className="auth-logo-wrap">
             <Image
-              src="/logo.jpg"
+              src="/logo.png"
               alt="AnalyzaX Logo"
-              width={44}
-              height={44}
-              style={{ borderRadius: "8px", objectFit: "cover" }}
+              width={48}
+              height={48}
+              style={{ objectFit: "contain", filter: "drop-shadow(0 4px 12px rgba(59, 130, 246, 0.45))" }}
               priority
             />
           </div>

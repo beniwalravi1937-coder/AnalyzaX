@@ -74,13 +74,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             }}
           >
             <Image
-              src="/logo.jpg"
+              src="/logo.png"
               alt="AnalyzaX Logo"
               width={30}
               height={30}
               style={{
-                borderRadius: "6px",
-                border: "1px solid rgba(99, 102, 241, 0.4)",
+                objectFit: "contain",
+                filter: "drop-shadow(0 2px 8px rgba(59, 130, 246, 0.45))",
               }}
             />
             <span
@@ -91,7 +91,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 letterSpacing: "-0.02em",
               }}
             >
-              Analyza<span style={{ color: "#818cf8" }}>X</span>
+              Analyza<span style={{ background: "linear-gradient(135deg, #60a5fa 0%, #a855f7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>X</span>
             </span>
           </Link>
 

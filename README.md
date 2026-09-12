@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="logo.jpg" alt="AnalyzaX Logo" width="180" style="border-radius: 24px; box-shadow: 0 10px 30px rgba(0,118,255,0.3);" />
+<img src="logo.png" alt="AnalyzaX Logo" width="160" style="filter: drop-shadow(0 10px 30px rgba(59,130,246,0.5));" />
 
 # AnalyzaX
 ### The Autonomous AI Data Analytics & Engineering Platform

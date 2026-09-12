@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AIAnalystWorkspace } from "@/components/chat/AIAnalystWorkspace";
 import { AICopilotWorkspace } from "@/components/chat/AICopilotWorkspace";
-import { Bot, Sparkles } from "lucide-react";
+import { Bot } from "lucide-react";
 
 export const Route = createFileRoute("/ai-analyst")({
   head: () => ({
@@ -42,7 +42,7 @@ function AIAnalystPage() {
             className={`btn btn-sm ${activeTab === "copilot" ? "btn-primary" : "btn-secondary"}`}
             style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "0.75rem" }}
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <img src="/logo.png" alt="" style={{ width: "14px", height: "14px", objectFit: "contain" }} />
             AI Copilot
           </button>
           <button

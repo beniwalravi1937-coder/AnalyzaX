@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     "An AI Data Analyst that takes raw data all the way to actionable insights. Upload, clean, analyze, model, forecast, and visualize your data.",
   keywords: ["data analytics", "AI analyst", "EDA", "machine learning", "data visualization"],
   icons: {
-    icon: "/logo.jpg",
+    icon: "/logo.png",
   },
 };
 

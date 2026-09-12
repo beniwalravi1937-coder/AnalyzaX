@@ -29,7 +29,6 @@ import {
   Microscope,
   Settings,
   Sigma,
-  Sparkles,
   Terminal,
   TrendingUp,
   Wand2,
@@ -178,10 +177,12 @@ function AppShell() {
       {open && <div className="sidebar-backdrop" onClick={() => setOpen(false)} />}
       <aside className={open ? "sidebar open" : "sidebar"}>
         <div className="sidebar-header">
-          <span className="brand">
-            <Sparkles className="w-4 h-4" />
-            AnalyzaX
-          </span>
+          <Link to="/" className="brand" onClick={() => setOpen(false)}>
+            <img src="/logo.png" alt="AnalyzaX Logo" className="brand-icon" />
+            <span className="brand-text">
+              Analyza<span className="brand-accent">X</span>
+            </span>
+          </Link>
           <button className="icon-btn md-hide" onClick={() => setOpen(false)} aria-label="Close menu">
             <X className="w-4 h-4" />
           </button>

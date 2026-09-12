@@ -22,7 +22,6 @@ import {
   Filter,
   Lightbulb,
   RefreshCw,
-  Sparkles,
   TrendingUp,
   XCircle,
 } from "lucide-react";
@@ -127,7 +126,7 @@ function InsightsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-zinc-800">
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2.5">
-            <Sparkles className="w-6 h-6 text-purple-400" />
+            <img src="/logo.png" alt="" className="w-6 h-6 object-contain" />
             Proactive Insight Center
           </h1>
           <p className="text-sm text-zinc-400 mt-1">

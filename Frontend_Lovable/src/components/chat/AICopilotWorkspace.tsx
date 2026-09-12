@@ -147,7 +147,7 @@ export function AICopilotWorkspace() {
       <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 border-b border-zinc-800 bg-zinc-900/60 text-xs">
         <div className="flex items-center gap-2">
           <span className="font-semibold text-zinc-300 flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-purple-400" />
+            <img src="/logo.png" alt="" className="w-4 h-4 object-contain" />
             AI Copilot Mode
           </span>
           <span className="text-zinc-600">|</span>

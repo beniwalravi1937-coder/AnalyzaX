@@ -56,10 +56,10 @@ function InvitePage() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <div className="auth-header">
-          <span className="auth-logo">
-            <Shield className="w-5 h-5" />
-          </span>
+        <div className="auth-header" style={{ textAlign: "center" }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "0.75rem" }}>
+            <img src="/logo.png" alt="AnalyzaX Logo" style={{ width: "52px", height: "52px", objectFit: "contain", filter: "drop-shadow(0 4px 14px rgba(59, 130, 246, 0.45))" }} />
+          </div>
           <h1 className="auth-title">Workspace invitation</h1>
           <p className="auth-subtitle">You&apos;ve been invited to collaborate on AnalyzaX</p>
         </div>
