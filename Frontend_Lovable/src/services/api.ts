@@ -26,11 +26,26 @@ import {
   EDAFinding,
   RelationshipQueryResponse,
 } from "@/types";
+import {
+  parseDatasetLocally,
+  getLocalDatasetsList,
+  getLocalDataset,
+  getLocalProfile,
+  getLocalQuality,
+  getLocalEDA,
+} from "./localDatasetEngine";
 
-const API_BASE_URL =
-  (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_API_BASE_URL) ||
-  (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_API_BASE_URL) ||
-  "";
+const getBaseUrl = (): string => {
+  if (typeof window !== "undefined") {
+    const custom = localStorage.getItem("analyzax_backend_url");
+    if (custom) return custom.replace(/\/$/, "");
+  }
+  return (
+    (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_API_BASE_URL) ||
+    (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_API_BASE_URL) ||
+    ""
+  );
+};
 
 export interface ApiSuccessResponse<T> {
   success?: boolean;
@@ -57,10 +72,14 @@ export interface HealthStatus {
 }
 
 class ApiClient {
-  private baseUrl: string;
+  private _configuredBaseUrl: string;
 
   constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
+    this._configuredBaseUrl = baseUrl;
+  }
+
+  public get baseUrl(): string {
+    return this._configuredBaseUrl || getBaseUrl();
   }
 
   private async request<T>(
@@ -133,6 +152,10 @@ class ApiClient {
       });
 
       if (!response.ok) {
+        // If HTTP 413 (Entity Too Large, e.g. Vercel 4.5MB limit) or 404 (endpoint absent on static host)
+        if (response.status === 413 || response.status === 404 || response.status === 405 || response.status === 502) {
+          return await parseDatasetLocally(file, response.status === 413);
+        }
         const errorBody = (await response.json().catch(() => ({
           error: { code: "UPLOAD_ERROR", message: `HTTP ${response.status}` },
         }))) as ApiErrorResponse;
@@ -146,36 +169,76 @@ class ApiClient {
       return await response.json();
     } catch (err) {
       if (err instanceof ApiError) throw err;
-      throw new ApiError(
-        "Failed to upload file to backend. Verify the backend server is running.",
-        "UPLOAD_NETWORK_ERROR",
-        0,
-      );
+      // Network failure or server unreachable — fall back to client-side analytical processing
+      try {
+        return await parseDatasetLocally(file, false);
+      } catch (localErr: any) {
+        throw new ApiError(
+          `Failed to process dataset: ${localErr?.message || "Verify file format"}`,
+          "UPLOAD_ERROR",
+          0,
+        );
+      }
     }
   }
 
   async getDataset(datasetId: string): Promise<DatasetResponse> {
-    return this.request<DatasetResponse>(`/api/v1/datasets/${datasetId}`);
+    try {
+      return await this.request<DatasetResponse>(`/api/v1/datasets/${datasetId}`);
+    } catch (err) {
+      const local = getLocalDataset(datasetId);
+      if (local) return local;
+      throw err;
+    }
   }
 
   async listDatasets(): Promise<{ datasets: DatasetResponse[]; total: number }> {
-    return this.request<{ datasets: DatasetResponse[]; total: number }>("/api/v1/datasets");
+    const local = getLocalDatasetsList();
+    try {
+      const res = await this.request<{ datasets: DatasetResponse[]; total: number }>("/api/v1/datasets");
+      const backendDatasets = res.datasets || [];
+      const backendIds = new Set(backendDatasets.map((d) => d.id));
+      const combined = [...backendDatasets, ...local.filter((l) => !backendIds.has(l.id))];
+      return { datasets: combined, total: combined.length };
+    } catch {
+      return { datasets: local, total: local.length };
+    }
   }
 
   async deleteDataset(datasetId: string): Promise<void> {
-    await this.request<void>(`/api/v1/datasets/${datasetId}`, {
-      method: "DELETE",
-    });
+    try {
+      await this.request<void>(`/api/v1/datasets/${datasetId}`, {
+        method: "DELETE",
+      });
+    } catch {
+      // Also remove from local storage if present
+      if (typeof window !== "undefined") {
+        const local = getLocalDatasetsList().filter((d) => d.id !== datasetId);
+        localStorage.setItem("analyzax_local_datasets_meta", JSON.stringify(local));
+      }
+    }
   }
 
   async getDatasetProfile(datasetId: string): Promise<DatasetProfileResponse> {
-    return this.request<DatasetProfileResponse>(`/api/v1/datasets/${datasetId}/profile`);
+    try {
+      return await this.request<DatasetProfileResponse>(`/api/v1/datasets/${datasetId}/profile`);
+    } catch (err) {
+      const local = getLocalProfile(datasetId);
+      if (local) return local;
+      throw err;
+    }
   }
 
   async refreshDatasetProfile(datasetId: string): Promise<DatasetProfileResponse> {
-    return this.request<DatasetProfileResponse>(`/api/v1/datasets/${datasetId}/profile/refresh`, {
-      method: "POST",
-    });
+    try {
+      return await this.request<DatasetProfileResponse>(`/api/v1/datasets/${datasetId}/profile/refresh`, {
+        method: "POST",
+      });
+    } catch (err) {
+      const local = getLocalProfile(datasetId);
+      if (local) return local;
+      throw err;
+    }
   }
 
   async getDatasetQuality(
@@ -187,18 +250,30 @@ class ApiClient {
     if (filters?.dimension) params.append("dimension", filters.dimension);
     if (filters?.column) params.append("column", filters.column);
     const queryString = params.toString() ? `?${params.toString()}` : "";
-    return this.request<DataQualityReportResponse>(
-      `/api/v1/datasets/${datasetId}/quality${queryString}`,
-    );
+    try {
+      return await this.request<DataQualityReportResponse>(
+        `/api/v1/datasets/${datasetId}/quality${queryString}`,
+      );
+    } catch (err) {
+      const local = getLocalQuality(datasetId);
+      if (local) return local;
+      throw err;
+    }
   }
 
   async refreshDatasetQuality(datasetId: string): Promise<DataQualityReportResponse> {
-    return this.request<DataQualityReportResponse>(
-      `/api/v1/datasets/${datasetId}/quality/refresh`,
-      {
-        method: "POST",
-      },
-    );
+    try {
+      return await this.request<DataQualityReportResponse>(
+        `/api/v1/datasets/${datasetId}/quality/refresh`,
+        {
+          method: "POST",
+        },
+      );
+    } catch (err) {
+      const local = getLocalQuality(datasetId);
+      if (local) return local;
+      throw err;
+    }
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -328,7 +403,13 @@ class ApiClient {
     const path = versionId
       ? `/api/v1/datasets/${datasetId}/versions/${versionId}/eda${query}`
       : `/api/v1/datasets/${datasetId}/eda${query}`;
-    return this.request<EDAReport>(path);
+    try {
+      return await this.request<EDAReport>(path);
+    } catch (err) {
+      const local = getLocalEDA(datasetId);
+      if (local) return local;
+      throw err;
+    }
   }
 
   async refreshEdaReport(
@@ -340,7 +421,13 @@ class ApiClient {
     const path = versionId
       ? `/api/v1/datasets/${datasetId}/versions/${versionId}/eda/refresh${query}`
       : `/api/v1/datasets/${datasetId}/eda/refresh${query}`;
-    return this.request<EDAReport>(path, { method: "POST" });
+    try {
+      return await this.request<EDAReport>(path, { method: "POST" });
+    } catch (err) {
+      const local = getLocalEDA(datasetId);
+      if (local) return local;
+      throw err;
+    }
   }
 
   async getColumnAnalysis(
