@@ -90,12 +90,12 @@ export const TaskTargetSelector: React.FC<TaskTargetSelectorProps> = ({
       {taskType !== "clustering" ? (
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.375rem" }}>
-            <label style={{ fontSize: "0.875rem", fontWeight: 600 }}>
+            <label style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary, #f1f5f9)" }}>
               2. Prediction Target Column <span style={{ color: "var(--color-error, #ef4444)" }}>*</span>
             </label>
             {recommendedTarget && (
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                Auto-detected candidate: <strong>{recommendedTarget}</strong>
+              <span style={{ fontSize: "0.75rem", color: "var(--text-muted, #94a3b8)" }}>
+                Auto-detected candidate: <strong style={{ color: "var(--color-primary, #818cf8)" }}>{recommendedTarget}</strong>
               </span>
             )}
           </div>
@@ -106,13 +106,43 @@ export const TaskTargetSelector: React.FC<TaskTargetSelectorProps> = ({
             className="input"
             style={{ width: "100%", padding: "0.5rem 0.75rem", fontSize: "0.875rem", borderRadius: "6px" }}
           >
-            <option value="" disabled>-- Select target column to predict --</option>
-            {columns.map((col) => (
-              <option key={col} value={col}>
-                {col} {col === recommendedTarget ? " (Recommended)" : ""}
-              </option>
-            ))}
+            <option value="" disabled>
+              {columns.length === 0
+                ? "-- Loading or no columns available --"
+                : `-- Select target column to predict (${columns.length} columns available) --`}
+            </option>
+            {recommendedTarget && columns.includes(recommendedTarget) && (
+              <optgroup label="★ Recommended Target Candidate">
+                <option value={recommendedTarget}>
+                  {recommendedTarget} (Recommended for {taskType.replace("_", " ")})
+                </option>
+              </optgroup>
+            )}
+            <optgroup label="All Dataset Columns">
+              {columns.map((col) => (
+                <option key={col} value={col}>
+                  {col} {col === recommendedTarget ? "★" : ""}
+                </option>
+              ))}
+            </optgroup>
           </select>
+
+          {/* Inline validation warning when no target column is selected */}
+          {!targetColumn && columns.length > 0 && (
+            <div
+              style={{
+                marginTop: "0.5rem",
+                padding: "0.4rem 0.75rem",
+                borderRadius: "6px",
+                background: "rgba(245, 158, 11, 0.1)",
+                border: "1px solid rgba(245, 158, 11, 0.3)",
+                color: "#f59e0b",
+                fontSize: "0.75rem",
+              }}
+            >
+              ⚠️ Please select a target column to predict for {taskType.replace("_", " ")}.
+            </div>
+          )}
 
           {/* Class distribution preview for classification */}
           {classDistribution && Object.keys(classDistribution).length > 0 && (
@@ -121,17 +151,17 @@ export const TaskTargetSelector: React.FC<TaskTargetSelectorProps> = ({
                 marginTop: "0.75rem",
                 padding: "0.625rem 0.75rem",
                 borderRadius: "6px",
-                background: "var(--bg-subtle)",
-                border: "1px solid var(--border-subtle)",
+                background: "var(--bg-subtle, #1e293b50)",
+                border: "1px solid var(--border-subtle, #334155)",
                 fontSize: "0.75rem",
               }}
             >
-              <span style={{ fontWeight: 600, color: "var(--text-muted)", display: "block", marginBottom: "0.375rem" }}>
+              <span style={{ fontWeight: 600, color: "var(--text-muted, #94a3b8)", display: "block", marginBottom: "0.375rem" }}>
                 Target Class Frequencies:
               </span>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
                 {Object.entries(classDistribution).map(([cls, cnt]) => (
-                  <span key={cls} style={{ background: "var(--bg-surface)", padding: "0.2rem 0.5rem", borderRadius: "4px", border: "1px solid var(--border-subtle)" }}>
+                  <span key={cls} style={{ background: "var(--bg-surface, #1e293b)", padding: "0.2rem 0.5rem", borderRadius: "4px", border: "1px solid var(--border-subtle, #334155)" }}>
                     <strong>{cls}:</strong> {cnt.toLocaleString()}
                   </span>
                 ))}

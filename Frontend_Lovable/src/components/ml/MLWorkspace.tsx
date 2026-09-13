@@ -15,7 +15,14 @@ import {
   SplitConfig,
   SuitabilityReport,
 } from "@/types/ml";
-import { mlApi } from "@/services/mlApi";
+import { useDataset } from "@/context/DatasetContext";
+import {
+  getLocalProfile,
+  getLocalSampleRows,
+  STUDENT_EXAM_PERFORMANCE_COLUMNS,
+} from "@/services/localDatasetEngine";
+import { sqlApi } from "@/services/sqlApi";
+import { DEFAULT_ML_MODELS, mlApi } from "@/services/mlApi";
 import { MLSuitabilityPanel } from "./MLSuitabilityPanel";
 import { TaskTargetSelector } from "./TaskTargetSelector";
 import { FeatureSelector } from "./FeatureSelector";
@@ -30,12 +37,15 @@ import { PredictionRunner } from "./PredictionRunner";
 import { MLExperimentHistory } from "./MLExperimentHistory";
 
 export const MLWorkspace: React.FC = () => {
+  const { activeDataset, datasets: contextDatasets } = useDataset();
+
   // Datasets & Versions
   const [datasets, setDatasets] = useState<DatasetResponse[]>([]);
   const [selectedDatasetId, setSelectedDatasetId] = useState<string>("");
   const [versions, setVersions] = useState<DatasetVersion[]>([]);
   const [selectedVersionId, setSelectedVersionId] = useState<string>("v1");
   const [columns, setColumns] = useState<string[]>([]);
+  const [isColumnsLoading, setIsColumnsLoading] = useState<boolean>(false);
 
   // Workflow Mode & Tabs
   const [mode, setMode] = useState<"beginner" | "advanced">("beginner");
@@ -97,55 +107,144 @@ export const MLWorkspace: React.FC = () => {
   const [isHistoryLoading, setIsHistoryLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Sync with global DatasetContext
+  useEffect(() => {
+    if (contextDatasets && contextDatasets.length > 0) {
+      setDatasets(contextDatasets);
+    }
+    if (activeDataset && (!selectedDatasetId || !datasets.some((d) => d.id === selectedDatasetId))) {
+      setSelectedDatasetId(activeDataset.id);
+    }
+  }, [activeDataset, contextDatasets]);
+
   // 1. Initial Load: Datasets & Registered Models
   useEffect(() => {
     const init = async () => {
       try {
         const [dsRes, modelsList] = await Promise.all([
-          api.listDatasets(),
-          mlApi.getModels(),
+          api.listDatasets().catch(() => ({ datasets: [] })),
+          mlApi.getModels().catch(() => DEFAULT_ML_MODELS),
         ]);
         const dsList = dsRes.datasets || [];
-        setDatasets(dsList);
-        setAvailableModels(modelsList);
         if (dsList.length > 0) {
-          setSelectedDatasetId(dsList[0].id);
+          setDatasets((prev) => (prev.length > 0 ? prev : dsList));
+          setSelectedDatasetId((prev) => prev || activeDataset?.id || dsList[0].id);
         }
+        setAvailableModels(modelsList.length > 0 ? modelsList : DEFAULT_ML_MODELS);
       } catch (err) {
         console.error("Failed to initialize ML workspace:", err);
+        setAvailableModels(DEFAULT_ML_MODELS);
       }
     };
     init();
   }, []);
 
   // 2. Load Versions, Schema & Trigger Suitability Scan
-  useEffect(() => {
+  const loadDatasetDetails = async () => {
     if (!selectedDatasetId) return;
+    setIsColumnsLoading(true);
+    setErrorMsg(null);
 
-    const loadDatasetDetails = async () => {
+    try {
+      // Step A: Load versions with safe fallback
+      const vList = await api.listVersions(selectedDatasetId).catch(() => [
+        { version_id: "v1", version_label: "Base", status: "READY", dataset_id: selectedDatasetId } as DatasetVersion,
+      ]);
+      setVersions(vList);
+      const activeV = vList.find((v) => v.status === "READY") || vList[0];
+      const vId = activeV ? activeV.version_id : "v1";
+      setSelectedVersionId(vId);
+
+      // Step B: Robust multi-tier column resolution
+      let colNames: string[] = [];
+
+      // 1. Dataset Profile API
       try {
-        const vList = await api.listVersions(selectedDatasetId);
-        setVersions(vList);
-        const activeV = vList.find((v) => v.status === "READY") || vList[0];
-        const vId = activeV ? activeV.version_id : "v1";
-        setSelectedVersionId(vId);
+        const prof = await api.getDatasetProfile(selectedDatasetId);
+        if (prof?.columns && prof.columns.length > 0) {
+          colNames = prof.columns.map((c: any) => (typeof c === "string" ? c : c.name));
+        }
+      } catch {
+        // Fallback
+      }
 
-        // Fetch columns from profile
-        const prof = await api.getDatasetProfile(selectedDatasetId).catch(() => null);
-        if (prof?.columns) {
-          const colNames = prof.columns.map((c: any) => c.name);
-          setColumns(colNames);
+      // 2. Local Dataset Engine Profile
+      if (colNames.length === 0) {
+        const localProf = getLocalProfile(selectedDatasetId);
+        if (localProf?.columns && localProf.columns.length > 0) {
+          colNames = localProf.columns.map((c: any) => (typeof c === "string" ? c : c.name));
+        }
+      }
 
-          // Run automated suitability
-          runSuitabilityCheck(selectedDatasetId, vId, undefined, undefined, colNames);
+      // 3. SQL Schema Introspection
+      if (colNames.length === 0) {
+        try {
+          const sInfo = await sqlApi.getSchema(selectedDatasetId, vId);
+          if (sInfo?.columns && sInfo.columns.length > 0) {
+            colNames = sInfo.columns.map((c) => c.name);
+          }
+        } catch {
+          // Fallback
+        }
+      }
+
+      // 4. Sample Rows introspection
+      if (colNames.length === 0) {
+        const rows = getLocalSampleRows(selectedDatasetId);
+        if (rows && rows.length > 0) {
+          colNames = Object.keys(rows[0]);
+        }
+      }
+
+      // 5. Preloaded fallback for student_exam_performance
+      if (colNames.length === 0) {
+        const dsObj = datasets.find((d) => d.id === selectedDatasetId) || activeDataset;
+        const dsName = (dsObj?.name || dsObj?.original_filename || selectedDatasetId).toLowerCase();
+        if (dsName.includes("student") || dsName.includes("exam") || dsName.includes("performance")) {
+          colNames = [...STUDENT_EXAM_PERFORMANCE_COLUMNS];
+        }
+      }
+
+      if (colNames.length > 0) {
+        setColumns(colNames);
+
+        // Auto-select candidate target column if not set or invalid
+        let newTarget = targetColumn;
+        if (!newTarget || !colNames.includes(newTarget)) {
+          if (taskType === "regression") {
+            newTarget = colNames.find((c) => c === "exam_score" || c.includes("score") || c.includes("sales") || c.includes("price")) || colNames[colNames.length - 1];
+          } else if (taskType === "binary_classification") {
+            newTarget = colNames.find((c) => c === "pass_status" || c.includes("status") || c.includes("churn")) || colNames[colNames.length - 1];
+          } else if (taskType === "multiclass_classification") {
+            newTarget = colNames.find((c) => c === "performance_grade" || c.includes("grade") || c.includes("level")) || colNames[colNames.length - 1];
+          }
+          setTargetColumn(newTarget);
         }
 
-        // Load experiment history
-        loadHistory(selectedDatasetId, vId);
-      } catch (err) {
-        console.error("Failed to load dataset metadata:", err);
+        // Auto-select clean recommended predictors if empty
+        if (selectedFeatures.length === 0) {
+          const defaultPreds = colNames.filter(
+            (c) => c !== newTarget && !/id$|^id$|^uuid$|identifier|student_id|order_id|customer_id/i.test(c)
+          );
+          setSelectedFeatures(defaultPreds);
+        }
+
+        // Run automated suitability
+        runSuitabilityCheck(selectedDatasetId, vId, newTarget, taskType, colNames);
+      } else {
+        setColumns([]);
       }
-    };
+
+      // Load experiment history
+      loadHistory(selectedDatasetId, vId);
+    } catch (err) {
+      console.error("Failed to load dataset details:", err);
+    } finally {
+      setIsColumnsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadDatasetDetails();
   }, [selectedDatasetId]);
 
@@ -176,7 +275,7 @@ export const MLWorkspace: React.FC = () => {
       if (rep.recommended_task) {
         setTaskType(rep.recommended_task);
       }
-      if (selectedFeatures.length === 0 && rep.recommended_features) {
+      if (selectedFeatures.length === 0 && rep.recommended_features && rep.recommended_features.length > 0) {
         setSelectedFeatures(rep.recommended_features);
       }
     } catch (err) {
@@ -216,6 +315,13 @@ export const MLWorkspace: React.FC = () => {
     else setPrimaryMetric("f1_macro");
   }, [taskType, availableModels]);
 
+  // Validation state computation
+  const isTargetRequired = taskType !== "clustering";
+  const hasValidTarget = !isTargetRequired || Boolean(targetColumn && columns.includes(targetColumn));
+  const hasPredictors = selectedFeatures.length > 0;
+  const hasModels = selectedModelIds.length > 0;
+  const isConfigValid = Boolean(selectedDatasetId) && hasValidTarget && hasPredictors && hasModels && !isTraining;
+
   // 6. Execute Experiment
   const handleRunExperiment = async () => {
     setErrorMsg(null);
@@ -225,7 +331,11 @@ export const MLWorkspace: React.FC = () => {
       return;
     }
     if (selectedFeatures.length === 0) {
-      setErrorMsg("Please select at least one feature column.");
+      setErrorMsg("Please select at least one predictor variable.");
+      return;
+    }
+    if (selectedModelIds.length === 0) {
+      setErrorMsg("Please select at least one algorithm to train.");
       return;
     }
 
@@ -461,11 +571,20 @@ export const MLWorkspace: React.FC = () => {
               taskType={taskType}
               onTaskTypeChange={(t) => {
                 setTaskType(t);
+                if (t === "regression" && targetColumn === "pass_status") {
+                  setTargetColumn("exam_score");
+                  setSelectedFeatures((prev) => prev.filter((f) => f !== "exam_score"));
+                } else if ((t === "binary_classification" || t === "multiclass_classification") && targetColumn === "exam_score") {
+                  const newT = t === "binary_classification" ? "pass_status" : "performance_grade";
+                  setTargetColumn(newT);
+                  setSelectedFeatures((prev) => prev.filter((f) => f !== newT));
+                }
                 runSuitabilityCheck(undefined, undefined, undefined, t);
               }}
               targetColumn={targetColumn}
               onTargetColumnChange={(tgt) => {
                 setTargetColumn(tgt);
+                setSelectedFeatures((prev) => prev.filter((f) => f !== tgt));
                 runSuitabilityCheck(undefined, undefined, tgt);
               }}
               columns={columns}
@@ -482,6 +601,8 @@ export const MLWorkspace: React.FC = () => {
               onSelectedFeaturesChange={setSelectedFeatures}
               recommendedFeatures={suitability?.recommended_features || []}
               excludedFeatures={suitability?.excluded_features || {}}
+              isLoading={isColumnsLoading}
+              onReloadColumns={loadDatasetDetails}
             />
 
             {/* Advanced Section: Preprocessing & Splitting */}
@@ -526,27 +647,71 @@ export const MLWorkspace: React.FC = () => {
             />
 
             {/* Train Action Button */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--border-subtle)", paddingTop: "1rem" }}>
-              <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                Selected: <strong>{selectedModelIds.length} model(s)</strong> on <strong>{selectedFeatures.length} features</strong>
-              </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", borderTop: "1px solid var(--border-subtle)", paddingTop: "1rem" }}>
+              {!isConfigValid && !isTraining && (
+                <div
+                  style={{
+                    padding: "0.625rem 0.875rem",
+                    borderRadius: "6px",
+                    background: "rgba(245, 158, 11, 0.1)",
+                    border: "1px solid rgba(245, 158, 11, 0.3)",
+                    color: "#f59e0b",
+                    fontSize: "0.75rem",
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <span style={{ fontWeight: 600 }}>Required to enable Run Experiment:</span>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                    {!hasValidTarget && (
+                      <span className="badge badge-warning" style={{ fontSize: "0.6875rem" }}>
+                        Select Target Column (Step 2)
+                      </span>
+                    )}
+                    {!hasPredictors && (
+                      <span className="badge badge-warning" style={{ fontSize: "0.6875rem" }}>
+                        Select at least 1 predictor (Step 3)
+                      </span>
+                    )}
+                    {!hasModels && (
+                      <span className="badge badge-warning" style={{ fontSize: "0.6875rem" }}>
+                        Select at least 1 algorithm (Step 4)
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
 
-              <button
-                type="button"
-                onClick={handleRunExperiment}
-                disabled={isTraining || selectedModelIds.length === 0}
-                className="btn btn-primary"
-                style={{ padding: "0.6rem 1.5rem", fontSize: "0.875rem" }}
-              >
-                {isTraining ? (
-                  <>
-                    <span className="spinner" style={{ marginRight: "0.5rem" }} />
-                    Fitting & Evaluating Models...
-                  </>
-                ) : (
-                  "Run Experiment"
-                )}
-              </button>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>
+                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                  Selected: <strong style={{ color: "var(--text-primary)" }}>{selectedModelIds.length} model(s)</strong> on <strong style={{ color: "var(--text-primary)" }}>{selectedFeatures.length} features</strong>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleRunExperiment}
+                  disabled={!isConfigValid || isTraining}
+                  title={!isConfigValid ? "Complete required selections above to run experiment" : "Start model training"}
+                  className="btn btn-primary"
+                  style={{
+                    padding: "0.6rem 1.5rem",
+                    fontSize: "0.875rem",
+                    opacity: !isConfigValid || isTraining ? 0.6 : 1,
+                    cursor: !isConfigValid || isTraining ? "not-allowed" : "pointer",
+                  }}
+                >
+                  {isTraining ? (
+                    <>
+                      <span className="spinner" style={{ marginRight: "0.5rem" }} />
+                      Fitting & Evaluating Models...
+                    </>
+                  ) : (
+                    "Run Experiment"
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 

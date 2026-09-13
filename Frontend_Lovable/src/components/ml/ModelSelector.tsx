@@ -56,21 +56,95 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
     });
   };
 
+  const selectAll = () => {
+    onSelectedModelIdsChange(candidateModels.map((m) => m.model_id));
+  };
+
+  const selectRecommended = () => {
+    const top = candidateModels.slice(0, 2).map((m) => m.model_id);
+    onSelectedModelIdsChange(top.length > 0 ? top : candidateModels.map((m) => m.model_id));
+  };
+
+  const clearAll = () => {
+    onSelectedModelIdsChange([]);
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
         <div>
-          <label style={{ fontSize: "0.875rem", fontWeight: 600 }}>
+          <label style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary, #f1f5f9)", display: "block" }}>
             4. Select Algorithms to Train ({selectedModelIds.length} selected)
           </label>
-          <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>
+          <span style={{ fontSize: "0.75rem", color: "var(--text-muted, #94a3b8)", display: "block", marginTop: "0.125rem" }}>
             A baseline reference model is automatically included for objective performance benchmarking.
           </span>
         </div>
+
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button
+            type="button"
+            onClick={selectRecommended}
+            disabled={candidateModels.length === 0}
+            className="btn btn-secondary btn-sm"
+            style={{ fontSize: "0.75rem" }}
+          >
+            Select Recommended
+          </button>
+          <button
+            type="button"
+            onClick={selectAll}
+            disabled={candidateModels.length === 0}
+            className="btn btn-secondary btn-sm"
+            style={{ fontSize: "0.75rem" }}
+          >
+            Select All
+          </button>
+          <button
+            type="button"
+            onClick={clearAll}
+            disabled={selectedModelIds.length === 0}
+            className="btn btn-secondary btn-sm"
+            style={{ fontSize: "0.75rem" }}
+          >
+            Clear
+          </button>
+        </div>
       </div>
 
-      {/* Model Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem" }}>
+      {/* Validation warning if 0 selected */}
+      {candidateModels.length > 0 && selectedModelIds.length === 0 && (
+        <div
+          style={{
+            padding: "0.5rem 0.75rem",
+            borderRadius: "6px",
+            background: "rgba(245, 158, 11, 0.12)",
+            border: "1px solid rgba(245, 158, 11, 0.4)",
+            color: "#f59e0b",
+            fontSize: "0.75rem",
+          }}
+        >
+          ⚠️ Please select at least one algorithm to train.
+        </div>
+      )}
+
+      {candidateModels.length === 0 ? (
+        <div
+          style={{
+            padding: "1.5rem",
+            borderRadius: "8px",
+            background: "var(--bg-subtle, #1e293b50)",
+            border: "1px dashed var(--border-subtle, #334155)",
+            textAlign: "center",
+            color: "var(--text-muted, #94a3b8)",
+            fontSize: "0.8125rem",
+          }}
+        >
+          Loading supported algorithms for {taskType.replace("_", " ")}...
+        </div>
+      ) : (
+        /* Model Cards */
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem" }}>
         {candidateModels.map((model) => {
           const isSelected = selectedModelIds.includes(model.model_id);
           const isExpanded = expandedModelId === model.model_id;
@@ -197,7 +271,8 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
             </div>
           );
         })}
-      </div>
+        </div>
+      )}
 
       {/* Hyperparameter Automated Search (Advanced Mode) */}
       {isAdvanced && (
