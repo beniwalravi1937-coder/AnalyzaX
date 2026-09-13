@@ -47,6 +47,8 @@ const getBaseUrl = (): string => {
   );
 };
 
+export const API_BASE_URL = getBaseUrl();
+
 export interface ApiSuccessResponse<T> {
   success?: boolean;
   data?: T;
