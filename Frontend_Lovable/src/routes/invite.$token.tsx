@@ -10,13 +10,18 @@ import { useAuth } from "@/lib/auth/auth";
 export const Route = createFileRoute("/invite/$token")({
   head: () => ({
     meta: [
-      { title: "Accept your AnalyzaX workspace invitation" },
+      { title: "Workspace Invitation — AnalyzaX" },
       {
         name: "description",
-        content: "Review and accept an invitation to collaborate on an AnalyzaX analytics workspace.",
+        content:
+          "Join your team's analytics workspace. Collaborate on shared datasets, automated reports, and predictive models seamlessly.",
       },
-      { property: "og:title", content: "AnalyzaX workspace invitation" },
-      { property: "og:description", content: "You have been invited to collaborate on AnalyzaX." },
+      { property: "og:title", content: "Workspace Invitation — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "Join your team's analytics workspace and collaborate on shared datasets and dashboards.",
+      },
     ],
   }),
   component: InvitePage,

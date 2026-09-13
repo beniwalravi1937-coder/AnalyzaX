@@ -10,10 +10,17 @@ import { InvitationResponse } from "../types/collaboration";
 export const Route = createFileRoute("/team")({
   head: () => ({
     meta: [
-      { title: "Team & Workspace Invitations — AnalyzaX" },
+      { title: "Team Members & Permissions — AnalyzaX" },
       {
         name: "description",
-        content: "Invite teammates to your AnalyzaX workspace, share invitation links and manage role access.",
+        content:
+          "Invite team members, share project links, and manage who can view, edit, or export analytical dashboards in your workspace.",
+      },
+      { property: "og:title", content: "Team Members & Permissions — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "Invite team members, share project links, and manage workspace roles and permissions.",
       },
     ],
   }),

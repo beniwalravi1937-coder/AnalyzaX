@@ -9,10 +9,17 @@ export const Route = createFileRoute("/reset-password")({
   }),
   head: () => ({
     meta: [
-      { title: "Set a new AnalyzaX password" },
+      { title: "Set New Password — AnalyzaX" },
       {
         name: "description",
-        content: "Choose a new secure password to finish recovering your AnalyzaX account.",
+        content:
+          "Create a new secure password for your AnalyzaX account to safely access your data workspaces and analytical models.",
+      },
+      { property: "og:title", content: "Set New Password — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "Create a new secure password for your AnalyzaX account to safely access your workspaces.",
       },
     ],
   }),

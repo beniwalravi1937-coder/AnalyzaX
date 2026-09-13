@@ -25,16 +25,17 @@ import { workspaceApi } from "@/services/workspaceApi";
 export const Route = createFileRoute("/data")({
   head: () => ({
     meta: [
-      { title: "Data Sources & Intelligence — AnalyzaX" },
+      { title: "Data Sources & Datasets — AnalyzaX" },
       {
         name: "description",
         content:
-          "Ingest, validate, and catalog datasets with automated deterministic DuckDB structural profiling and semantic understanding.",
+          "Upload, inspect, and organize all your files in one place. Get instant summaries of columns, rows, and data health without writing code.",
       },
-      { property: "og:title", content: "Data Sources & Intelligence — AnalyzaX" },
+      { property: "og:title", content: "Data Sources & Datasets — AnalyzaX" },
       {
         property: "og:description",
-        content: "Automated deterministic DuckDB structural profiling and semantic understanding.",
+        content:
+          "Upload, inspect, and organize all your files in one place with instant summaries and data health metrics.",
       },
     ],
   }),

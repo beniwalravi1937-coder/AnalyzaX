@@ -8,16 +8,17 @@ import { Bot } from "lucide-react";
 export const Route = createFileRoute("/ai-analyst")({
   head: () => ({
     meta: [
-      { title: "AI Copilot & Analytical Studio — AnalyzaX" },
+      { title: "AI Data Analyst — AnalyzaX" },
       {
         name: "description",
         content:
-          "Autonomous analytical partner. Discover signals, run multi-step investigations, and plan dashboards with explicit human approval boundaries.",
+          "Ask questions in plain English and get instant answers, visualizations, and executive summaries from your data — no SQL or code required.",
       },
-      { property: "og:title", content: "AI Copilot & Analytical Studio — AnalyzaX" },
+      { property: "og:title", content: "AI Data Analyst — AnalyzaX" },
       {
         property: "og:description",
-        content: "Autonomous analytical AI partner powered by DuckDB SQL validation.",
+        content:
+          "Ask questions in plain English and get instant answers, visualizations, and summaries from your data.",
       },
     ],
   }),

@@ -34,11 +34,17 @@ import {
 export const Route = createFileRoute("/notifications")({
   head: () => ({
     meta: [
-      { title: "Notification Center — AnalyzaX" },
+      { title: "Notifications & Alerts — AnalyzaX" },
       {
         name: "description",
         content:
-          "Unified enterprise communications, collaboration alerts, and analytical job milestones.",
+          "Stay informed with real-time updates when team members share datasets, analytical jobs complete, or metrics trigger alerts.",
+      },
+      { property: "og:title", content: "Notifications & Alerts — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "Stay informed with real-time updates when team members share datasets or analytical jobs complete.",
       },
     ],
   }),

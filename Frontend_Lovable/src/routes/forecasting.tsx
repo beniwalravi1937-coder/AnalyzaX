@@ -6,16 +6,17 @@ import { ForecastingWorkspace } from "@/components/forecasting/ForecastingWorksp
 export const Route = createFileRoute("/forecasting")({
   head: () => ({
     meta: [
-      { title: "Forecasting & Time-Series Intelligence — AnalyzaX" },
+      { title: "Trend Forecasting & Projections — AnalyzaX" },
       {
         name: "description",
         content:
-          "Deterministic, version-aware temporal forecasting. Automatic frequency detection, rolling-origin backtesting, 8 statistical estimators, prediction intervals, and leakage-free out-of-sample projections.",
+          "Project future revenue, demand, and growth trends with automated time-series forecasting. See clear confidence bands and future estimates in seconds.",
       },
-      { property: "og:title", content: "Forecasting & Time-Series Intelligence — AnalyzaX" },
+      { property: "og:title", content: "Trend Forecasting & Projections — AnalyzaX" },
       {
         property: "og:description",
-        content: "Deterministic time-series forecasting powered by statsmodels.",
+        content:
+          "Project future revenue, demand, and growth trends with automated time-series forecasting.",
       },
     ],
   }),

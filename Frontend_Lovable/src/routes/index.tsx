@@ -16,12 +16,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Automate data health checks, one-click cleaning, AI-powered questions, and predictive modeling in a unified modern analytics workspace.",
+          "Upload your data and get instant cleaning, charts, and AI-generated insights — no SQL required. Built for modern teams.",
       },
       { property: "og:title", content: "AnalyzaX — Turn Raw Data Into Executive Insights in Seconds" },
       {
         property: "og:description",
-        content: "Turn raw spreadsheets into clear answers, interactive charts, and predictive models in seconds.",
+        content:
+          "Upload your data and get instant cleaning, charts, and AI-generated insights — no SQL required.",
       },
     ],
   }),

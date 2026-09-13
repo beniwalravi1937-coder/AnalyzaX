@@ -14,16 +14,17 @@ import { FindingsTab } from "@/components/eda/FindingsTab";
 export const Route = createFileRoute("/eda")({
   head: () => ({
     meta: [
-      { title: "Exploratory Data Analysis (EDA) — AnalyzaX" },
+      { title: "Data Exploration & Relationships — AnalyzaX" },
       {
         name: "description",
         content:
-          "Vectorized statistical distributions, pairwise correlations, time-series trends, and automated rule-based findings.",
+          "Explore distributions, discover what factors drive your metrics, and uncover hidden relationships between variables with automated visual summaries.",
       },
-      { property: "og:title", content: "Exploratory Data Analysis (EDA) — AnalyzaX" },
+      { property: "og:title", content: "Data Exploration & Relationships — AnalyzaX" },
       {
         property: "og:description",
-        content: "High-speed Polars statistical summaries and correlation structures.",
+        content:
+          "Explore distributions and uncover what factors drive your business metrics with automated visual summaries.",
       },
     ],
   }),

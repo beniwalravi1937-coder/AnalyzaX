@@ -26,10 +26,17 @@ import {
 export const Route = createFileRoute("/projects/")({
   head: () => ({
     meta: [
-      { title: "Projects & Workspaces — AnalyzaX" },
+      { title: "Projects & Folders — AnalyzaX" },
       {
         name: "description",
-        content: "Manage your analytical lakehouses, vectorized pipelines, and autonomous AI dataset connections.",
+        content:
+          "Organize your team's analytics projects, datasets, and saved reports in clean, shareable workspaces tailored for your company.",
+      },
+      { property: "og:title", content: "Projects & Folders — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "Organize your team's analytics projects, datasets, and saved reports in clean, shareable workspaces.",
       },
     ],
   }),

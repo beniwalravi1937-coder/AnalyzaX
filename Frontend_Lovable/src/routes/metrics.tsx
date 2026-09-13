@@ -31,11 +31,17 @@ import {
 export const Route = createFileRoute("/metrics")({
   head: () => ({
     meta: [
-      { title: "Governed Semantic Metrics — AnalyzaX" },
+      { title: "KPI & Metric Library — AnalyzaX" },
       {
         name: "description",
         content:
-          "Standardized business definitions with AST formula validation, version history, and cycle detection.",
+          "Define standardized company KPIs and business formulas once so everyone on your team measures success the exact same way.",
+      },
+      { property: "og:title", content: "KPI & Metric Library — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "Define standardized company KPIs and business formulas once for team-wide consistency.",
       },
     ],
   }),

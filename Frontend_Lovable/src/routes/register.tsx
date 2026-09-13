@@ -9,11 +9,17 @@ export const Route = createFileRoute("/register")({
   }),
   head: () => ({
     meta: [
-      { title: "Create your AnalyzaX account | Data Analytics Workspace" },
+      { title: "Create an Account — AnalyzaX" },
       {
         name: "description",
         content:
-          "Create an AnalyzaX account to upload data, run quality checks, build charts, query with SQL and forecast trends.",
+          "Create your free AnalyzaX account. Upload spreadsheets, run automated quality audits, and discover insights in seconds without coding.",
+      },
+      { property: "og:title", content: "Create an Account — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "Create your free AnalyzaX account to upload data, run quality checks, and discover insights without coding.",
       },
     ],
   }),

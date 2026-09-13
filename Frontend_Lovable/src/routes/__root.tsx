@@ -268,7 +268,7 @@ function AppShell() {
             </div>
           )}
           <span className="stat-subtext">
-            Autonomous analytical engine backed by DuckDB & Polars.
+            Smart data analysis, automated cleaning & predictive insights.
           </span>
         </div>
       </aside>

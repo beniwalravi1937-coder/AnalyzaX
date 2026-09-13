@@ -24,16 +24,17 @@ import {
 export const Route = createFileRoute("/cleaning")({
   head: () => ({
     meta: [
-      { title: "Cleaning Studio — AnalyzaX" },
+      { title: "Data Cleaning Studio — AnalyzaX" },
       {
         name: "description",
         content:
-          "Build deterministic transformation pipelines, preview changes, and create versioned datasets with automated lineage.",
+          "Fix messy rows, remove duplicates, and fill missing values with one click. Track every version safely without losing your original data.",
       },
-      { property: "og:title", content: "Cleaning Studio — AnalyzaX" },
+      { property: "og:title", content: "Data Cleaning Studio — AnalyzaX" },
       {
         property: "og:description",
-        content: "Build deterministic transformation pipelines with automated lineage.",
+        content:
+          "Fix messy rows, remove duplicates, and fill missing values with one click. Track every version safely.",
       },
     ],
   }),

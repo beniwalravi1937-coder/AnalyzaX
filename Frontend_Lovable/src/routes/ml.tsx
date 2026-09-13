@@ -6,16 +6,17 @@ import { MLWorkspace } from "@/components/ml/MLWorkspace";
 export const Route = createFileRoute("/ml")({
   head: () => ({
     meta: [
-      { title: "Machine Learning Studio & Workspace — AnalyzaX" },
+      { title: "Predictive Machine Learning — AnalyzaX" },
       {
         name: "description",
         content:
-          "Deterministic, version-aware machine learning powered by scikit-learn. Automated suitability diagnostics, leakage-free preprocessing, multi-model evaluation, and live inference.",
+          "Train predictive AI models to forecast outcomes, classify customer churn, and score leads in one click — with zero machine learning coding needed.",
       },
-      { property: "og:title", content: "Machine Learning Studio & Workspace — AnalyzaX" },
+      { property: "og:title", content: "Predictive Machine Learning — AnalyzaX" },
       {
         property: "og:description",
-        content: "Deterministic machine learning studio powered by scikit-learn.",
+        content:
+          "Train predictive models to forecast outcomes, classify churn, and score leads with zero code needed.",
       },
     ],
   }),

@@ -9,11 +9,17 @@ import { SettingsNav } from "../components/settings/SettingsNav";
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Settings & System Diagnostics — AnalyzaX" },
+      { title: "Workspace Settings — AnalyzaX" },
       {
         name: "description",
         content:
-          "Application environment configurations, backend engine health monitoring, and system properties.",
+          "Manage your account preferences, system integrations, and workspace configuration options all in one place.",
+      },
+      { property: "og:title", content: "Workspace Settings — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "Manage your account preferences, system integrations, and workspace configuration options.",
       },
     ],
   }),

@@ -29,11 +29,17 @@ import {
 export const Route = createFileRoute("/insights")({
   head: () => ({
     meta: [
-      { title: "Proactive Insight Center — AnalyzaX" },
+      { title: "Smart Business Insights — AnalyzaX" },
       {
         name: "description",
         content:
-          "Automated multi-engine discovery across data quality, anomalies, distributions, and trends.",
+          "Discover hidden patterns, unexpected spikes, and critical changes in your numbers automatically without digging through endless rows.",
+      },
+      { property: "og:title", content: "Smart Business Insights — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "Discover hidden patterns, unexpected spikes, and critical changes in your numbers automatically.",
       },
     ],
   }),

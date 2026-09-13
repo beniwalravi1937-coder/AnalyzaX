@@ -9,11 +9,17 @@ export const Route = createFileRoute("/login")({
   }),
   head: () => ({
     meta: [
-      { title: "Sign in to AnalyzaX | AI-Powered Data Analytics" },
+      { title: "Sign In — AnalyzaX" },
       {
         name: "description",
         content:
-          "Sign in to AnalyzaX to profile, clean, query and model your data with statistics, forecasting and AI-assisted analysis.",
+          "Sign in to your AnalyzaX workspace to explore datasets, build interactive dashboards, and generate AI-assisted insights.",
+      },
+      { property: "og:title", content: "Sign In — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "Sign in to your AnalyzaX workspace to explore datasets and generate AI-assisted insights.",
       },
     ],
   }),

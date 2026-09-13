@@ -6,16 +6,17 @@ import { StatisticsWorkspace } from "@/components/statistics/StatisticsWorkspace
 export const Route = createFileRoute("/statistics")({
   head: () => ({
     meta: [
-      { title: "Statistical Intelligence Engine — AnalyzaX" },
+      { title: "Statistical Testing & Analysis — AnalyzaX" },
       {
         name: "description",
         content:
-          "Rigorous hypothesis testing, parametric and non-parametric tests, descriptive metrics, effect sizes, confidence intervals, and regression diagnostics calculated deterministically with SciPy and statsmodels.",
+          "Run rigorous statistical tests, compare group differences, and check significance levels with automated explanations anyone on your team can understand.",
       },
-      { property: "og:title", content: "Statistical Intelligence Engine — AnalyzaX" },
+      { property: "og:title", content: "Statistical Testing & Analysis — AnalyzaX" },
       {
         property: "og:description",
-        content: "Deterministic hypothesis testing and statistical diagnostics powered by SciPy and statsmodels.",
+        content:
+          "Run statistical tests and compare group differences with automated explanations anyone can understand.",
       },
     ],
   }),

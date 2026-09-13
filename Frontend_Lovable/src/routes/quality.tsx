@@ -19,16 +19,17 @@ import { ColumnQualityTable } from "@/components/quality/ColumnQualityTable";
 export const Route = createFileRoute("/quality")({
   head: () => ({
     meta: [
-      { title: "Data Quality Assessment — AnalyzaX" },
+      { title: "Data Quality Health Check — AnalyzaX" },
       {
         name: "description",
         content:
-          "Deterministic auditing of completeness, uniqueness, domain validity, category consistency, and anomaly risk.",
+          "Audit your dataset health in seconds. Spot missing cells, duplicate records, and invalid values with an automated quality score and fix tips.",
       },
-      { property: "og:title", content: "Data Quality Assessment — AnalyzaX" },
+      { property: "og:title", content: "Data Quality Health Check — AnalyzaX" },
       {
         property: "og:description",
-        content: "Deterministic 6-dimension data quality auditing powered by DuckDB.",
+        content:
+          "Audit your dataset health in seconds. Spot missing cells and duplicate records with an automated quality score.",
       },
     ],
   }),

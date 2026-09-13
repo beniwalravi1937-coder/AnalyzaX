@@ -29,16 +29,17 @@ import { VisualizationGrid } from "@/components/visualization/VisualizationGrid"
 export const Route = createFileRoute("/visualizations")({
   head: () => ({
     meta: [
-      { title: "Visualization Intelligence & Studio — AnalyzaX" },
+      { title: "Interactive Charts & Visuals — AnalyzaX" },
       {
         name: "description",
         content:
-          "Deterministic, semantic, version-aware visualizations and automated chart intelligence.",
+          "Build interactive bar, line, and scatter charts with drag-and-drop ease. Turn complex spreadsheet rows into clear, presentation-ready graphics.",
       },
-      { property: "og:title", content: "Visualization Intelligence & Studio — AnalyzaX" },
+      { property: "og:title", content: "Interactive Charts & Visuals — AnalyzaX" },
       {
         property: "og:description",
-        content: "ECharts-powered interactive visualization builder and recommendation engine.",
+        content:
+          "Build interactive charts with drag-and-drop ease. Turn complex data into presentation-ready visuals.",
       },
     ],
   }),

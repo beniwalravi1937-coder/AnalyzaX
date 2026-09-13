@@ -6,10 +6,17 @@ import { authApi } from "../services/authApi";
 export const Route = createFileRoute("/forgot-password")({
   head: () => ({
     meta: [
-      { title: "Reset your AnalyzaX password" },
+      { title: "Forgot Password — AnalyzaX" },
       {
         name: "description",
-        content: "Request a secure password reset link for your AnalyzaX analytics account.",
+        content:
+          "Reset your password securely. Enter your account email to receive a password recovery link and regain access to your workspaces.",
+      },
+      { property: "og:title", content: "Forgot Password — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "Reset your password securely and regain access to your AnalyzaX workspaces.",
       },
     ],
   }),

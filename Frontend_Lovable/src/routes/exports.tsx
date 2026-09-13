@@ -13,11 +13,17 @@ import { ExportsIcon, UploadIcon } from "../components/icons";
 export const Route = createFileRoute("/exports")({
   head: () => ({
     meta: [
-      { title: "Export & Artifact Studio — AnalyzaX" },
+      { title: "Data & Report Exports — AnalyzaX" },
       {
         name: "description",
         content:
-          "Multi-format publishing engine for reproducible data artifacts, executive reports, SQL outputs, and standalone visualizations.",
+          "Export cleaned datasets, executive presentation summaries, and chart graphics into CSV, Excel, PDF, or PNG format in one click.",
+      },
+      { property: "og:title", content: "Data & Report Exports — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "Export cleaned datasets, executive presentation summaries, and chart graphics in one click.",
       },
     ],
   }),

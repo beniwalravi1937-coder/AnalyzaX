@@ -36,16 +36,17 @@ import { SavedQueriesPanel } from "@/components/sql/SavedQueriesPanel";
 export const Route = createFileRoute("/sql")({
   head: () => ({
     meta: [
-      { title: "DuckDB SQL Studio — AnalyzaX" },
+      { title: "SQL Query Workbench — AnalyzaX" },
       {
         name: "description",
         content:
-          "Vectorized in-memory SQL execution engine with AST security validation, schema browser, execution plans, and automated chart advice.",
+          "Query any dataset instantly with fast SQL. Filter, group, and summarize records with instant chart previews and AI-assisted query writing.",
       },
-      { property: "og:title", content: "DuckDB SQL Studio — AnalyzaX" },
+      { property: "og:title", content: "SQL Query Workbench — AnalyzaX" },
       {
         property: "og:description",
-        content: "Vectorized in-memory SQL execution engine powered by DuckDB.",
+        content:
+          "Query any dataset instantly with fast SQL, instant chart previews, and AI query assistance.",
       },
     ],
   }),

@@ -31,10 +31,17 @@ import {
 export const Route = createFileRoute("/projects/$id")({
   head: () => ({
     meta: [
-      { title: "Project Workspace — AnalyzaX" },
+      { title: "Project Details & Assets — AnalyzaX" },
       {
         name: "description",
-        content: "Project assets, lineage graph, health diagnostics and collaborative activity feed.",
+        content:
+          "View project datasets, dashboards, team activity, and data changes in one centralized, real-time collaboration hub.",
+      },
+      { property: "og:title", content: "Project Details & Assets — AnalyzaX" },
+      {
+        property: "og:description",
+        content:
+          "View project datasets, dashboards, team activity, and data changes in one centralized collaboration hub.",
       },
     ],
   }),
