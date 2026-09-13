@@ -65,7 +65,7 @@ function ForgotPasswordPage() {
             />
           </Link>
           <div className="auth-brand-badge">
-            <span>FastAPI Security Gate</span>
+            <span>Secure Analytical Workspace</span>
           </div>
           <h1 className="auth-title">Reset your password</h1>
           <p className="auth-subtitle">Enter your registered email address to receive reset instructions.</p>

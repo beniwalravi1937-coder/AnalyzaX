@@ -72,8 +72,8 @@ function SettingsPage() {
               </thead>
               <tbody>
                 <tr>
-                  <td style={{ fontWeight: 600 }}>FastAPI Application</td>
-                  <td style={{ color: "var(--text-muted)" }}>REST & WebSocket Layer</td>
+                  <td style={{ fontWeight: 600 }}>Analytical API Service</td>
+                  <td style={{ color: "var(--text-muted)" }}>REST & WebSocket Gateway</td>
                   <td>
                     <span className={`badge ${connection === "connected" ? "badge-emerald" : "badge-amber"}`}>
                       {connection === "connected" ? <CheckIcon size={10} /> : <AlertCircleIcon size={10} />}
@@ -81,7 +81,7 @@ function SettingsPage() {
                     </span>
                   </td>
                   <td style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                    http://127.0.0.1:8000
+                    Active API Gateway
                   </td>
                 </tr>
 
@@ -136,7 +136,7 @@ function SettingsPage() {
             &bull; <strong style={{ color: "var(--text-primary)" }}>Immutable Raw Datasets:</strong> Uploaded source files are strictly immutable. Cleaning or transformations generate versioned derivatives with complete lineage logs.
           </p>
           <p>
-            &bull; <strong style={{ color: "var(--text-primary)" }}>Strict 4-Tier Layering:</strong> Presentation (Next.js/Vite) &rarr; API Routes (FastAPI) &rarr; Application Services &rarr; Pure Analytical Engines.
+            &bull; <strong style={{ color: "var(--text-primary)" }}>Strict 4-Tier Layering:</strong> Presentation Layer &rarr; API Services &rarr; Application Services &rarr; Pure Analytical Engines.
           </p>
         </div>
       </SectionCard>

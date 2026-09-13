@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://analyzaxab-vp.vercel.app/sitemap.xml

@@ -1,5 +1,4 @@
 import React from "react";
-import logoImg from "../../assets/logo.png";
 
 interface AnalyzaXLogoProps {
   size?: number;
@@ -20,7 +19,7 @@ export function AnalyzaXLogo({
       style={{ display: "inline-flex", alignItems: "center", gap: "0.55rem", ...style }}
     >
       <img
-        src={logoImg}
+        src="/logo.png"
         alt="AnalyzaX Logo"
         width={size}
         height={size}

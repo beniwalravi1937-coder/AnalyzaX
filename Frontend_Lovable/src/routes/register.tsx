@@ -111,10 +111,10 @@ function RegisterPage() {
             />
           </Link>
           <div className="auth-brand-badge">
-            <span>FastAPI Analytical Cloud</span>
+            <span>Secure Analytical Workspace</span>
           </div>
           <h1 className="auth-title">Create your workspace</h1>
-          <p className="auth-subtitle">Full access to DuckDB analytics, Polars EDA, ML & AI Copilot.</p>
+          <p className="auth-subtitle">Full access to automated data analytics, instant profiling, ML & AI Copilot.</p>
         </div>
 
         {error && (

@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { User, WorkspaceMembership, RoleName } from "../types/auth";
-import { authApi, setAuthToken } from "../services/authApi";
+import { authApi, setAuthToken, getLocalUser } from "../services/authApi";
 
 interface AuthContextType {
   user: User | null;
@@ -30,15 +30,24 @@ const PUBLIC_ROUTES = [
 ];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => getLocalUser());
   const [workspaceMemberships, setWorkspaceMemberships] = useState<WorkspaceMembership[]>([]);
   const [permissions, setPermissions] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
   const refreshUser = useCallback(async () => {
+    // Check if there is an existing local session or token before attempting network refresh
+    const local = getLocalUser();
+    const hasToken = typeof window !== "undefined" && Boolean(localStorage.getItem("analyzax_auth_token"));
+    if (!local && !hasToken) {
+      setUser(null);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       setIsLoading(true);
       const res = await authApi.getMe();
@@ -47,10 +56,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setPermissions(res.permissions_summary || []);
       setError(null);
     } catch (err: any) {
-      setUser(null);
-      setWorkspaceMemberships([]);
-      setPermissions([]);
-      setAuthToken(null);
+      // If network fails or backend is in static preview, keep local user if available
+      const cached = getLocalUser();
+      if (cached) {
+        setUser(cached);
+      } else {
+        setUser(null);
+        setWorkspaceMemberships([]);
+        setPermissions([]);
+        setAuthToken(null);
+      }
     } finally {
       setIsLoading(false);
     }

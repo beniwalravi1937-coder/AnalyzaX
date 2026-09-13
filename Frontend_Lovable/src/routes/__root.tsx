@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import {
+  ArrowRight,
   BarChart3,
   Bell,
   Brain,
@@ -19,6 +20,7 @@ import {
   Download,
   FlaskConical,
   Folder,
+  Lock,
   ShieldCheck,
   LayoutDashboard,
   Lightbulb,
@@ -96,10 +98,17 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   return (
-    <div className="empty-state" style={{ marginTop: "3rem" }}>
-      <div className="empty-state-title">This page didn&apos;t load</div>
-      <div className="empty-state-desc">{error.message}</div>
-      <div style={{ display: "flex", gap: "0.5rem" }}>
+    <div className="empty-state" style={{ marginTop: "3rem", padding: "2.5rem 1.5rem", maxWidth: "600px", margin: "3rem auto", textAlign: "center" }}>
+      <div style={{ display: "inline-flex", padding: "1rem", borderRadius: "12px", background: "rgba(239, 68, 68, 0.1)", marginBottom: "1rem" }}>
+        <X className="w-8 h-8" style={{ color: "#f87171" }} />
+      </div>
+      <div className="empty-state-title" style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "0.5rem" }}>
+        An unexpected error occurred
+      </div>
+      <div className="empty-state-desc" style={{ color: "var(--text-muted)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+        {error.message || "A rendering or runtime exception interrupted this view. Details have been safely logged."}
+      </div>
+      <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center" }}>
         <button
           className="btn btn-primary"
           onClick={() => {
@@ -107,10 +116,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             reset();
           }}
         >
-          Try again
+          Reload View
         </button>
         <a className="btn btn-secondary" href="/">
-          Go home
+          Return Home
         </a>
       </div>
     </div>
@@ -133,6 +142,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "canonical", href: "https://analyzaxab-vp.vercel.app/" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -242,22 +252,7 @@ function AppShell() {
     return <Outlet />;
   }
 
-  // Loading state while checking auth status
-  if (isAuthLoading && !isAuthenticated) {
-    return (
-      <div style={{ minHeight: "100vh", backgroundColor: "#0b0f19", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
-          <AnalyzaXLogo size={36} showText={true} />
-          <div style={{ width: "24px", height: "24px", border: "2px solid rgba(99, 102, 241, 0.2)", borderTopColor: "#6366f1", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-        </div>
-      </div>
-    );
-  }
 
-  // Guard protected routes while redirecting
-  if (!isAuthenticated && !isLandingRoute) {
-    return null;
-  }
 
   return (
     <div className="app-shell">
@@ -379,7 +374,51 @@ function AppShell() {
           </span>
         </header>
         <main className="workspace-container">
-          <Outlet />
+          {isAuthLoading && !isAuthenticated ? (
+            <div style={{ padding: "2rem", width: "100%", maxWidth: "1200px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+                <div>
+                  <div style={{ width: "240px", height: "32px", borderRadius: "8px", background: "rgba(255,255,255,0.08)", marginBottom: "0.5rem" }} />
+                  <div style={{ width: "380px", height: "18px", borderRadius: "6px", background: "rgba(255,255,255,0.04)" }} />
+                </div>
+                <div style={{ width: "130px", height: "36px", borderRadius: "8px", background: "rgba(255,255,255,0.06)" }} />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} style={{ height: "110px", borderRadius: "12px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }} />
+                ))}
+              </div>
+              <div style={{ height: "320px", borderRadius: "12px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }} />
+            </div>
+          ) : !isAuthenticated && !isLandingRoute ? (
+            <div style={{ padding: "3.5rem 1.5rem", maxWidth: "680px", margin: "2rem auto", textAlign: "center" }}>
+              <div style={{ display: "inline-flex", padding: "1rem", borderRadius: "16px", background: "rgba(99, 102, 241, 0.12)", border: "1px solid rgba(99, 102, 241, 0.3)", marginBottom: "1.25rem" }}>
+                <Lock style={{ width: "36px", height: "36px", color: "#818cf8" }} />
+              </div>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+                Sign In to Access This Workspace
+              </h2>
+              <p style={{ color: "var(--text-muted)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "1.75rem" }}>
+                This analytical engine requires an authenticated session. Sign in to run queries, view automated data profiling, and deploy models.
+              </p>
+              <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap", marginBottom: "2rem" }}>
+                <Link to="/login" search={{ next: pathname }} className="btn btn-primary" style={{ padding: "0.65rem 1.5rem", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span>Sign In to Continue</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link to="/register" className="btn btn-secondary" style={{ padding: "0.65rem 1.5rem" }}>
+                  Create Free Account
+                </Link>
+              </div>
+              <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "1.5rem" }}>
+                <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+                  Want to explore first? <Link to="/" style={{ color: "var(--accent-indigo)", fontWeight: 500 }}>Explore demo on homepage &rarr;</Link>
+                </p>
+              </div>
+            </div>
+          ) : (
+            <Outlet />
+          )}
         </main>
       </div>
     </div>

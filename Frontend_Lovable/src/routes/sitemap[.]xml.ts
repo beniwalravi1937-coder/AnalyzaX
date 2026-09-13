@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-// TODO: replace with your project URL once a project name or custom domain is set.
-const BASE_URL = "";
+const BASE_URL = process.env.SITE_URL || "https://analyzaxab-vp.vercel.app";
 
 interface SitemapEntry {
   path: string;
