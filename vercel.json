@@ -1,5 +1,11 @@
 {
-  "buildCommand": "cd Frontend_Lovable && npm install && npm run build",
+  "buildCommand": "cd Frontend_Lovable && npm install --legacy-peer-deps && npm run build",
   "outputDirectory": "Frontend_Lovable/dist",
-  "framework": "vite"
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
