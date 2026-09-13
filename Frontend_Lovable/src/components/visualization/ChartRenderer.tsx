@@ -209,7 +209,7 @@ export function ChartRenderer({
           Tier 3 Specialized Chart (Deferred)
         </span>
         <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", maxWidth: "420px" }}>
-          "{spec.chart_type}" is registered in AnalyzaX architecture, with its interactive renderer scheduled for Phase 10.
+          "{spec.chart_type}" is registered in AnalyzaX architecture, with its interactive renderer coming soon in an upcoming release.
         </span>
       </div>
     );

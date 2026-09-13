@@ -330,7 +330,7 @@ export function QualityIssuesTable({
                                   gap: "0.35rem",
                                 }}
                               >
-                                <span>⚡ Recommended Action (Phase 6 Cleaning)</span>
+                                <span>⚡ Recommended Action (Automated Cleaning)</span>
                               </div>
                               <p style={{ margin: 0, color: "var(--text-primary)", lineHeight: 1.4 }}>
                                 {issue.recommended_action}

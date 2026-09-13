@@ -67,7 +67,7 @@ function ExportsPage() {
       <PageHeader
         title="Export & Artifact Studio"
         description="Multi-format publishing engine for reproducible data artifacts, executive reports, SQL outputs, and standalone visualizations."
-        badge={{ text: "Phase 15 — Active", variant: "emerald" }}
+        badge={{ text: "Publishing Studio", variant: "emerald" }}
       />
 
       {/* Top Bar / Controls */}

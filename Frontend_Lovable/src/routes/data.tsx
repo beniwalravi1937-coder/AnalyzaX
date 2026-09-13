@@ -161,7 +161,7 @@ function DataPage() {
       <PageHeader
         title="Dataset Management & Intelligence"
         description="Ingest, validate, and catalog datasets with automated deterministic DuckDB structural profiling and semantic understanding."
-        badge={{ text: "Phase 4 — Automated Profiling", variant: "emerald" }}
+        badge={{ text: "Automated Profiling", variant: "emerald" }}
         actions={
           <button
             type="button"
@@ -473,7 +473,7 @@ function DataPage() {
       {/* Upload Zone */}
       <SectionCard
         title="Upload Dataset"
-        subtitle="Support for Columnar Parquet, Delimited CSV, Structured JSON, and Excel Spreadsheets (up to 100 MB)."
+        subtitle="Support for Columnar Parquet, Delimited CSV, Structured JSON, and Excel Spreadsheets (up to 100 MB on Free, up to 10 GB on Enterprise)."
       >
         <FileDropzone
           maxSizeMb={100}

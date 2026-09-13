@@ -146,7 +146,7 @@ function EDAPage() {
       <PageHeader
         title="Exploratory Data Analysis (EDA)"
         description="Vectorized statistical distributions, pairwise correlations, time-series trends, and automated rule-based findings."
-        badge={{ text: "Phase 7 — Complete", variant: "emerald" }}
+        badge={{ text: "Exploratory Studio", variant: "emerald" }}
       />
 
       {/* Dataset & Version Bar */}

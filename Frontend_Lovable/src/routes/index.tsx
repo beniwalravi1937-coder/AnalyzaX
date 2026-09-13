@@ -136,7 +136,7 @@ function DashboardPage() {
       <PageHeader
         title="Dashboards & Insight Workspaces"
         description="Transform analytical findings, KPI metrics, charts, statistics, and forecasts into persistent interactive dashboards."
-        badge={{ text: "Phase 14 — Active", variant: "indigo" }}
+        badge={{ text: "Executive Studio", variant: "indigo" }}
         actions={
           <button
             onClick={() => {

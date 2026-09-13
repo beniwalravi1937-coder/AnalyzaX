@@ -390,9 +390,9 @@ function SQLPage() {
       {/* Top Header & Dataset/Version Selectors */}
       <div style={{ marginBottom: "1rem" }}>
         <PageHeader
-          title="DuckDB SQL Studio"
-          description="Vectorized in-memory SQL execution engine with AST security validation, schema browser, execution plans, and automated chart advice."
-          badge={{ text: "Phase 8 — Active Engine", variant: "indigo" }}
+          title="SQL Query Workbench"
+          description="Execute fast analytical queries over your datasets with automated schema browsing, execution plans, and instant chart generation."
+          badge={{ text: "SQL Query Studio", variant: "indigo" }}
           actions={
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
               {/* Dataset Selector */}

@@ -42,7 +42,7 @@ function AIAnalystPage() {
         <PageHeader
           title="AI Copilot & Analytical Studio"
           description="Evolved from reactive question-answering into an autonomous analytical partner. Discover signals, run multi-step investigations, and plan dashboards with explicit human approval boundaries."
-          badge={{ text: "Phase 25 — Advanced AI Product Intelligence", variant: "indigo" }}
+          badge={{ text: "Autonomous Copilot", variant: "indigo" }}
         />
 
         <div style={{ display: "flex", alignItems: "center", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "8px", padding: "0.25rem", shrink: 0 }}>

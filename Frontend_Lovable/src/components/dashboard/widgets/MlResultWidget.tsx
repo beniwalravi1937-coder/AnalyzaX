@@ -48,7 +48,7 @@ export function MlResultWidget({ dataResp, configuration }: MlResultWidgetProps)
               borderRadius: "4px",
             }}
           >
-            Phase 11 Certified
+            Production Validated
           </span>
         </div>
 

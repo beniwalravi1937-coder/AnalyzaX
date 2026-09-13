@@ -70,7 +70,7 @@ export function ForecastWidget({ dataResp, configuration }: ForecastWidgetProps)
       </div>
 
       <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
-        Forecast derived from Phase 12 temporal models.
+        Forecast derived from automated temporal models.
       </div>
     </div>
   );

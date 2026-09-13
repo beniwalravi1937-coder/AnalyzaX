@@ -30,6 +30,8 @@ import {
   Settings,
   Sigma,
   Terminal,
+  ChevronDown,
+  ChevronRight,
   TrendingUp,
   Wand2,
   X,
@@ -41,27 +43,38 @@ import { DatasetProvider, useDataset } from "@/context/DatasetContext";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { WorkspaceProvider } from "@/context/WorkspaceContext";
 import { AnalyzaXLogo } from "@/components/brand/AnalyzaXLogo";
+import { GettingStartedChecklist } from "@/components/layout/GettingStartedChecklist";
 
-const NAV = [
+interface NavItem {
+  to: string;
+  label: string;
+  icon: any;
+  section: string;
+  isAdvanced?: boolean;
+}
+
+const COLLAPSIBLE_SECTIONS = ["Modelling", "Workspace"];
+
+const NAV: NavItem[] = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, section: "Overview" },
   { to: "/insights", label: "Insights", icon: Lightbulb, section: "Overview" },
   { to: "/notifications", label: "Notifications", icon: Bell, section: "Overview" },
   { to: "/data", label: "Data Sources", icon: Database, section: "Data" },
   { to: "/quality", label: "Data Quality", icon: ShieldCheck, section: "Data" },
   { to: "/cleaning", label: "Cleaning Studio", icon: Wand2, section: "Data" },
-  { to: "/sql", label: "SQL Workbench", icon: Terminal, section: "Data" },
+  { to: "/sql", label: "SQL Workbench", icon: Terminal, section: "Data", isAdvanced: true },
   { to: "/visualizations", label: "Visualizations", icon: BarChart3, section: "Analysis" },
   { to: "/eda", label: "Explore", icon: Microscope, section: "Analysis" },
   { to: "/statistics", label: "Statistics", icon: Sigma, section: "Analysis" },
   { to: "/ai-analyst", label: "AI Analyst", icon: Brain, section: "Analysis" },
-  { to: "/ml", label: "Machine Learning", icon: FlaskConical, section: "Modelling" },
-  { to: "/forecasting", label: "Forecasting", icon: TrendingUp, section: "Modelling" },
+  { to: "/ml", label: "Machine Learning", icon: FlaskConical, section: "Modelling", isAdvanced: true },
+  { to: "/forecasting", label: "Forecasting", icon: TrendingUp, section: "Modelling", isAdvanced: true },
   { to: "/projects", label: "Projects", icon: Folder, section: "Workspace" },
   { to: "/team", label: "Team", icon: Users, section: "Workspace" },
   { to: "/metrics", label: "Metric Library", icon: Calculator, section: "Workspace" },
   { to: "/exports", label: "Exports", icon: Download, section: "Workspace" },
   { to: "/settings", label: "Settings", icon: Settings, section: "Workspace" },
-] as const;
+];
 
 function NotFoundComponent() {
   return (
@@ -174,6 +187,37 @@ function AppShell() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const sections = [...new Set(NAV.map((n) => n.section))];
 
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem("analyzax_sidebar_collapsed_sections");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      Modelling: true,
+      Workspace: true,
+    };
+  });
+
+  const toggleSection = (section: string) => {
+    setCollapsedSections((prev) => {
+      const next = { ...prev, [section]: !prev[section] };
+      try {
+        localStorage.setItem("analyzax_sidebar_collapsed_sections", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  const isSectionCollapsed = (section: string) => {
+    if (!COLLAPSIBLE_SECTIONS.includes(section)) return false;
+    const items = NAV.filter((n) => n.section === section);
+    const isActiveInRoute = items.some((item) =>
+      item.to === "/" ? pathname === "/" : pathname === item.to || pathname.startsWith(`${item.to}/`)
+    );
+    if (isActiveInRoute) return false;
+    return Boolean(collapsedSections[section]);
+  };
+
   const isAuthRoute = AUTH_ROUTES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   const isLandingRoute = pathname === "/";
 
@@ -228,24 +272,51 @@ function AppShell() {
           </button>
         </div>
         <nav className="sidebar-nav">
-          {sections.map((section) => (
-            <div key={section}>
-              <div className="nav-section-title">{section}</div>
-              {NAV.filter((n) => n.section === section).map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  activeOptions={{ exact: item.to === "/" }}
-                  className="nav-item"
-                  activeProps={{ className: "nav-item active" }}
-                  onClick={() => setOpen(false)}
-                >
-                  <item.icon className="w-4 h-4" />
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          ))}
+          <GettingStartedChecklist />
+          {sections.map((section) => {
+            const isCollapsible = COLLAPSIBLE_SECTIONS.includes(section);
+            const isCollapsed = isSectionCollapsed(section);
+            const items = NAV.filter((n) => n.section === section);
+
+            return (
+              <div key={section} style={{ marginBottom: "0.25rem" }}>
+                {isCollapsible ? (
+                  <div
+                    className="nav-section-title nav-section-header"
+                    onClick={() => toggleSection(section)}
+                    role="button"
+                    tabIndex={0}
+                    style={{ paddingRight: "0.5rem" }}
+                  >
+                    <span>{section}</span>
+                    {isCollapsed ? (
+                      <ChevronRight style={{ width: "13px", height: "13px", color: "var(--text-muted)" }} />
+                    ) : (
+                      <ChevronDown style={{ width: "13px", height: "13px", color: "var(--text-muted)" }} />
+                    )}
+                  </div>
+                ) : (
+                  <div className="nav-section-title">{section}</div>
+                )}
+
+                {!isCollapsed &&
+                  items.map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      activeOptions={{ exact: item.to === "/" }}
+                      className="nav-item"
+                      activeProps={{ className: "nav-item active" }}
+                      onClick={() => setOpen(false)}
+                    >
+                      <item.icon className="w-4 h-4" />
+                      <span>{item.label}</span>
+                      {item.isAdvanced && <span className="nav-item-badge">Pro</span>}
+                    </Link>
+                  ))}
+              </div>
+            );
+          })}
         </nav>
         <div className="sidebar-footer">
           {isAuthenticated && user ? (

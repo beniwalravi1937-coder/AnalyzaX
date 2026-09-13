@@ -36,7 +36,7 @@ const PALETTE_OPTIONS: {
   {
     type: "CHART",
     title: "ChartSpec Visualization",
-    desc: "Embed Phase 9 line, bar, scatter, donut, or heatmap chart with interactive cross-filtering.",
+    desc: "Embed interactive line, bar, scatter, donut, or heatmap chart with cross-filtering.",
     icon: BarChartIcon,
     color: "#818cf8",
   },
@@ -50,7 +50,7 @@ const PALETTE_OPTIONS: {
   {
     type: "STATISTICS",
     title: "Hypothesis Test / ANOVA",
-    desc: "Embed Phase 10 statistical significance test with p-value and filter safety warnings.",
+    desc: "Embed statistical significance test with p-value and filter safety warnings.",
     icon: StatisticsIcon,
     color: "#f59e0b",
   },
@@ -64,7 +64,7 @@ const PALETTE_OPTIONS: {
   {
     type: "FORECAST",
     title: "Temporal Forecast",
-    desc: "Horizon forecast predictions and validation metrics from Phase 12.",
+    desc: "Horizon forecast predictions and temporal validation metrics.",
     icon: ForecastingIcon,
     color: "#06b6d4",
   },

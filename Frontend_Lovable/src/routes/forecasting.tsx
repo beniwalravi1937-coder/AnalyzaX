@@ -34,7 +34,7 @@ function ForecastingPage() {
       <PageHeader
         title="Forecasting & Time-Series Intelligence"
         description="Deterministic, version-aware temporal forecasting. Automatic frequency detection, rolling-origin backtesting, 8 statistical estimators, prediction intervals, and leakage-free out-of-sample projections."
-        badge={{ text: "Phase 12 — Time-Series Intelligence", variant: "indigo" }}
+        badge={{ text: "Time-Series Intelligence", variant: "indigo" }}
       />
 
       <div style={{ marginTop: "1rem" }}>

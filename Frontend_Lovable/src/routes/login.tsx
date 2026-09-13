@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Lock } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export const Route = createFileRoute("/login")({
@@ -78,11 +78,32 @@ function LoginPage() {
             />
           </Link>
           <div className="auth-brand-badge">
-            <span>FastAPI Analytical Cloud</span>
+            <span>Secure Analytical Workspace</span>
           </div>
           <h1 className="auth-title">Welcome back to AnalyzaX</h1>
           <p className="auth-subtitle">Sign in to your analytical workspaces, pipelines and models.</p>
         </div>
+
+        {next && next !== "/" && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              padding: "0.65rem 0.85rem",
+              marginBottom: "1rem",
+              background: "rgba(99, 102, 241, 0.12)",
+              border: "1px solid rgba(99, 102, 241, 0.3)",
+              borderRadius: "8px",
+              color: "#a5b4fc",
+              fontSize: "0.8125rem",
+              fontWeight: 500,
+            }}
+          >
+            <Lock className="w-4 h-4 flex-shrink-0" style={{ color: "#818cf8" }} />
+            <span>Sign in to continue to your requested workspace.</span>
+          </div>
+        )}
 
         {error && (
           <div className="auth-alert auth-alert-error" role="alert">

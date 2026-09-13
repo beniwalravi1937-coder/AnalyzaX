@@ -74,7 +74,8 @@ export function FileDropzone({
     const maxBytes = maxSizeMb * 1024 * 1024;
     if (file.size > maxBytes) {
       setPhase("failed");
-      setErrorMessage(`The file exceeds the maximum supported size of ${maxSizeMb} MB.`);
+      const fileSizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      setErrorMessage(`The uploaded file (${fileSizeMb} MB) exceeds the Free plan limit of ${maxSizeMb} MB. Need to process larger datasets? Upgrade to Pro (500 MB), Team (2 GB), or Enterprise (10 GB+).`);
       return;
     }
 
@@ -246,15 +247,26 @@ export function FileDropzone({
               {errorMessage || "Unable to validate or ingest file."}
             </p>
 
-            <button
-              type="button"
-              onClick={handleReset}
-              className="btn btn-secondary btn-sm"
-              style={{ gap: "0.35rem", marginTop: "0.25rem" }}
-            >
-              <RefreshIcon size={14} />
-              <span>Try Again</span>
-            </button>
+            <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem", alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="btn btn-secondary btn-sm"
+                style={{ gap: "0.35rem" }}
+              >
+                <RefreshIcon size={14} />
+                <span>Try Again</span>
+              </button>
+              {errorMessage?.includes("Free plan limit") && (
+                <a
+                  href="/settings"
+                  className="btn btn-primary btn-sm"
+                  style={{ gap: "0.35rem", textDecoration: "none" }}
+                >
+                  <span>See Plans & Upgrade</span>
+                </a>
+              )}
+            </div>
           </div>
         ) : isProcessing ? (
           /* ── Multi-Stage Ingestion Pipeline Progress ── */
@@ -355,15 +367,23 @@ export function FileDropzone({
               from your device
             </p>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap", justifyContent: "center" }}>
               {SUPPORTED_FORMATS.map((fmt) => (
                 <span key={fmt.label} className="badge badge-neutral" style={{ fontSize: "0.6875rem" }}>
                   {fmt.label}
                 </span>
               ))}
-              <span style={{ fontSize: "0.75rem", color: "var(--text-faint)", marginLeft: "0.35rem" }}>
-                &bull; Up to {maxSizeMb} MB
-              </span>
+            </div>
+
+            <div style={{ marginTop: "0.75rem", fontSize: "0.75rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.35rem", flexWrap: "wrap", justifyContent: "center" }}>
+              <span>Free plan: up to {maxSizeMb} MB. Need more?</span>
+              <a
+                href="/settings"
+                onClick={(e) => e.stopPropagation()}
+                style={{ color: "var(--accent-primary)", fontWeight: 600, textDecoration: "underline" }}
+              >
+                See plans →
+              </a>
             </div>
           </>
         )}
