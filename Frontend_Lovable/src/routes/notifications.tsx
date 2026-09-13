@@ -46,6 +46,11 @@ export const Route = createFileRoute("/notifications")({
         content:
           "Stay informed with real-time updates when team members share datasets or analytical jobs complete.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
     ],
   }),
   component: NotificationsPage,

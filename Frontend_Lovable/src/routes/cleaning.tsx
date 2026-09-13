@@ -11,6 +11,7 @@ import {
 } from "@/types";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
 import { CleanIcon, UploadIcon, AlertCircleIcon } from "@/components/icons";
 import {
   CleaningRecommendations,
@@ -36,6 +37,11 @@ export const Route = createFileRoute("/cleaning")({
         content:
           "Fix messy rows, remove duplicates, and fill missing values with one click. Track every version safely.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-cleaning.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-cleaning.png" },
     ],
   }),
   component: CleaningPage,
@@ -273,30 +279,15 @@ function CleaningPage() {
           title="Clean & Transform"
           description="Build deterministic transformation pipelines, preview changes, and create versioned datasets."
         />
-        <EmptyState
-          icon={<CleanIcon size={36} />}
-          title="No Dataset Selected"
-          description="Upload or select a dataset from the repository to clean, normalize, and transform."
-          action={
-            <Link
-              to="/data"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                padding: "0.6rem 1.25rem",
-                borderRadius: "var(--radius-md)",
-                backgroundColor: "var(--accent-primary)",
-                color: "#ffffff",
-                fontWeight: 600,
-                fontSize: "0.875rem",
-                textDecoration: "none",
-              }}
-            >
-              <UploadIcon size={16} />
-              Go to Datasets
-            </Link>
-          }
+        <GuidedOnboarding
+          title="Intelligent Data Cleaning Studio"
+          description="Fix messy records, fill missing values, strip whitespace, and normalize text with one click. Safely preview transformation diffs and track changes across versions."
+          badgeText="Data Cleaning"
+          features={[
+            "1-click automated cleaning recommendations & data deduplication",
+            "Deterministic imputation (mean, median, mode, forward-fill, constant)",
+            "Auditable version lineage with zero risk to original data",
+          ]}
         />
       </div>
     );

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import React, { useState, useEffect, useCallback } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
 import { EDAIcon, UploadIcon, RefreshIcon } from "@/components/icons";
 import { apiClient } from "@/services/api";
 import { DatasetResponse, EDAReport } from "@/types";
@@ -26,6 +27,11 @@ export const Route = createFileRoute("/eda")({
         content:
           "Explore distributions and uncover what factors drive your business metrics with automated visual summaries.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-eda.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-eda.png" },
     ],
   }),
   component: EDAPage,
@@ -204,16 +210,15 @@ function EDAPage() {
       {/* Empty State if no datasets */}
       {datasets.length === 0 && !isLoading && (
         <div style={{ marginBottom: "2rem" }}>
-          <EmptyState
-            icon={<EDAIcon size={28} />}
-            title="No datasets found"
-            description="Upload or import a dataset to automatically compute high-speed Polars statistical summaries, correlation structures, and interactive distributions."
-            action={
-              <Link to="/data" className="btn btn-primary">
-                <UploadIcon size={15} />
-                <span>Upload Dataset</span>
-              </Link>
-            }
+          <GuidedOnboarding
+            title="Explore Data & Uncover Relationships"
+            description="Understand what drives your metrics. Explore numerical distributions, calculate correlation matrices, identify skewness, and discover patterns automatically."
+            badgeText="Exploratory Analysis"
+            features={[
+              "Instant univariate distributions, quantiles, and outliers",
+              "Interactive Pearson & Spearman correlation matrices",
+              "Automated key driver and bivariate relationship discovery",
+            ]}
           />
         </div>
       )}

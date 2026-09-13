@@ -9,6 +9,7 @@ import {
 } from "@/types";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
 import { DataQualityIcon, UploadIcon, RefreshIcon, AlertCircleIcon } from "@/components/icons";
 import { QualityScoreCard } from "@/components/quality/QualityScoreCard";
 import { DimensionCards } from "@/components/quality/DimensionCards";
@@ -31,6 +32,11 @@ export const Route = createFileRoute("/quality")({
         content:
           "Audit your dataset health in seconds. Spot missing cells and duplicate records with an automated quality score.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-quality.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-quality.png" },
     ],
   }),
   component: DataQualityPage,
@@ -128,16 +134,15 @@ function DataQualityPage() {
 
       {/* State 1: No Dataset Connected */}
       {!activeDataset && !isDatasetLoading && (
-        <EmptyState
-          icon={<DataQualityIcon size={28} />}
-          title="No dataset connected"
-          description="Upload or connect a dataset to run the automated 6-dimension Data Quality audit."
-          action={
-            <Link to="/data" className="btn btn-primary">
-              <UploadIcon size={15} />
-              <span>Connect Dataset</span>
-            </Link>
-          }
+        <GuidedOnboarding
+          title="Automated Data Quality Health Check"
+          description="Spot missing cells, duplicate records, outliers, and type mismatches instantly. Get an objective health score and actionable recommendations before running analyses."
+          badgeText="Data Health Audit"
+          features={[
+            "6-dimension data quality scoring & health breakdown",
+            "Automatic anomaly and duplicate record identification",
+            "Actionable fix recommendations with 1-click cleaning links",
+          ]}
         />
       )}
 

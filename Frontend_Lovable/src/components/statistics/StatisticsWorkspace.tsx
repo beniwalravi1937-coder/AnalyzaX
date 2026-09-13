@@ -9,6 +9,7 @@ import { StatisticsMethodSelector } from "./StatisticsMethodSelector";
 import { TestConfiguration } from "./TestConfiguration";
 import { StatisticsResultView } from "./StatisticsResult";
 import { StatisticsHistory } from "./StatisticsHistory";
+import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
 
 export const StatisticsWorkspace: React.FC = () => {
   const [datasets, setDatasets] = useState<DatasetResponse[]>([]);
@@ -150,6 +151,29 @@ export const StatisticsWorkspace: React.FC = () => {
   };
 
   const currentMethodItem = methods.find((m) => m.method === selectedMethod) || methods[0];
+
+  if (datasets.length === 0) {
+    return (
+      <GuidedOnboarding
+        title="Hypothesis Testing & Statistical Analysis"
+        description="Verify business assumptions with mathematical confidence. Compare group averages, evaluate treatment effects, and validate significance with automated plain-language explanations."
+        badgeText="Statistical Testing"
+        features={[
+          "Parametric & non-parametric tests (t-test, ANOVA, Mann-Whitney, Chi-square)",
+          "Automated assumption diagnostics & effect size metrics",
+          "Executive plain-language summaries explaining what the p-value means",
+        ]}
+        onUploadSuccess={async () => {
+          const dsRes = await api.listDatasets();
+          const dsList = dsRes.datasets || [];
+          setDatasets(dsList);
+          if (dsList.length > 0) {
+            setSelectedDatasetId(dsList[0].id);
+          }
+        }}
+      />
+    );
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>

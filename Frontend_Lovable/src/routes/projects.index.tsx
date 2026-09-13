@@ -38,6 +38,11 @@ export const Route = createFileRoute("/projects/")({
         content:
           "Organize your team's analytics projects, datasets, and saved reports in clean, shareable workspaces.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
     ],
   }),
   component: ProjectsPage,

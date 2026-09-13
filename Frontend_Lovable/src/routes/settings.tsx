@@ -21,6 +21,11 @@ export const Route = createFileRoute("/settings")({
         content:
           "Manage your account preferences, system integrations, and workspace configuration options.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
     ],
   }),
   component: SettingsPage,

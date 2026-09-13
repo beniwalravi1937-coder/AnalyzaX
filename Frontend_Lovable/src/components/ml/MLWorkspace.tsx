@@ -25,6 +25,7 @@ import { ModelSelector } from "./ModelSelector";
 import { ModelComparisonLeaderboard } from "./ModelComparisonLeaderboard";
 import { ModelDiagnosticsView } from "./ModelDiagnosticsView";
 import { FeatureImportanceView } from "./FeatureImportanceView";
+import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
 import { PredictionRunner } from "./PredictionRunner";
 import { MLExperimentHistory } from "./MLExperimentHistory";
 
@@ -286,6 +287,29 @@ export const MLWorkspace: React.FC = () => {
   };
 
   const selectedModelRun = result?.model_runs.find((r) => r.model_run_id === selectedRunId);
+
+  if (datasets.length === 0) {
+    return (
+      <GuidedOnboarding
+        title="Train Predictive Machine Learning Models"
+        description="Build machine learning models to predict customer churn, classify outcomes, and forecast values with zero data science coding required. Complete with automated feature encoding and model benchmarks."
+        badgeText="Machine Learning Studio"
+        features={[
+          "Classification & regression with automated algorithm benchmarking",
+          "Leakage-free preprocessing, train/test splitting, and cross-validation",
+          "Interactive live what-if scenarios & model prediction explorer",
+        ]}
+        onUploadSuccess={async () => {
+          const dsRes = await api.listDatasets();
+          const dsList = dsRes.datasets || [];
+          setDatasets(dsList);
+          if (dsList.length > 0) {
+            setSelectedDatasetId(dsList[0].id);
+          }
+        }}
+      />
+    );
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>

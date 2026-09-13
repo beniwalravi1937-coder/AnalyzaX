@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { DashboardWorkspace } from "@/components/dashboard/DashboardWorkspace";
 import { STARTER_TEMPLATES } from "@/components/dashboard/templates";
 import { LandingPage } from "@/components/landing/LandingPage";
+import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,6 +25,11 @@ export const Route = createFileRoute("/")({
         content:
           "Upload your data and get instant cleaning, charts, and AI-generated insights — no SQL required.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
     ],
   }),
   component: IndexRouteComponent,
@@ -40,7 +46,7 @@ function IndexRouteComponent() {
 }
 
 function DashboardPage() {
-  const { activeDataset } = useDataset();
+  const { datasets, activeDataset } = useDataset();
   const [dashboards, setDashboards] = useState<Dashboard[]>([]);
   const [selectedDashboardId, setSelectedDashboardId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -182,6 +188,17 @@ function DashboardPage() {
         <div style={{ textAlign: "center", color: "#94a3b8", padding: "4rem" }}>
           Loading saved dashboards...
         </div>
+      ) : !activeDataset && datasets.length === 0 ? (
+        <GuidedOnboarding
+          title="Welcome to Your Analytics Command Center"
+          description="Create executive dashboards, track key business metrics, and monitor live KPI cards. Upload your files or explore with our pre-built demo data in seconds."
+          badgeText="Workspace Setup"
+          features={[
+            "Executive overview templates with instant KPI cards",
+            "Multi-chart boards with real-time interactive cross-filtering",
+            "Automated insights & natural language query assistance",
+          ]}
+        />
       ) : filteredDashboards.length === 0 ? (
         <div
           style={{

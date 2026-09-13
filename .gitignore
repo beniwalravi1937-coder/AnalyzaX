@@ -84,6 +84,7 @@ secrets/
 
 # Data & Local Databases (preserve directory structure via .gitkeep)
 *.csv
+!Frontend_Lovable/public/sample-datasets/*.csv
 student_exam_performance.csv
 verify_deployment.py
 test_full_suite_student_exam.py

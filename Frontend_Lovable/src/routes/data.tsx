@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { SectionCard } from "@/components/ui/SectionCard";
 import { FileDropzone } from "@/components/ui/FileDropzone";
+import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
 import { useDataset } from "@/context/DatasetContext";
 import { DatasetResponse, DatasetProfileResponse } from "@/types";
 import { apiClient } from "@/services/api";
@@ -37,6 +38,11 @@ export const Route = createFileRoute("/data")({
         content:
           "Upload, inspect, and organize all your files in one place with instant summaries and data health metrics.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-data.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-data.png" },
     ],
   }),
   component: DataPage,
@@ -520,41 +526,18 @@ function DataPage() {
             Loading dataset catalog...
           </div>
         ) : datasets.length === 0 ? (
-          <div style={{ padding: "3rem 1rem", textAlign: "center" }}>
-            <div
-              style={{
-                width: "48px",
-                height: "48px",
-                borderRadius: "50%",
-                backgroundColor: "rgba(255, 255, 255, 0.04)",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--text-muted)",
-                marginBottom: "0.75rem",
-              }}
-            >
-              <DatasetIcon size={24} />
-            </div>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.9375rem",
-                color: "var(--text-secondary)",
-                fontWeight: 500,
-              }}
-            >
-              No datasets registered yet
-            </p>
-            <p
-              style={{
-                margin: "0.35rem 0 0",
-                fontSize: "0.8125rem",
-                color: "var(--text-muted)",
-              }}
-            >
-              Drag and drop a CSV, Parquet, JSON, or Excel file above to begin.
-            </p>
+          <div style={{ padding: "1rem 0" }}>
+            <GuidedOnboarding
+              title="Add Your First Dataset to AnalyzaX"
+              description="Upload CSV, Parquet, JSON, or Excel files. AnalyzaX automatically infers schema types, scans for null values, and prepares your data for instant exploratory analysis and interactive charting."
+              badgeText="Data Ingestion"
+              features={[
+                "Supports CSV, Parquet, JSON & Excel files up to 100k+ rows",
+                "Instant structural profiling with column type classification",
+                "Safe, immutable storage with auditable version history",
+              ]}
+              compact
+            />
           </div>
         ) : (
           <div style={{ overflowX: "auto" }}>

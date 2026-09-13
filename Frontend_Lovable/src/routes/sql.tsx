@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import React, { useState, useEffect, useCallback } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
 import {
   SQLIcon,
   UploadIcon,
@@ -48,6 +49,11 @@ export const Route = createFileRoute("/sql")({
         content:
           "Query any dataset instantly with fast SQL, instant chart previews, and AI query assistance.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-sql.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-sql.png" },
     ],
   }),
   component: SQLPage,
@@ -454,16 +460,15 @@ function SQLPage() {
       </div>
 
       {datasets.length === 0 ? (
-        <EmptyState
-          icon={<SQLIcon size={32} />}
-          title="No Datasets Available"
-          description="Upload a CSV, Parquet, or Excel dataset to activate the DuckDB SQL Studio and execute analytical queries."
-          action={
-            <Link to="/data" className="btn btn-primary btn-sm">
-              <UploadIcon size={14} />
-              Upload Dataset
-            </Link>
-          }
+        <GuidedOnboarding
+          title="SQL Query Workbench"
+          description="Filter, group, aggregate, and analyze your data using standard SQL syntax. Get instant query result tables, query plan breakdowns, and AI-assisted SQL query writing."
+          badgeText="SQL Studio"
+          features={[
+            "Fast in-memory SQL execution over all your datasets",
+            "Auto-complete table schemas, column names, and syntax highlighting",
+            "Instant conversion of SQL result sets into interactive charts",
+          ]}
         />
       ) : (
         /* Master Studio Workspace (Split View) */

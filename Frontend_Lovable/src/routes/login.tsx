@@ -21,6 +21,11 @@ export const Route = createFileRoute("/login")({
         content:
           "Sign in to your AnalyzaX workspace to explore datasets and generate AI-assisted insights.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
     ],
   }),
   component: LoginPage,

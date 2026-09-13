@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AIAnalystWorkspace } from "@/components/chat/AIAnalystWorkspace";
 import { AICopilotWorkspace } from "@/components/chat/AICopilotWorkspace";
+import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
+import { useDataset } from "@/context/DatasetContext";
 import { Bot } from "lucide-react";
 
 export const Route = createFileRoute("/ai-analyst")({
@@ -20,6 +22,11 @@ export const Route = createFileRoute("/ai-analyst")({
         content:
           "Ask questions in plain English and get instant answers, visualizations, and summaries from your data.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-ai-analyst.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-ai-analyst.png" },
     ],
   }),
   component: AIAnalystPage,
@@ -27,6 +34,7 @@ export const Route = createFileRoute("/ai-analyst")({
 
 function AIAnalystPage() {
   const [activeTab, setActiveTab] = useState<"copilot" | "classic">("copilot");
+  const { datasets, activeDataset } = useDataset();
 
   return (
     <div className="ax-stack">
@@ -58,7 +66,22 @@ function AIAnalystPage() {
       </div>
 
       <div style={{ marginTop: "1rem" }}>
-        {activeTab === "copilot" ? <AICopilotWorkspace /> : <AIAnalystWorkspace />}
+        {!activeDataset && datasets.length === 0 ? (
+          <GuidedOnboarding
+            title="Ask Questions & Chat With Your Data"
+            description="Your AI analytical partner. Ask questions in plain English, discover hidden anomalies, generate automated charts, and receive executive summaries — with zero code required."
+            badgeText="AI Analyst Setup"
+            features={[
+              "Natural language Q&A backed by real analytical data execution",
+              "Proactive anomaly detection & multi-step investigative plans",
+              "Instant chart synthesis and automated dashboard recommendations",
+            ]}
+          />
+        ) : activeTab === "copilot" ? (
+          <AICopilotWorkspace />
+        ) : (
+          <AIAnalystWorkspace />
+        )}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import React, { useState, useEffect, useCallback } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
 import {
   BarChartIcon,
   UploadIcon,
@@ -41,6 +42,11 @@ export const Route = createFileRoute("/visualizations")({
         content:
           "Build interactive charts with drag-and-drop ease. Turn complex data into presentation-ready visuals.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-visualizations.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-visualizations.png" },
     ],
   }),
   component: VisualizationsPage,
@@ -359,14 +365,15 @@ function VisualizationsPage() {
       </div>
 
       {datasets.length === 0 ? (
-        <EmptyState
-          title="No Datasets Available"
-          description="Upload a dataset to start exploring automated visualization intelligence and interactive charts."
-          action={
-            <Link to="/data" className="btn btn-primary btn-sm">
-              <UploadIcon size={14} /> Upload Dataset
-            </Link>
-          }
+        <GuidedOnboarding
+          title="Build Interactive Charts & Visuals"
+          description="Transform your data into clear, interactive graphs. Drag-and-drop dimensions to build bar charts, scatter plots, line trends, and heatmaps without writing code."
+          badgeText="Visual Studio Setup"
+          features={[
+            "20+ responsive chart & graph types",
+            "Automated chart recommendations based on column distributions",
+            "Instant high-resolution PNG & SVG graphic exports",
+          ]}
         />
       ) : (
         <>

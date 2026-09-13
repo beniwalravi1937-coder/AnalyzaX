@@ -18,6 +18,11 @@ export const Route = createFileRoute("/statistics")({
         content:
           "Run statistical tests and compare group differences with automated explanations anyone can understand.",
       },
+      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-statistics.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-statistics.png" },
     ],
   }),
   component: StatisticsPage,

@@ -23,6 +23,7 @@ import { ForecastVisualizer } from "./ForecastVisualizer";
 import { ForecastDiagnosticsView } from "./ForecastDiagnosticsView";
 import { ForecastFutureInference } from "./ForecastFutureInference";
 import { ForecastingHistory } from "./ForecastingHistory";
+import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
 import {
   LineChart,
   History,
@@ -316,6 +317,29 @@ export const ForecastingWorkspace: React.FC = () => {
   const selectedModelRun = activeResult?.models.find(
     (m) => m.model_id === selectedModelId
   );
+
+  if (datasets.length === 0) {
+    return (
+      <GuidedOnboarding
+        title="Project Trends & Forecast Future Metrics"
+        description="Predict future demand, revenue, and KPIs with automated time-series forecasting. Includes automatic frequency detection, rolling backtesting, confidence intervals, and multiple statistical models."
+        badgeText="Time-Series Forecasting"
+        features={[
+          "Auto-detection of dates, seasonal cycles, and sampling frequencies",
+          "8 statistical & machine learning forecasting engines with benchmark scores",
+          "Visual confidence intervals and exportable future trend projections",
+        ]}
+        onUploadSuccess={async () => {
+          const dsRes = await api.listDatasets();
+          const dsList = dsRes.datasets || [];
+          setDatasets(dsList);
+          if (dsList.length > 0) {
+            setSelectedDatasetId(dsList[0].id);
+          }
+        }}
+      />
+    );
+  }
 
   return (
     <div className="space-y-8 pb-16">
