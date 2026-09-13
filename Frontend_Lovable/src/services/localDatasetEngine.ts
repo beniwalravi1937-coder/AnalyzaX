@@ -209,6 +209,8 @@ export async function parseDatasetLocally(
       }
     }
 
+    const sampleValues = Array.from(freqMap.keys()).filter((v) => v.trim().length > 0).slice(0, 5);
+
     columns.push({
       name: colName,
       data_type: isNumeric ? "DOUBLE" : "VARCHAR",
@@ -218,6 +220,7 @@ export async function parseDatasetLocally(
       null_percentage: missingPct,
       distinct_count: distinctCount,
       unique_count: distinctCount,
+      sample_values: sampleValues,
       numeric_metrics: numericMetrics,
       categorical_metrics: categoricalMetrics,
     });
@@ -382,7 +385,7 @@ export async function parseDatasetLocally(
     }
   }
 
-  const msg = is413
+  const msg = is413Limit
     ? `Vercel serverless request body exceeded 4.5MB (HTTP 413). Ingested locally with client-side analytical profiling (${totalRows.toLocaleString()} rows cataloged).`
     : `Dataset successfully uploaded and profiled (${totalRows.toLocaleString()} rows, ${header.length} columns).`;
 

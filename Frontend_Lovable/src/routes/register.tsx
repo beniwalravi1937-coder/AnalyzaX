@@ -4,7 +4,9 @@ import { AlertCircle, CheckCircle, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export const Route = createFileRoute("/register")({
-  validateSearch: (search: Record<string, unknown>) => ({ next: (search["next"] as string) || "/" }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    next: (search["next"] as string) || (search["redirect"] as string) || "/",
+  }),
   head: () => ({
     meta: [
       { title: "Create your AnalyzaX account | Data Analytics Workspace" },

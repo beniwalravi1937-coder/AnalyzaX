@@ -3,28 +3,40 @@ import React, { useEffect, useState } from "react";
 import { Dashboard } from "@/types/dashboard";
 import { createDashboard, deleteDashboard, duplicateDashboard, listDashboards } from "@/services/dashboardApi";
 import { useDataset } from "@/context/DatasetContext";
+import { useAuth } from "@/context/AuthContext";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { DashboardWorkspace } from "@/components/dashboard/DashboardWorkspace";
 import { STARTER_TEMPLATES } from "@/components/dashboard/templates";
+import { LandingPage } from "@/components/landing/LandingPage";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "AnalyzaX — AI-Powered Data Analytics Workspace" },
+      { title: "AnalyzaX — Turn Raw Data Into Executive Insights in Seconds" },
       {
         name: "description",
         content:
-          "Profile, clean, chart and question your data end to end. Built on DuckDB and Polars for enterprise data intelligence.",
+          "Automate data health checks, one-click cleaning, AI-powered questions, and predictive modeling in a unified modern analytics workspace.",
       },
-      { property: "og:title", content: "AnalyzaX — AI-Powered Data Analytics Workspace" },
+      { property: "og:title", content: "AnalyzaX — Turn Raw Data Into Executive Insights in Seconds" },
       {
         property: "og:description",
-        content: "Turn raw data into profiled, cleaned, charted analytical insights.",
+        content: "Turn raw spreadsheets into clear answers, interactive charts, and predictive models in seconds.",
       },
     ],
   }),
-  component: DashboardPage,
+  component: IndexRouteComponent,
 });
+
+function IndexRouteComponent() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (!isLoading && !isAuthenticated) {
+    return <LandingPage />;
+  }
+
+  return <DashboardPage />;
+}
 
 function DashboardPage() {
   const { activeDataset } = useDataset();

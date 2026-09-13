@@ -83,6 +83,11 @@ secrets/
 *.key
 
 # Data & Local Databases (preserve directory structure via .gitkeep)
+*.csv
+student_exam_performance.csv
+verify_deployment.py
+test_full_suite_student_exam.py
+test_suite_py311.py
 data/*
 !data/uploads/
 !data/processed/

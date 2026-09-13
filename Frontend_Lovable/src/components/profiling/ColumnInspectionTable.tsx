@@ -129,7 +129,7 @@ export function ColumnInspectionTable({ columns }: ColumnInspectionTableProps) {
                   </td>
                   <td style={{ padding: "0.75rem 1rem" }}>
                     <div style={{ display: "flex", gap: "0.3rem", flexWrap: "wrap", maxWidth: "260px" }}>
-                      {col.sample_values.slice(0, 3).map((val, idx) => (
+                      {(col.sample_values || []).slice(0, 3).map((val, idx) => (
                         <span
                           key={idx}
                           style={{
@@ -243,13 +243,13 @@ export function ColumnInspectionTable({ columns }: ColumnInspectionTableProps) {
                         )}
 
                         {/* 2. Categorical Distribution Metrics */}
-                        {col.categorical_metrics && col.categorical_metrics.top_categories.length > 0 && (
+                        {col.categorical_metrics && (col.categorical_metrics.top_categories || []).length > 0 && (
                           <div>
                             <h4 style={{ margin: "0 0 0.5rem", fontSize: "0.8125rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                              Top Frequent Categories ({col.categorical_metrics.top_categories.length} of {col.unique_count})
+                              Top Frequent Categories ({(col.categorical_metrics.top_categories || []).length} of {col.unique_count})
                             </h4>
                             <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                              {col.categorical_metrics.top_categories.slice(0, 8).map((cat, idx) => (
+                              {(col.categorical_metrics.top_categories || []).slice(0, 8).map((cat, idx) => (
                                 <div key={idx} style={{ display: "flex", alignItems: "center", gap: "0.75rem", fontSize: "0.75rem" }}>
                                   <span style={{ width: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "var(--text-primary)" }}>
                                     {String(cat.value)}

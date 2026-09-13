@@ -164,13 +164,50 @@ const AUTH_ROUTES = ["/login", "/register", "/forgot-password", "/reset-password
 function AppShell() {
   const [open, setOpen] = useState(false);
   const { datasets, activeDataset, selectDataset } = useDataset();
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const sections = [...new Set(NAV.map((n) => n.section))];
 
-  if (AUTH_ROUTES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+  const isAuthRoute = AUTH_ROUTES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  const isLandingRoute = pathname === "/";
+
+  // Redirect unauthenticated visitors attempting to access internal protected routes
+  useEffect(() => {
+    if (!isAuthLoading && !isAuthenticated && !isAuthRoute && !isLandingRoute) {
+      navigate({
+        to: "/login",
+        search: { next: pathname },
+        replace: true,
+      });
+    }
+  }, [isAuthLoading, isAuthenticated, isAuthRoute, isLandingRoute, pathname, navigate]);
+
+  // Auth pages render without workspace shell
+  if (isAuthRoute) {
     return <Outlet />;
+  }
+
+  // Unauthenticated visitor on / renders the public marketing landing page
+  if (isLandingRoute && !isAuthenticated) {
+    return <Outlet />;
+  }
+
+  // Loading state while checking auth status
+  if (isAuthLoading && !isAuthenticated) {
+    return (
+      <div style={{ minHeight: "100vh", backgroundColor: "#0b0f19", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
+          <AnalyzaXLogo size={36} showText={true} />
+          <div style={{ width: "24px", height: "24px", border: "2px solid rgba(99, 102, 241, 0.2)", borderTopColor: "#6366f1", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+        </div>
+      </div>
+    );
+  }
+
+  // Guard protected routes while redirecting
+  if (!isAuthenticated && !isLandingRoute) {
+    return null;
   }
 
   return (
