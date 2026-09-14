@@ -1,7 +1,7 @@
 {
   "buildCommand": "node build.cjs",
   "outputDirectory": "dist",
-  "framework": "vite",
+  "framework": null,
   "rewrites": [
     {
       "source": "/(.*)",
