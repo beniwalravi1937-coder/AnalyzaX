@@ -23,10 +23,10 @@ services:
     networks:
       - analyzax-network
 
-  # 2. Next.js Frontend Presentation Layer
+  # 2. Unified Frontend Presentation Layer
   frontend:
     build:
-      context: ./frontend
+      context: ./Frontend
       dockerfile: Dockerfile
     container_name: analyzax-frontend
     restart: always

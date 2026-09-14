@@ -239,24 +239,20 @@ Audits datasets across 6 foundational quality dimensions:
 
 ---
 
-##  Dual Frontend Experience
+##  Unified Frontend Architecture
 
-AnalyzaX includes two complete, state-of-the-art frontend experiences:
+AnalyzaX features a single, unified enterprise-grade frontend workspace:
 
 ```
-frontend/                         # Option A: Next.js 14 App Router
-├── app/(workspace)/              # Workspace layouts, server-side data fetching
-├── components/                   # shadcn/ui components, ECharts renderers
-└── services/                     # Typed FastAPI client SDK
-
-Frontend_Lovable/                 # Option B: TanStack Router & Start
-├── src/routes/                   # File-based declarative routing with loaders
-├── src/components/               # Glassmorphic UI with vibrant micro-animations
-└── src/services/                 # Dual Vite API proxy & Supabase integration
+Frontend/                         # Unified Vite + TanStack Router & Start Workspace
+├── src/routes/                   # File-based declarative routing with loaders & auth protection
+├── src/components/               # Glassmorphic UI with Omni-inspired design tokens
+│   ├── ui/                       # Centralized 25+ primitives (buttons, modals, cards, etc.)
+│   └── workspace/                # Domain-specific analytical studios & inspectors
+└── src/services/                 # Typed FastAPI client SDK & real-time WebSocket bindings
 ```
 
-- **`frontend/`**: Enterprise-grade Next.js 14 App Router application with Tailwind CSS, Lucide icons, and server/client boundary separation.
-- **`Frontend_Lovable/`**: Ultra-fluid modern UI built with TanStack Router, Vite, dynamic responsive animations, and seamless dark-mode aesthetics.
+- **`Frontend/`**: Ultra-fluid modern analytical workspace built with TanStack Router, Vite, dynamic responsive animations, Radix UI primitives, Apache ECharts, and seamless dark-mode aesthetics.
 
 ---
 
@@ -333,20 +329,8 @@ uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
 API Documentation will be live at: **`http://127.0.0.1:8000/docs`**
 
 ### 4. Start the Frontend
-
-Choose your preferred frontend experience:
-
-#### Option A: Frontend_Lovable (TanStack Router)
 ```bash
-cd Frontend_Lovable
-npm install
-npm run dev
-```
-Visit **`http://localhost:3000`**
-
-#### Option B: Enterprise Next.js Frontend
-```bash
-cd frontend
+cd Frontend
 npm install
 npm run dev
 ```
