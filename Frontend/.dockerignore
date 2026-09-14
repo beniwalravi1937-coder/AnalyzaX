@@ -1,9 +1,0 @@
-node_modules
-.output
-dist
-.git
-.env
-.env.local
-.tanstack
-.vercel
-.wrangler

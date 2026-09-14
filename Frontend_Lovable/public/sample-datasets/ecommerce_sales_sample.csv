@@ -1,0 +1,51 @@
+order_id,order_date,customer_segment,region,category,sub_category,sales,profit,discount,quantity,rating,customer_churned
+ORD-1001,2024-01-15,Consumer,North America,Technology,Phones,850.50,210.20,0.05,2,4.8,0
+ORD-1002,2024-01-18,Corporate,Europe,Office Supplies,Binders,45.20,12.50,0.00,5,4.2,0
+ORD-1003,2024-01-22,Home Office,Asia Pacific,Furniture,Chairs,320.00,-45.00,0.20,1,3.5,1
+ORD-1004,2024-02-05,Consumer,North America,Technology,Accessories,120.00,38.40,0.10,3,4.6,0
+ORD-1005,2024-02-12,Corporate,Latin America,Office Supplies,Paper,28.90,9.10,0.00,4,4.0,0
+ORD-1006,2024-02-20,Consumer,Europe,Furniture,Tables,650.00,-110.00,0.25,1,2.9,1
+ORD-1007,2024-03-02,Home Office,North America,Technology,Machines,1250.00,340.00,0.05,1,4.9,0
+ORD-1008,2024-03-10,Corporate,Asia Pacific,Furniture,Bookcases,290.00,42.00,0.15,2,3.8,0
+ORD-1009,2024-03-15,Consumer,Latin America,Office Supplies,Appliances,180.50,52.20,0.10,2,4.4,0
+ORD-1010,2024-03-28,Home Office,Europe,Technology,Phones,920.00,245.00,0.00,1,4.7,0
+ORD-1011,2024-04-05,Corporate,North America,Office Supplies,Storage,215.00,68.00,0.05,3,4.3,0
+ORD-1012,2024-04-14,Consumer,Asia Pacific,Furniture,Furnishings,85.00,22.10,0.00,4,4.1,0
+ORD-1013,2024-04-22,Home Office,Latin America,Technology,Accessories,165.00,48.00,0.10,2,4.5,0
+ORD-1014,2024-05-01,Consumer,North America,Office Supplies,Art,34.50,11.20,0.00,6,4.7,0
+ORD-1015,2024-05-11,Corporate,Europe,Furniture,Chairs,410.00,75.00,0.10,2,3.9,0
+ORD-1016,2024-05-19,Consumer,North America,Technology,Phones,1100.00,290.00,0.05,2,4.9,0
+ORD-1017,2024-06-03,Home Office,Asia Pacific,Office Supplies,Binders,55.00,15.50,0.00,3,4.0,0
+ORD-1018,2024-06-12,Corporate,North America,Furniture,Tables,720.00,-95.00,0.20,1,3.1,1
+ORD-1019,2024-06-25,Consumer,Europe,Technology,Machines,1450.00,420.00,0.00,1,5.0,0
+ORD-1020,2024-07-04,Home Office,North America,Office Supplies,Paper,42.00,14.00,0.00,5,4.4,0
+ORD-1021,2024-07-15,Corporate,Latin America,Technology,Accessories,190.00,55.00,0.05,2,4.6,0
+ORD-1022,2024-07-28,Consumer,Asia Pacific,Furniture,Chairs,350.00,-20.00,0.15,1,3.4,1
+ORD-1023,2024-08-08,Corporate,Europe,Office Supplies,Appliances,240.00,72.00,0.00,2,4.5,0
+ORD-1024,2024-08-18,Home Office,North America,Technology,Phones,780.00,195.00,0.10,1,4.6,0
+ORD-1025,2024-09-02,Consumer,North America,Office Supplies,Storage,310.00,88.00,0.05,4,4.3,0
+ORD-1026,2024-09-14,Corporate,Asia Pacific,Furniture,Bookcases,330.00,51.00,0.10,2,4.0,0
+ORD-1027,2024-09-27,Consumer,Europe,Technology,Accessories,140.00,41.00,0.00,3,4.7,0
+ORD-1028,2024-10-06,Home Office,Latin America,Office Supplies,Art,48.00,16.00,0.00,4,4.2,0
+ORD-1029,2024-10-18,Corporate,North America,Furniture,Tables,810.00,-130.00,0.25,1,2.8,1
+ORD-1030,2024-10-29,Consumer,Asia Pacific,Technology,Phones,950.00,260.00,0.00,1,4.8,0
+ORD-1031,2024-11-05,Corporate,Europe,Office Supplies,Paper,38.00,12.50,0.00,5,4.3,0
+ORD-1032,2024-11-15,Home Office,North America,Furniture,Chairs,380.00,60.00,0.10,2,3.9,0
+ORD-1033,2024-11-26,Consumer,North America,Technology,Machines,1600.00,480.00,0.05,1,5.0,0
+ORD-1034,2024-12-04,Corporate,Latin America,Office Supplies,Binders,62.00,18.00,0.00,4,4.1,0
+ORD-1035,2024-12-14,Consumer,Europe,Furniture,Furnishings,95.00,26.00,0.00,3,4.2,0
+ORD-1036,2024-12-22,Home Office,Asia Pacific,Technology,Accessories,210.00,62.00,0.05,2,4.6,0
+ORD-1037,2025-01-08,Consumer,North America,Technology,Phones,890.00,230.00,0.05,2,4.8,0
+ORD-1038,2025-01-19,Corporate,Europe,Office Supplies,Appliances,275.00,84.00,0.00,2,4.6,0
+ORD-1039,2025-01-30,Home Office,North America,Furniture,Chairs,360.00,-15.00,0.15,1,3.6,1
+ORD-1040,2025-02-10,Consumer,Asia Pacific,Technology,Accessories,155.00,45.00,0.00,3,4.7,0
+ORD-1041,2025-02-22,Corporate,North America,Office Supplies,Storage,340.00,98.00,0.05,4,4.4,0
+ORD-1042,2025-03-05,Consumer,Latin America,Furniture,Tables,690.00,-105.00,0.20,1,3.0,1
+ORD-1043,2025-03-18,Home Office,Europe,Technology,Machines,1520.00,450.00,0.00,1,4.9,0
+ORD-1044,2025-03-29,Corporate,Asia Pacific,Office Supplies,Paper,45.00,15.00,0.00,6,4.5,0
+ORD-1045,2025-04-10,Consumer,North America,Technology,Phones,1050.00,280.00,0.05,2,4.9,0
+ORD-1046,2025-04-21,Home Office,Europe,Furniture,Bookcases,340.00,55.00,0.10,2,4.1,0
+ORD-1047,2025-05-03,Corporate,North America,Office Supplies,Binders,58.00,17.00,0.00,3,4.2,0
+ORD-1048,2025-05-15,Consumer,Asia Pacific,Technology,Accessories,175.00,52.00,0.05,2,4.6,0
+ORD-1049,2025-05-26,Home Office,Latin America,Furniture,Furnishings,110.00,31.00,0.00,4,4.3,0
+ORD-1050,2025-06-08,Consumer,North America,Office Supplies,Appliances,290.00,90.00,0.00,2,4.7,0
