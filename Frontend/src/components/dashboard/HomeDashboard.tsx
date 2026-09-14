@@ -509,7 +509,7 @@ export function HomeDashboard({ onOpenCustomDashboard }: HomeDashboardProps) {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 130px), 1fr))",
                 gap: "1rem",
                 textAlign: "left",
               }}
@@ -650,7 +650,7 @@ export function HomeDashboard({ onOpenCustomDashboard }: HomeDashboardProps) {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 210px), 1fr))",
           gap: "0.875rem",
         }}
       >
@@ -738,7 +738,7 @@ export function HomeDashboard({ onOpenCustomDashboard }: HomeDashboardProps) {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
               gap: "0.875rem",
             }}
           >
@@ -856,7 +856,7 @@ export function HomeDashboard({ onOpenCustomDashboard }: HomeDashboardProps) {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 400px), 1fr))",
               gap: "1rem",
             }}
           >
@@ -931,7 +931,7 @@ export function HomeDashboard({ onOpenCustomDashboard }: HomeDashboardProps) {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
           gap: "1rem",
         }}
       >
