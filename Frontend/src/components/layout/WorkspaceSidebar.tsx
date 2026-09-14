@@ -23,7 +23,9 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  LogOut,
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 import {
   Tooltip,
   TooltipContent,
@@ -111,6 +113,7 @@ export const WorkspaceSidebar: React.FC<WorkspaceSidebarProps> = ({
   className,
 }) => {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { user, isAuthenticated, logout } = useAuth();
 
   const isRouteActive = (itemTo: string) => {
     if (itemTo === "/") return pathname === "/";
@@ -261,18 +264,59 @@ export const WorkspaceSidebar: React.FC<WorkspaceSidebarProps> = ({
         </TooltipProvider>
       </nav>
 
-      {/* Sidebar Footer with Subtle Status */}
+      {/* Sidebar Footer: System Status & Bottom-most Session Management */}
       <div className={cn(
-        "p-3 border-t border-slate-800/80 shrink-0 text-slate-500 text-[11px]",
-        isCollapsed ? "text-center px-1" : "flex items-center justify-between"
+        "p-2.5 border-t border-slate-800/80 shrink-0 text-slate-500 text-[11px] flex flex-col gap-2 bg-slate-950/80",
+        isCollapsed ? "items-center px-1" : ""
       )}>
-        {!isCollapsed ? (
-          <div className="flex flex-col truncate">
-            <span className="text-slate-400 text-xs font-medium">AnalyzaX Engine</span>
-            <span className="text-[10px] text-slate-500 font-mono">v1.0 · DuckDB Core</span>
+        {/* Engine status indicator */}
+        {!isCollapsed && (
+          <div className="flex items-center justify-between px-1 text-[10px] text-slate-500 font-mono">
+            <span>AnalyzaX Engine</span>
+            <span>v1.0 · DuckDB</span>
           </div>
-        ) : (
-          <span className="text-[10px] font-mono text-indigo-400 font-semibold">AX</span>
+        )}
+
+        {/* Bottom-most Session Management */}
+        {isAuthenticated && user && (
+          isCollapsed ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={logout}
+                  aria-label="Sign out"
+                  className="flex items-center justify-center h-8 w-8 rounded-lg text-slate-400 hover:text-red-400 hover:bg-slate-800/60 transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="bg-slate-900 border-slate-700 text-xs text-white">
+                Sign out ({user.email})
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <div className="flex items-center justify-between gap-2 p-1.5 rounded-lg bg-slate-900/60 border border-slate-800/60">
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="text-xs font-medium text-slate-300 truncate">
+                  {user.display_name || user.email?.split("@")[0]}
+                </span>
+                <span className="text-[10px] text-slate-500 truncate font-mono">
+                  {user.email}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={logout}
+                aria-label="Sign out of AnalyzaX"
+                title="Sign out"
+                className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+              >
+                <LogOut className="w-3 h-3" />
+                <span>Sign out</span>
+              </button>
+            </div>
+          )
         )}
       </div>
     </div>
