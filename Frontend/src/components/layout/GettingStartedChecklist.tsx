@@ -87,12 +87,17 @@ export function GettingStartedChecklist({ isCollapsed = false }: GettingStartedC
       role="region"
       aria-label="Getting Started Onboarding Checklist"
       style={{
-        display: "block",
+        display: "flex",
+        flexDirection: "column",
+        flexShrink: 0,
+        boxSizing: "border-box",
+        width: "calc(100% - 1rem)",
         visibility: "visible",
         opacity: 1,
         position: "relative",
         zIndex: 10,
         margin: "0.75rem 0.5rem 1rem 0.5rem",
+        minHeight: "fit-content",
         background: "linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.98) 100%)",
         border: "1px solid rgba(99, 102, 241, 0.45)",
         borderRadius: "10px",

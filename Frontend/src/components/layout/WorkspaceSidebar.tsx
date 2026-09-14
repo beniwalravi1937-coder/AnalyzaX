@@ -157,10 +157,10 @@ export const WorkspaceSidebar: React.FC<WorkspaceSidebarProps> = ({
       </div>
 
       {/* Navigation Body */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-4 no-scrollbar">
+      <nav className="sidebar-nav flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-4 no-scrollbar flex flex-col" aria-label="Primary Workspace Navigation">
         <TooltipProvider delayDuration={150}>
           {/* Getting Started Onboarding Checklist */}
-          <div className="mb-2 relative z-10 block opacity-100 visible">
+          <div className="mb-2 relative z-10 block opacity-100 visible shrink-0 w-full">
             <GettingStartedChecklist isCollapsed={isCollapsed} />
           </div>
 
@@ -259,7 +259,7 @@ export const WorkspaceSidebar: React.FC<WorkspaceSidebarProps> = ({
             </div>
           ))}
         </TooltipProvider>
-      </div>
+      </nav>
 
       {/* Sidebar Footer with Subtle Status */}
       <div className={cn(
