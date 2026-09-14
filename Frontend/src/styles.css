@@ -600,7 +600,7 @@
 
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-muted: #94a3b8;
 
   --accent-primary: #F59E0B;
   --accent-primary-hover: #FCD34D;
@@ -836,6 +836,7 @@ body {
 /* Buttons */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; font-size: 0.8125rem; font-weight: 500; padding: 0.5rem 0.95rem; border-radius: var(--ax-radius-sm); border: 1px solid transparent; cursor: pointer; text-decoration: none; transition: all 0.15s ease; }
 .btn-primary {
+  background-color: #f59e0b;
   background-image: linear-gradient(180deg, #FCD34D, #F59E0B);
   color: #080B16; font-weight: 700;
   box-shadow: 0 8px 20px -6px rgba(245,158,11,0.45), inset 0 1px 1px rgba(255,255,255,0.45);
@@ -909,7 +910,7 @@ body {
 
 /* Badges & alerts */
 .badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.6875rem; font-weight: 600; padding: 0.2rem 0.55rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.04em; }
-.badge-neutral { background-color: rgba(255,255,255,0.07); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.1); }
+.badge-neutral { background-color: rgba(255,255,255,0.1); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.18); }
 .badge-emerald { background-color: rgba(16,185,129,0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.25); }
 .badge-indigo { background-color: rgba(245,158,11,0.12); color: #FCD34D; border: 1px solid rgba(245,158,11,0.25); }
 .badge-amber { background-color: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }

@@ -440,8 +440,10 @@ export const MLWorkspace: React.FC = () => {
         {/* Dataset & Version Selectors */}
         <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
           <div>
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Dataset</span>
+            <label htmlFor="ml-dataset-select" style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Dataset</label>
             <select
+              id="ml-dataset-select"
+              aria-label="Select Dataset"
               value={selectedDatasetId}
               onChange={(e) => setSelectedDatasetId(e.target.value)}
               className="input"
@@ -456,8 +458,10 @@ export const MLWorkspace: React.FC = () => {
           </div>
 
           <div>
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Dataset Version</span>
+            <label htmlFor="ml-version-select" style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Dataset Version</label>
             <select
+              id="ml-version-select"
+              aria-label="Select Dataset Version"
               value={selectedVersionId}
               onChange={(e) => {
                 setSelectedVersionId(e.target.value);

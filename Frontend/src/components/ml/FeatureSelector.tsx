@@ -203,11 +203,16 @@ export const FeatureSelector: React.FC<FeatureSelectorProps> = ({
                   fontSize: "0.8125rem",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", overflow: "hidden" }}>
+                <label
+                  htmlFor={`feature-checkbox-${col}`}
+                  style={{ display: "flex", alignItems: "center", gap: "0.5rem", overflow: "hidden", cursor: "pointer", flex: 1 }}
+                >
                   <input
+                    id={`feature-checkbox-${col}`}
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => {}} // handled by parent div
+                    aria-label={`Select feature ${col}`}
                     style={{ cursor: "pointer" }}
                   />
                   <span
@@ -221,7 +226,7 @@ export const FeatureSelector: React.FC<FeatureSelectorProps> = ({
                   >
                     {col}
                   </span>
-                </div>
+                </label>
 
                 <div>
                   {exclusionReason ? (

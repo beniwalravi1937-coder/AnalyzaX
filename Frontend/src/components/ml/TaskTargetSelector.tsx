@@ -90,7 +90,7 @@ export const TaskTargetSelector: React.FC<TaskTargetSelectorProps> = ({
       {taskType !== "clustering" ? (
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.375rem" }}>
-            <label style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary, #f1f5f9)" }}>
+            <label htmlFor="ml-target-column-select" style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary, #f1f5f9)" }}>
               2. Prediction Target Column <span style={{ color: "var(--color-error, #ef4444)" }}>*</span>
             </label>
             {recommendedTarget && (
@@ -101,6 +101,8 @@ export const TaskTargetSelector: React.FC<TaskTargetSelectorProps> = ({
           </div>
 
           <select
+            id="ml-target-column-select"
+            aria-label="Select Target Variable"
             value={targetColumn}
             onChange={(e) => onTargetColumnChange(e.target.value)}
             className="input"

@@ -197,7 +197,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
                 {model.supports_probability && <span className="badge badge-info" style={{ fontSize: "0.6875rem" }}>Probabilities</span>}
                 {model.supports_feature_importance && <span className="badge badge-neutral" style={{ fontSize: "0.6875rem" }}>Feature Importance</span>}
                 {model.supports_coefficients && <span className="badge badge-neutral" style={{ fontSize: "0.6875rem" }}>Coefficients</span>}
-                <span className="badge badge-neutral" style={{ fontSize: "0.6875rem", opacity: 0.75 }}>
+                <span className="badge badge-neutral" style={{ fontSize: "0.6875rem", color: "#cbd5e1" }}>
                   {model.resource_class}
                 </span>
               </div>

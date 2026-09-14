@@ -96,9 +96,9 @@ export const MLSuitabilityPanel: React.FC<MLSuitabilityPanelProps> = ({
                 background: report.is_suitable ? "var(--color-success, #10b981)" : "var(--color-error, #ef4444)",
               }}
             />
-            <h4 style={{ margin: 0, fontSize: "0.9375rem", fontWeight: 600 }}>
+            <h2 style={{ margin: 0, fontSize: "0.9375rem", fontWeight: 600 }}>
               {report.is_suitable ? "Dataset Ready for Machine Learning" : "Suitability Warning: Action Recommended"}
-            </h4>
+            </h2>
           </div>
           <p style={{ margin: "0.25rem 0 0 1.25rem", fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
             {report.summary}
