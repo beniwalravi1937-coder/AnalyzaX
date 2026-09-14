@@ -1,24 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React, { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { LandingPage } from "@/components/landing/LandingPage";
 import { HomeDashboard } from "@/components/dashboard/HomeDashboard";
 import { DashboardWorkspace } from "@/components/dashboard/DashboardWorkspace";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "AnalyzaX — Turn Raw Data Into Executive Insights in Seconds" },
+      { title: "Dashboard — AnalyzaX" },
       {
         name: "description",
         content:
-          "Upload your data and get instant cleaning, charts, and AI-generated insights — no SQL required. Built for modern teams.",
+          "Your analytics workspace. Explore real-time KPIs, data health diagnostics, deterministic insights, ChartSpec visualizations, and recommended next steps.",
       },
-      { property: "og:title", content: "AnalyzaX — Turn Raw Data Into Executive Insights in Seconds" },
+      { property: "og:title", content: "Dashboard — AnalyzaX" },
       {
         property: "og:description",
         content:
-          "Upload your data and get instant cleaning, charts, and AI-generated insights — no SQL required.",
+          "Your analytics workspace. Explore real-time KPIs, data health diagnostics, deterministic insights, and ChartSpec visualizations.",
       },
       { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
       { property: "og:image:width", content: "1200" },
@@ -27,16 +25,11 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
     ],
   }),
-  component: IndexRouteComponent,
+  component: DashboardRouteComponent,
 });
 
-function IndexRouteComponent() {
-  const { isAuthenticated, isLoading } = useAuth();
+function DashboardRouteComponent() {
   const [selectedDashboardId, setSelectedDashboardId] = useState<string | null>(null);
-
-  if (!isLoading && !isAuthenticated) {
-    return <LandingPage />;
-  }
 
   if (selectedDashboardId) {
     return (

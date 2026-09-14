@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AiAnalystRouteImport } from './routes/ai-analyst'
 import { Route as CleaningRouteImport } from './routes/cleaning'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DataRouteImport } from './routes/data'
 import { Route as EdaRouteImport } from './routes/eda'
 import { Route as ExportsRouteImport } from './routes/exports'
@@ -48,6 +49,11 @@ const AiAnalystRoute = AiAnalystRouteImport.update({
 const CleaningRoute = CleaningRouteImport.update({
   id: '/cleaning',
   path: '/cleaning',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DataRoute = DataRouteImport.update({
@@ -165,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai-analyst': typeof AiAnalystRoute
   '/cleaning': typeof CleaningRoute
+  '/dashboard': typeof DashboardRoute
   '/data': typeof DataRoute
   '/eda': typeof EdaRoute
   '/exports': typeof ExportsRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai-analyst': typeof AiAnalystRoute
   '/cleaning': typeof CleaningRoute
+  '/dashboard': typeof DashboardRoute
   '/data': typeof DataRoute
   '/eda': typeof EdaRoute
   '/exports': typeof ExportsRoute
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/ai-analyst': typeof AiAnalystRoute
   '/cleaning': typeof CleaningRoute
+  '/dashboard': typeof DashboardRoute
   '/data': typeof DataRoute
   '/eda': typeof EdaRoute
   '/exports': typeof ExportsRoute
@@ -249,6 +258,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ai-analyst'
     | '/cleaning'
+    | '/dashboard'
     | '/data'
     | '/eda'
     | '/exports'
@@ -276,6 +286,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ai-analyst'
     | '/cleaning'
+    | '/dashboard'
     | '/data'
     | '/eda'
     | '/exports'
@@ -303,6 +314,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ai-analyst'
     | '/cleaning'
+    | '/dashboard'
     | '/data'
     | '/eda'
     | '/exports'
@@ -331,6 +343,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AiAnalystRoute: typeof AiAnalystRoute
   CleaningRoute: typeof CleaningRoute
+  DashboardRoute: typeof DashboardRoute
   DataRoute: typeof DataRoute
   EdaRoute: typeof EdaRoute
   ExportsRoute: typeof ExportsRoute
@@ -376,6 +389,13 @@ declare module '@tanstack/react-router' {
       path: '/cleaning'
       fullPath: '/cleaning'
       preLoaderRoute: typeof CleaningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/data': {
@@ -539,6 +559,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AiAnalystRoute: AiAnalystRoute,
   CleaningRoute: CleaningRoute,
+  DashboardRoute: DashboardRoute,
   DataRoute: DataRoute,
   EdaRoute: EdaRoute,
   ExportsRoute: ExportsRoute,
