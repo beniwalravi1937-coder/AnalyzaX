@@ -30,16 +30,8 @@ export const Route = createFileRoute("/forecasting")({
 
 function ForecastingPage() {
   return (
-    <div className="ax-stack">
-      <PageHeader
-        title="Forecasting & Time-Series Intelligence"
-        description="Deterministic, version-aware temporal forecasting. Automatic frequency detection, rolling-origin backtesting, 8 statistical estimators, prediction intervals, and leakage-free out-of-sample projections."
-        badge={{ text: "Time-Series Intelligence", variant: "indigo" }}
-      />
-
-      <div style={{ marginTop: "1rem" }}>
-        <ForecastingWorkspace />
-      </div>
+    <div className="flex flex-col min-h-[calc(100vh-100px)]">
+      <ForecastingWorkspace />
     </div>
   );
 }

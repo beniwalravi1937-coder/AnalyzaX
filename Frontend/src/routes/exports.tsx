@@ -1,14 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import React, { useState } from "react";
-import Link from "next/link";
 import { useDataset } from "../context/DatasetContext";
-import { PageHeader } from "../components/layout/PageHeader";
 import { ExportQuickPanel } from "../components/exports/ExportQuickPanel";
 import { ReportBuilderPanel } from "../components/exports/ReportBuilderPanel";
 import { ExportHistoryTable } from "../components/exports/ExportHistoryTable";
 import { ChartImageExport } from "../components/exports/ChartImageExport";
 import { cleanupExpired } from "../services/exportApi";
 import { ExportsIcon, UploadIcon } from "../components/icons";
+import { AnalyticalWorkspaceHeader } from "@/components/layout/AnalyticalWorkspaceHeader";
+import { SecondaryInfoPanel } from "@/components/layout/SecondaryInfoPanel";
+import { Button } from "@/components/ui/button";
+import { Download, Trash2, FileText, Image as ImageIcon, Zap, History as HistoryIcon } from "lucide-react";
 
 export const Route = createFileRoute("/exports")({
   head: () => ({
@@ -17,19 +19,9 @@ export const Route = createFileRoute("/exports")({
       {
         name: "description",
         content:
-          "Export cleaned datasets, executive presentation summaries, and chart graphics into CSV, Excel, PDF, or PNG format in one click.",
+          "Multi-format publishing engine for reproducible data artifacts, executive reports, and visualization assets.",
       },
       { property: "og:title", content: "Data & Report Exports — AnalyzaX" },
-      {
-        property: "og:description",
-        content:
-          "Export cleaned datasets, executive presentation summaries, and chart graphics in one click.",
-      },
-      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
     ],
   }),
   component: ExportsPage,
@@ -43,6 +35,7 @@ function ExportsPage() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [isCleaning, setIsCleaning] = useState(false);
   const [cleanupResult, setCleanupResult] = useState<string | null>(null);
+  const [mode, setMode] = useState<"beginner" | "advanced">("beginner");
 
   const handleCleanup = async () => {
     setIsCleaning(true);
@@ -62,77 +55,88 @@ function ExportsPage() {
     setRefreshTrigger((prev) => prev + 1);
   };
 
+  const workflowSteps = [
+    { id: "scope", label: "Dataset Scope", status: activeDataset ? ("completed" as const) : ("current" as const) },
+    { id: "format", label: "Format Selection", status: "completed" as const },
+    { id: "execution", label: "Artifact Rendering", status: activeTab === "history" ? ("completed" as const) : ("current" as const) },
+    { id: "archive", label: "Download & Archive", status: "completed" as const },
+  ];
+
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto", paddingBottom: "3rem" }}>
-      <PageHeader
-        title="Export & Artifact Studio"
-        description="Multi-format publishing engine for reproducible data artifacts, executive reports, SQL outputs, and standalone visualizations."
-        badge={{ text: "Publishing Studio", variant: "emerald" }}
+    <div className="flex flex-col min-h-[calc(100vh-100px)] space-y-4">
+      <AnalyticalWorkspaceHeader
+        title="Exports"
+        description="Multi-format publishing engine for reproducible data artifacts, executive reports, and visualization assets."
+        badgeText="Multi-Format Engine"
+        steps={workflowSteps}
+        currentStepId={activeTab === "history" ? "archive" : "format"}
+        status="idle"
+        mode={mode}
+        onModeChange={setMode}
+        primaryAction={
+          <Button
+            size="sm"
+            onClick={() => setActiveTab("quick")}
+            className="h-9 px-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs gap-1.5 shadow-sm"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>New Export</span>
+          </Button>
+        }
+        secondaryActions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCleanup}
+            disabled={isCleaning}
+            className="h-9 px-2.5 text-xs border-white/10 bg-slate-900/60 hover:bg-slate-850 hover:border-white/20 text-slate-300 gap-1.5"
+          >
+            <Trash2 className="w-3.5 h-3.5 text-slate-400" />
+            <span>{isCleaning ? "Cleaning..." : "Purge Expired"}</span>
+          </Button>
+        }
       />
 
-      {/* Top Bar / Controls */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "1rem",
-          marginBottom: "1.5rem",
-          borderBottom: "1px solid var(--border-subtle)",
-          paddingBottom: "1rem",
-        }}
-      >
-        {/* Navigation Tabs */}
-        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+      {/* Navigation Tabs */}
+      <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div className="flex gap-2 flex-wrap">
           <button
             type="button"
             onClick={() => setActiveTab("quick")}
-            className={`btn btn-sm ${activeTab === "quick" ? "btn-primary" : "btn-secondary"}`}
+            className={`btn btn-sm text-xs ${activeTab === "quick" ? "btn-primary" : "btn-secondary"}`}
           >
             ⚡ Quick Export
           </button>
           <button
             type="button"
             onClick={() => setActiveTab("reports")}
-            className={`btn btn-sm ${activeTab === "reports" ? "btn-primary" : "btn-secondary"}`}
+            className={`btn btn-sm text-xs ${activeTab === "reports" ? "btn-primary" : "btn-secondary"}`}
           >
             📑 Report Builder
           </button>
           <button
             type="button"
             onClick={() => setActiveTab("chart_images")}
-            className={`btn btn-sm ${activeTab === "chart_images" ? "btn-primary" : "btn-secondary"}`}
+            className={`btn btn-sm text-xs ${activeTab === "chart_images" ? "btn-primary" : "btn-secondary"}`}
           >
             🖼️ Chart Images
           </button>
           <button
             type="button"
             onClick={() => setActiveTab("history")}
-            className={`btn btn-sm ${activeTab === "history" ? "btn-primary" : "btn-secondary"}`}
+            className={`btn btn-sm text-xs ${activeTab === "history" ? "btn-primary" : "btn-secondary"}`}
           >
             📜 Artifact History
           </button>
         </div>
 
-        {/* Global Cleanup Button */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          {cleanupResult && (
-            <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-              {cleanupResult}
-            </span>
-          )}
-          <button
-            onClick={handleCleanup}
-            disabled={isCleaning}
-            className="btn btn-ghost btn-sm"
-            style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}
-            title="Purge artifacts older than TTL (7 days)"
-          >
-            {isCleaning ? "Cleaning..." : "🧹 Purge Expired"}
-          </button>
-        </div>
+        {cleanupResult && (
+          <span className="text-xs text-slate-400">
+            {cleanupResult}
+          </span>
+        )}
       </div>
+
 
       {/* Dataset Context Bar */}
       <div
@@ -167,7 +171,7 @@ function ExportsPage() {
         </div>
 
         {!activeDataset && (
-          <Link href="/data" className="btn btn-primary btn-sm" style={{ fontSize: "0.75rem" }}>
+          <Link to="/data" className="btn btn-primary btn-sm" style={{ fontSize: "0.75rem" }}>
             Upload Dataset
           </Link>
         )}
@@ -198,7 +202,7 @@ function ExportsPage() {
               <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem" }}>
                 Select or upload a dataset to export tabular data or analytical artifacts.
               </p>
-              <Link href="/data" className="btn btn-primary btn-sm" style={{ marginTop: "1rem" }}>
+              <Link to="/data" className="btn btn-primary btn-sm" style={{ marginTop: "1rem" }}>
                 <UploadIcon size={14} style={{ marginRight: "0.4rem" }} /> Go to Ingestion
               </Link>
             </div>
@@ -262,7 +266,7 @@ function ExportsPage() {
             }}
           >
             💡 <strong>Pro-tip:</strong> You can also export charts directly within the{" "}
-            <Link href="/visualizations" style={{ color: "var(--brand-primary)", textDecoration: "underline" }}>
+            <Link to="/visualizations" style={{ color: "var(--brand-primary)", textDecoration: "underline" }}>
               Visualization Studio
             </Link>{" "}
             using the chart toolbar dropdown menu.
@@ -277,6 +281,64 @@ function ExportsPage() {
           onJobDeleted={handleExportCreated}
         />
       )}
+
+      {/* Secondary Information */}
+      <SecondaryInfoPanel
+        metadata={{
+          datasetName: activeDataset?.name || "No dataset selected",
+          versionName: activeDataset?.active_version_id || "v1",
+          engine: "Multi-Format Export & Archival Engine",
+          customFields: {
+            "Active Tab": activeTab,
+            "Artifact TTL": "7 days retention",
+            "Supported Formats": "CSV, Excel, Parquet, PDF, PNG",
+          },
+        }}
+        recommendations={[
+          {
+            id: "eda-verify",
+            title: "Verify Data Summary in EDA",
+            description: "Check statistical moments and distributions before distributing export packages.",
+            actionLabel: "Open EDA",
+            onAction: () => { window.location.href = "/eda"; },
+            impact: "medium" as const,
+          },
+          {
+            id: "cleaning-verify",
+            title: "Check Imputation Lineage",
+            description: "Review transformation log before generating client-facing executive reports.",
+            actionLabel: "Cleaning Studio",
+            onAction: () => { window.location.href = "/cleaning"; },
+            impact: "low" as const,
+          },
+        ]}
+        detailsContent={
+          <div className="space-y-3 text-xs text-slate-300">
+            <p>
+              Generated analytical packages and reports are rendered server-side with sha256 checksums and automated schema preservation.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                <span className="text-slate-400 block text-[10px] uppercase">Storage Mode</span>
+                <span className="font-semibold text-slate-200">Ephemeral Sandboxed FS</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                <span className="text-slate-400 block text-[10px] uppercase">Retention Policy</span>
+                <span className="font-semibold text-slate-200">7-Day Automatic Purge</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                <span className="text-slate-400 block text-[10px] uppercase">Report Renderer</span>
+                <span className="font-semibold text-slate-200">Executive HTML/PDF Engine</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                <span className="text-slate-400 block text-[10px] uppercase">Integrity Verification</span>
+                <span className="font-semibold text-slate-200">SHA-256 Checksum</span>
+              </div>
+            </div>
+          </div>
+        }
+      />
     </div>
   );
 }
+

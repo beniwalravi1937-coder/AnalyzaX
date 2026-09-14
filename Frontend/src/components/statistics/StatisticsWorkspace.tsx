@@ -9,7 +9,12 @@ import { StatisticsMethodSelector } from "./StatisticsMethodSelector";
 import { TestConfiguration } from "./TestConfiguration";
 import { StatisticsResultView } from "./StatisticsResult";
 import { StatisticsHistory } from "./StatisticsHistory";
-import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
+import { AnalyticalWorkspaceHeader } from "@/components/layout/AnalyticalWorkspaceHeader";
+import { SecondaryInfoPanel } from "@/components/layout/SecondaryInfoPanel";
+import { DatasetSelector } from "@/components/ui/DatasetSelector";
+import { VersionSelector } from "@/components/ui/VersionSelector";
+import { Button } from "@/components/ui/button";
+import { Play, Sparkles, SlidersHorizontal, ArrowRight } from "lucide-react";
 
 export const StatisticsWorkspace: React.FC = () => {
   const [datasets, setDatasets] = useState<DatasetResponse[]>([]);
@@ -175,78 +180,94 @@ export const StatisticsWorkspace: React.FC = () => {
     );
   }
 
+  const [mode, setMode] = useState<"beginner" | "advanced">("beginner");
+
+  const currentDataset = datasets.find((d) => d.id === selectedDatasetId);
+
+  const workflowSteps = [
+    { id: "builder", label: "Analysis Builder", status: "completed" as const },
+    { id: "results", label: "Results", status: (currentResult ? "completed" : "current") as const },
+    { id: "assumptions", label: "Assumptions", status: (currentResult?.assumptions && currentResult.assumptions.length > 0 ? "completed" : "pending") as const },
+    { id: "diagnostics", label: "Diagnostics", status: (currentResult?.effect_sizes && currentResult.effect_sizes.length > 0 ? "completed" : "pending") as const },
+    { id: "interpretation", label: "Interpretation", status: (currentResult?.findings && currentResult.findings.length > 0 ? "completed" : "pending") as const },
+  ];
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-      {/* Top Bar: Dataset & Version Picker */}
-      <div
-        style={{
-          padding: "1rem 1.25rem",
-          borderRadius: "var(--radius-md, 8px)",
-          background: "var(--bg-surface, rgba(255, 255, 255, 0.02))",
-          border: "1px solid var(--border-subtle, rgba(255, 255, 255, 0.08))",
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: "1rem",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <div>
-            <label style={{ display: "block", fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "0.2rem" }}>
-              Active Dataset
-            </label>
-            <select
-              value={selectedDatasetId}
-              onChange={(e) => setSelectedDatasetId(e.target.value)}
-              className="input input-sm"
-              style={{ minWidth: "180px" }}
-            >
-              {datasets.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label style={{ display: "block", fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "0.2rem" }}>
-              Dataset Version
-            </label>
-            <select
-              value={selectedVersionId}
-              onChange={(e) => setSelectedVersionId(e.target.value)}
-              className="input input-sm"
-              style={{ minWidth: "120px" }}
-            >
-              {versions.map((v) => (
-                <option key={v.version_id} value={v.version_id}>
-                  {v.version_id} ({v.version_label || "Version"})
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* View Toggle */}
-        <div style={{ display: "flex", gap: "0.5rem" }}>
-          <button
-            type="button"
-            onClick={() => setActiveTab("workspace")}
-            className={`btn btn-sm ${activeTab === "workspace" ? "btn-primary" : "btn-secondary"}`}
+    <div className="flex flex-col min-h-[calc(100vh-100px)]">
+      <AnalyticalWorkspaceHeader
+        title="Statistics"
+        description="Run statistical analysis with transparent methodology."
+        badgeText="SciPy + statsmodels"
+        steps={workflowSteps}
+        currentStepId={currentResult ? "results" : "builder"}
+        mode={mode}
+        onToggleMode={setMode}
+        status={isLoading ? "running" : currentResult ? "success" : "idle"}
+        durationMs={currentResult?.execution_time_ms}
+        primaryAction={
+          <Button
+            size="sm"
+            onClick={handleExecute}
+            disabled={isLoading || targetColumns.length === 0}
+            className="h-9 px-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs gap-1.5 shadow-sm"
           >
-            Analysis Workspace
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("history")}
-            className={`btn btn-sm ${activeTab === "history" ? "btn-primary" : "btn-secondary"}`}
-          >
-            History ({history.length})
-          </button>
-        </div>
-      </div>
+            <Play className="w-3.5 h-3.5 fill-current" />
+            <span>{isLoading ? "Running..." : "Run Analysis"}</span>
+          </Button>
+        }
+        secondaryActions={
+          <div className="flex items-center gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAutoRecommend}
+              className="h-9 px-2.5 text-xs border-white/10 bg-slate-900/60 hover:bg-slate-850 hover:border-white/20 text-indigo-300 gap-1"
+            >
+              <Sparkles className="w-3 h-3" />
+              <span>Auto-Recommend</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setActiveTab(activeTab === "workspace" ? "history" : "workspace")}
+              className={`h-9 px-2.5 text-xs border-white/10 ${activeTab === "history" ? "bg-indigo-600/20 text-white border-indigo-500/40" : "bg-slate-900/60 text-slate-300"}`}
+            >
+              <span>History ({history.length})</span>
+            </Button>
+          </div>
+        }
+        customDatasetSelector={
+          <div className="flex items-center gap-1.5 bg-slate-900/60 p-1 rounded-lg border border-white/10">
+            <span className="text-[11px] font-medium text-slate-400 pl-2 pr-0.5 uppercase tracking-wider hidden sm:inline">
+              Dataset:
+            </span>
+            <DatasetSelector
+              datasets={datasets.map((d) => ({
+                id: d.id,
+                name: d.name,
+                rowCount: (d as any).row_count,
+                versionName: (d as any).current_version_name || "V1",
+              }))}
+              activeDatasetId={selectedDatasetId}
+              onSelectDataset={(id) => setSelectedDatasetId(id)}
+              size="sm"
+            />
+            {versions.length > 0 && (
+              <VersionSelector
+                versions={versions.map((v) => ({
+                  id: v.version_id,
+                  version_number: parseInt(v.version_id.replace(/\D/g, "") || "1"),
+                  row_count: v.row_count,
+                  is_current: v.version_id === selectedVersionId,
+                }))}
+                activeVersionId={selectedVersionId || versions[0]?.version_id}
+                onSelectVersion={(vid) => setSelectedVersionId(vid)}
+                size="sm"
+              />
+            )}
+          </div>
+        }
+      />
 
       {errorMsg && (
         <div
@@ -331,6 +352,46 @@ export const StatisticsWorkspace: React.FC = () => {
           )}
         </div>
       )}
+
+      {/* Secondary Information: History, Details, Metadata, Recommendations */}
+      <SecondaryInfoPanel
+        metadata={{
+          datasetName: currentDataset?.name || "Active Dataset",
+          versionName: selectedVersionId || "V1",
+          engine: "SciPy + statsmodels (Deterministic)",
+          executionTimeMs: currentResult?.execution_time_ms,
+          customFields: {
+            "Selected Method": currentMethodItem?.name || selectedMethod,
+            "Target Column(s)": targetColumns.join(", ") || "None",
+            "Group Column(s)": groupColumns.join(", ") || "None",
+            "Significance Alpha": alpha,
+            "Confidence Level": `${Math.round(confidenceLevel * 100)}%`,
+          },
+        }}
+        historyEntries={history.map((h) => ({
+          id: h.result_id,
+          title: `${h.method_name} on ${(h.parameters as any)?.target_columns?.join(", ") || "columns"}`,
+          timestamp: h.executed_at,
+          status: "success" as const,
+          durationMs: h.execution_time_ms,
+          summary: h.executive_summary?.slice(0, 100) + "...",
+        }))}
+        onSelectHistoryEntry={async (entry) => {
+          const res = await statisticsApi.getAnalysis(entry.id);
+          setCurrentResult(res);
+          setActiveTab("workspace");
+        }}
+        recommendations={[
+          {
+            id: "rec-stat-normality",
+            title: "Automated Normality & Variance Check",
+            description: "Assess skewness and variance homogeneity to ensure parametric assumptions hold before decision-making.",
+            impact: "medium" as const,
+            actionLabel: "Verify Assumptions",
+            onAction: handleAutoRecommend,
+          },
+        ]}
+      />
     </div>
   );
 };

@@ -25,8 +25,13 @@ import {
   TrendingUp,
   XCircle,
   Info,
+  Sparkles,
+  Zap,
 } from "lucide-react";
 import { AnalysisDetailsDrawer } from "@/components/ui/AnalysisDetailsDrawer";
+import { AnalyticalWorkspaceHeader } from "@/components/layout/AnalyticalWorkspaceHeader";
+import { SecondaryInfoPanel } from "@/components/layout/SecondaryInfoPanel";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/insights")({
   head: () => ({
@@ -35,19 +40,9 @@ export const Route = createFileRoute("/insights")({
       {
         name: "description",
         content:
-          "Discover hidden patterns, unexpected spikes, and critical changes in your numbers automatically without digging through endless rows.",
+          "Prioritized executive findings and deterministic root cause analysis.",
       },
       { property: "og:title", content: "Smart Business Insights — AnalyzaX" },
-      {
-        property: "og:description",
-        content:
-          "Discover hidden patterns, unexpected spikes, and critical changes in your numbers automatically.",
-      },
-      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-insights.png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-insights.png" },
     ],
   }),
   component: InsightsPage,
@@ -64,6 +59,7 @@ function InsightsPage() {
   const [activeInsight, setActiveInsight] = useState<Insight | null>(null);
   const [isDiscovering, setIsDiscovering] = useState<boolean>(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
+  const [mode, setMode] = useState<"beginner" | "advanced">("beginner");
 
   const fetchInsights = async () => {
     if (!activeWorkspace?.workspace_id) return;
@@ -135,30 +131,39 @@ function InsightsPage() {
     }
   };
 
-  return (
-    <div className="flex flex-col h-full overflow-hidden p-6 space-y-6 text-zinc-100">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-zinc-800">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2.5">
-            <img src="/logo.png" alt="" className="w-6 h-6 object-contain" />
-            Proactive Insight Center
-          </h1>
-          <p className="text-sm text-zinc-400 mt-1">
-            Automated multi-engine discovery across data quality, anomalies, distributions, and trends.
-          </p>
-        </div>
+  const workflowSteps = [
+    { id: "scan", label: "Signal Scanner", status: isDiscovering ? ("current" as const) : insights.length > 0 ? ("completed" as const) : ("pending" as const) },
+    { id: "priority", label: "Prioritization", status: insights.length > 0 ? ("completed" as const) : ("pending" as const) },
+    { id: "evidence", label: "Evidence & Citations", status: activeInsight?.evidence?.length ? ("completed" as const) : ("pending" as const) },
+    { id: "actions", label: "Recommended Actions", status: activeInsight?.recommended_actions?.length ? ("completed" as const) : ("pending" as const) },
+  ];
 
-        <div className="flex items-center gap-3">
-          <button
+  return (
+    <div className="flex flex-col min-h-[calc(100vh-100px)] space-y-4">
+      <AnalyticalWorkspaceHeader
+        title="Insights"
+        description="Prioritized executive findings and deterministic root cause analysis."
+        badgeText="Deterministic Multi-Engine"
+        steps={workflowSteps}
+        currentStepId={activeInsight ? "evidence" : "scan"}
+        status={isDiscovering ? "running" : loading ? "loading" : "idle"}
+        mode={mode}
+        onModeChange={setMode}
+        primaryAction={
+          <Button
+            size="sm"
             onClick={handleRunDiscovery}
             disabled={isDiscovering || !activeDataset}
-            className="flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg bg-purple-600 hover:bg-purple-500 text-white disabled:opacity-50 transition-all shadow-lg shadow-purple-900/20"
+            className="h-9 px-3 bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs gap-1.5 shadow-sm"
           >
-            <RefreshCw className={`w-4 h-4 ${isDiscovering ? "animate-spin" : ""}`} />
-            {isDiscovering ? "Scanning Engines..." : "Scan for Signals"}
-          </button>
-        </div>
-      </div>
+            <RefreshCw className={`w-3.5 h-3.5 ${isDiscovering ? "animate-spin" : ""}`} />
+            <span>{isDiscovering ? "Scanning Signals..." : "Scan for Signals"}</span>
+          </Button>
+        }
+        onRefresh={() => fetchInsights()}
+        isRefreshing={loading}
+      />
+
 
       <div className="flex flex-wrap items-center gap-4 text-xs">
         <div className="flex items-center gap-1.5 text-zinc-400">
@@ -369,6 +374,72 @@ function InsightsPage() {
         </div>
       </div>
 
+      {/* Secondary Information */}
+      <SecondaryInfoPanel
+        metadata={{
+          datasetName: activeDataset?.name || "No dataset selected",
+          versionName: activeDataset?.version_id ? `v${activeDataset.version_id}` : "v1",
+          engine: "Statistical Profiling & Copilot Engine",
+          customFields: {
+            "Total Signals": insights.length,
+            "Critical": insights.filter((i) => i.severity === "CRITICAL").length,
+            "High": insights.filter((i) => i.severity === "HIGH").length,
+            "Selected Type": selectedType,
+          },
+        }}
+        recommendations={
+          activeInsight?.recommended_actions?.map((act) => ({
+            id: act.action_id,
+            title: act.title,
+            description: act.description,
+            actionLabel: act.tool_id ? `Open ${act.tool_id}` : "Investigate",
+            onAction: () => {
+              if (act.tool_id === "CLEANING" || act.tool_id === "cleaning") window.location.href = "/cleaning";
+              else if (act.tool_id === "EDA" || act.tool_id === "eda") window.location.href = "/eda";
+              else if (act.tool_id === "SQL" || act.tool_id === "sql") window.location.href = "/sql";
+              else if (act.tool_id === "FORECASTING" || act.tool_id === "forecasting") window.location.href = "/forecasting";
+            },
+            impact: "high" as const,
+          })) || [
+            {
+              id: "eda",
+              title: "Explore Signal Distributions in EDA",
+              description: "Inspect the raw shape of metrics and potential outliers associated with this insight.",
+              actionLabel: "Launch EDA",
+              onAction: () => { window.location.href = "/eda"; },
+              impact: "medium" as const,
+            },
+          ]
+        }
+        detailsContent={
+          <div className="space-y-3 text-xs text-slate-300">
+            <p>
+              Insights are ranked by deterministic importance scores computed from statistical significance, effect size, and operational impact.
+            </p>
+            {activeInsight && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                  <span className="text-slate-400 block text-[10px] uppercase">Type</span>
+                  <span className="font-semibold text-slate-200">{activeInsight.insight_type}</span>
+                </div>
+                <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                  <span className="text-slate-400 block text-[10px] uppercase">Severity</span>
+                  <span className="font-semibold text-slate-200">{activeInsight.severity}</span>
+                </div>
+                <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                  <span className="text-slate-400 block text-[10px] uppercase">Importance</span>
+                  <span className="font-semibold text-slate-200">{Math.round(activeInsight.importance_score)}/100</span>
+                </div>
+                <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                  <span className="text-slate-400 block text-[10px] uppercase">Evidence Citations</span>
+                  <span className="font-semibold text-slate-200">{activeInsight.evidence?.length || 0}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        }
+      />
+
       <AnalysisDetailsDrawer
         isOpen={isDetailsOpen}
         onClose={() => setIsDetailsOpen(false)}
@@ -387,3 +458,4 @@ function InsightsPage() {
     </div>
   );
 }
+

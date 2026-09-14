@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import React, { useState, useEffect, useCallback } from "react";
-import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
 import {
@@ -33,6 +32,12 @@ import { SQLVisualizer } from "@/components/sql/SQLVisualizer";
 import { SQLExplainPanel } from "@/components/sql/SQLExplainPanel";
 import { QueryHistoryPanel } from "@/components/sql/QueryHistoryPanel";
 import { SavedQueriesPanel } from "@/components/sql/SavedQueriesPanel";
+import { AnalyticalWorkspaceHeader } from "@/components/layout/AnalyticalWorkspaceHeader";
+import { SecondaryInfoPanel } from "@/components/layout/SecondaryInfoPanel";
+import { DatasetSelector } from "@/components/ui/DatasetSelector";
+import { VersionSelector } from "@/components/ui/VersionSelector";
+import { Button } from "@/components/ui/button";
+import { Plus, Database, Sparkles, SlidersHorizontal } from "lucide-react";
 
 export const Route = createFileRoute("/sql")({
   head: () => ({
@@ -385,79 +390,124 @@ function SQLPage() {
     }
   };
 
+  const [mode, setMode] = useState<"beginner" | "advanced">("beginner");
+
+  const currentDataset = datasets.find((d) => d.id === selectedDatasetId);
+
+  const workflowSteps = [
+    {
+      id: "schema",
+      label: "Schema",
+      status: (isExplorerOpen ? "completed" : "pending") as const,
+      onClick: () => setIsExplorerOpen(!isExplorerOpen),
+    },
+    {
+      id: "editor",
+      label: "Editor",
+      status: (currentSql.trim().length > 0 ? "completed" : "current") as const,
+    },
+    {
+      id: "results",
+      label: "Results",
+      status: (queryResult ? "completed" : "pending") as const,
+      onClick: () => setOutputTab("results"),
+    },
+  ];
+
+  const secondaryRecommendations = [
+    {
+      id: "rec-limit",
+      title: "Add LIMIT clause for interactive exploration",
+      description: "Default query limits preserve client memory and return sub-20ms results.",
+      actionLabel: "Add LIMIT 50",
+      onAction: () => {
+        if (!currentSql.toUpperCase().includes("LIMIT")) {
+          handleChangeQuery(currentSql.replace(/;?\s*$/, "") + " LIMIT 50;");
+        }
+      },
+      impact: "low" as const,
+    },
+    {
+      id: "rec-explain",
+      title: "Inspect AST execution plan",
+      description: "Review query plan operators to verify filter pushdown and scan performance.",
+      actionLabel: "Explain Query",
+      onAction: () => handleExplainQuery(),
+      impact: "medium" as const,
+    },
+  ];
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 100px)" }}>
-      {/* Top Header & Dataset/Version Selectors */}
-      <div style={{ marginBottom: "1rem" }}>
-        <PageHeader
-          title="SQL Query Workbench"
-          description="Execute fast analytical queries over your datasets with automated schema browsing, execution plans, and instant chart generation."
-          badge={{ text: "SQL Query Studio", variant: "indigo" }}
-          actions={
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-              {/* Dataset Selector */}
-              <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Dataset:</span>
-                <select
-                  value={selectedDatasetId}
-                  onChange={(e) => {
-                    setSelectedDatasetId(e.target.value);
-                    setSelectedVersionId("");
-                  }}
-                  className="input input-sm"
-                  style={{ minWidth: "150px", fontSize: "0.75rem" }}
-                  disabled={datasets.length === 0}
-                >
-                  {datasets.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Version Selector */}
-              {versions.length > 0 && (
-                <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Version:</span>
-                  <select
-                    value={selectedVersionId}
-                    onChange={(e) => setSelectedVersionId(e.target.value)}
-                    className="input input-sm"
-                    style={{ minWidth: "90px", fontSize: "0.75rem" }}
-                  >
-                    {versions.map((v) => (
-                      <option key={v.version_id} value={v.version_id}>
-                        {v.version_id} ({v.row_count} rows)
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              <button
-                type="button"
-                onClick={loadSchema}
-                disabled={schemaLoading}
-                className="btn btn-secondary btn-sm"
-                title="Refresh schema"
-              >
-                <RefreshIcon size={13} className={schemaLoading ? "spin" : ""} />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setIsExplorerOpen(!isExplorerOpen)}
-                className={`btn btn-sm ${isExplorerOpen ? "btn-primary" : "btn-secondary"}`}
-                style={{ fontSize: "0.75rem" }}
-              >
-                <DatabaseIcon size={13} />
-                Schema
-              </button>
-            </div>
-          }
-        />
-      </div>
+    <div className="flex flex-col min-h-[calc(100vh-100px)]">
+      <AnalyticalWorkspaceHeader
+        title="SQL Workbench"
+        description="Query your data using governed, read-only SQL."
+        badgeText="Governed Read-Only"
+        steps={workflowSteps}
+        currentStepId={outputTab === "results" ? "results" : "editor"}
+        mode={mode}
+        onToggleMode={setMode}
+        status={isRunning ? "running" : queryResult ? "success" : "idle"}
+        durationMs={queryResult?.execution_time_ms}
+        rowCount={queryResult?.row_count}
+        primaryAction={
+          <Button
+            size="sm"
+            onClick={handleAddTab}
+            className="h-9 px-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs gap-1.5 shadow-sm"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>New Query</span>
+          </Button>
+        }
+        secondaryActions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsExplorerOpen(!isExplorerOpen)}
+            className="h-9 px-2.5 text-xs border-white/10 bg-slate-900/60 hover:bg-slate-850 hover:border-white/20 text-slate-300 gap-1.5"
+          >
+            <Database className="w-3.5 h-3.5 text-indigo-400" />
+            <span>{isExplorerOpen ? "Hide Schema" : "Show Schema"}</span>
+          </Button>
+        }
+        customDatasetSelector={
+          <div className="flex items-center gap-1.5 bg-slate-900/60 p-1 rounded-lg border border-white/10">
+            <span className="text-[11px] font-medium text-slate-400 pl-2 pr-0.5 uppercase tracking-wider hidden sm:inline">
+              Dataset:
+            </span>
+            <DatasetSelector
+              datasets={datasets.map((d) => ({
+                id: d.id,
+                name: d.name,
+                rowCount: (d as any).row_count,
+                versionName: (d as any).current_version_name || "V1",
+              }))}
+              activeDatasetId={selectedDatasetId}
+              onSelectDataset={(id) => {
+                setSelectedDatasetId(id);
+                setSelectedVersionId("");
+              }}
+              size="sm"
+            />
+            {versions.length > 0 && (
+              <VersionSelector
+                versions={versions.map((v) => ({
+                  id: v.version_id,
+                  version_number: parseInt(v.version_id.replace(/\D/g, "") || "1"),
+                  row_count: v.row_count,
+                  is_current: v.version_id === selectedVersionId,
+                }))}
+                activeVersionId={selectedVersionId || versions[0]?.version_id}
+                onSelectVersion={(vid) => setSelectedVersionId(vid)}
+                size="sm"
+              />
+            )}
+          </div>
+        }
+        onRefresh={loadSchema}
+        isRefreshing={schemaLoading}
+      />
 
       {datasets.length === 0 ? (
         <GuidedOnboarding
@@ -651,6 +701,42 @@ function SQLPage() {
           </div>
         </div>
       )}
+
+      {/* Secondary Information: History, Details, Metadata, Recommendations */}
+      <SecondaryInfoPanel
+        metadata={{
+          datasetName: currentDataset?.name || "Active Dataset",
+          versionName: selectedVersionId || "V1",
+          rowCount: queryResult?.row_count ?? (currentDataset as any)?.row_count,
+          columnCount: schema?.columns?.length,
+          engine: "DuckDB (Governed Read-Only)",
+          executionTimeMs: queryResult?.execution_time_ms,
+          customFields: {
+            "Table Alias": schema?.table_alias || "dataset",
+            "Active Queries": tabs.length,
+            "Saved Queries": savedQueries.length,
+          },
+        }}
+        historyEntries={history.map((h) => ({
+          id: h.query_id || String(h.executed_at),
+          title: h.sql.slice(0, 45) + (h.sql.length > 45 ? "..." : ""),
+          timestamp: h.executed_at,
+          status: h.status === "SUCCESS" ? ("success" as const) : ("error" as const),
+          durationMs: h.execution_time_ms,
+          queryOrCommand: h.sql,
+          summary: `${h.row_count ?? 0} rows returned`,
+        }))}
+        onSelectHistoryEntry={(entry) => {
+          if (entry.queryOrCommand) handleChangeQuery(entry.queryOrCommand);
+        }}
+        onRerunHistoryEntry={(entry) => {
+          if (entry.queryOrCommand) {
+            handleChangeQuery(entry.queryOrCommand);
+            handleRunQuery();
+          }
+        }}
+        recommendations={secondaryRecommendations}
+      />
     </div>
   );
 }

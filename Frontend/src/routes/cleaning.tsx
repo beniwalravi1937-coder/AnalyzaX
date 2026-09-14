@@ -21,6 +21,10 @@ import {
   BeforeAfterComparisonModal,
   DatasetVersionSelector,
 } from "@/components/cleaning";
+import { AnalyticalWorkspaceHeader } from "@/components/layout/AnalyticalWorkspaceHeader";
+import { SecondaryInfoPanel } from "@/components/layout/SecondaryInfoPanel";
+import { Button } from "@/components/ui/button";
+import { Play, Sparkles, GitBranch, ArrowRight, Layers, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/cleaning")({
   head: () => ({
@@ -293,31 +297,72 @@ function CleaningPage() {
     );
   }
 
-  return (
-    <div className="ax-stack">
-      {/* Header with Version Selector */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: "1rem",
-        }}
-      >
-        <PageHeader
-          title="Clean & Transform"
-          description={`Transforming ${activeDataset.name} • Non-destructive execution with immutable version lineage`}
-        />
+  const workflowSteps = [
+    { id: "issues", label: "Issues", status: recommendations.length > 0 ? ("completed" as const) : ("current" as const) },
+    { id: "actions", label: "Recommended actions", status: planSteps.length > 0 ? ("completed" as const) : ("current" as const) },
+    { id: "preview", label: "Preview", status: preview ? ("completed" as const) : ("pending" as const) },
+    { id: "apply", label: "Apply", status: isApplyLoading ? ("current" as const) : ("pending" as const) },
+    { id: "new-version", label: `New version (V${versions.length + 1})`, status: comparisonModalData ? ("completed" as const) : ("pending" as const) },
+  ];
 
-        {versions.length > 0 && (
-          <DatasetVersionSelector
-            versions={versions}
-            activeVersionId={activeVersionId}
-            onSelectVersion={handleSelectVersion}
-            isLoading={isVersionLoading}
-          />
-        )}
+  return (
+    <div className="flex flex-col min-h-[calc(100vh-100px)]">
+      <AnalyticalWorkspaceHeader
+        title="Cleaning Studio"
+        description="Fix messy rows, remove duplicates, and fill missing values with auditable version lineage."
+        badgeText="Immutable Lineage"
+        steps={workflowSteps}
+        currentStepId={preview ? "preview" : planSteps.length > 0 ? "actions" : "issues"}
+        status={isApplyLoading ? "running" : isPreviewLoading ? "loading" : "idle"}
+        primaryAction={
+          <Button
+            size="sm"
+            onClick={() => {
+              if (planSteps.length > 0) setIsApplyDialogOpen(true);
+              else if (recommendations.length > 0) handleAddStep(recommendations[0].suggested_step);
+            }}
+            disabled={isApplyLoading || (planSteps.length === 0 && recommendations.length === 0)}
+            className="h-9 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs gap-1.5 shadow-sm"
+          >
+            <GitBranch className="w-3.5 h-3.5" />
+            <span>{planSteps.length > 0 ? `Apply Plan → Create V${versions.length + 1}` : "Apply First Fix"}</span>
+          </Button>
+        }
+        secondaryActions={
+          versions.length > 0 ? (
+            <DatasetVersionSelector
+              versions={versions}
+              activeVersionId={activeVersionId}
+              onSelectVersion={handleSelectVersion}
+              isLoading={isVersionLoading}
+            />
+          ) : undefined
+        }
+      />
+
+      {/* Visual Version Creation Banner */}
+      <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-indigo-950/60 to-emerald-950/40 border border-emerald-500/25 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
+            <GitBranch className="w-4 h-4 text-emerald-400" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-white">Immutable Lineage Protection:</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40">
+                Next Version: V{versions.length + 1}
+              </span>
+            </div>
+            <p className="text-slate-400 text-[11px] mt-0.5">
+              Original data is permanently preserved. Every pipeline application creates a new, auditable version artifact with full diff tracking.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 self-end sm:self-center font-mono text-[11px] text-slate-300 shrink-0">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Non-destructive DAG</span>
+        </div>
       </div>
 
       {/* Success Banner */}
@@ -457,6 +502,38 @@ function CleaningPage() {
         comparison={comparisonModalData?.comparison || null}
         newVersion={comparisonModalData?.newVersion || null}
         datasetId={activeDataset.id}
+      />
+
+      {/* Secondary Information: History, Details, Metadata, Recommendations */}
+      <SecondaryInfoPanel
+        metadata={{
+          datasetName: activeDataset.name,
+          versionName: activeVersionId || "V1",
+          rowCount: (activeDataset as any).row_count,
+          columnCount: (activeDataset as any).column_count,
+          engine: "Polars + DuckDB (Deterministic)",
+          customFields: {
+            "Planned Operations": planSteps.length,
+            "Available Recommendations": recommendations.length,
+            "Next Lineage Snapshot": `V${versions.length + 1}`,
+          },
+        }}
+        historyEntries={versions.map((v) => ({
+          id: v.version_id,
+          title: `Snapshot ${v.version_id} (${v.row_count.toLocaleString()} rows)`,
+          timestamp: v.created_at,
+          status: "success" as const,
+          summary: v.change_description || "Cleaned dataset version snapshot",
+        }))}
+        onSelectHistoryEntry={(entry) => handleSelectVersion(entry.id)}
+        recommendations={recommendations.slice(0, 4).map((r, i) => ({
+          id: `rec-${i}`,
+          title: r.title,
+          description: r.description,
+          impact: r.priority === "HIGH" ? ("high" as const) : r.priority === "MEDIUM" ? ("medium" as const) : ("low" as const),
+          actionLabel: "Add to Plan",
+          onAction: () => handleAddStep(r.suggested_step),
+        }))}
       />
     </div>
   );

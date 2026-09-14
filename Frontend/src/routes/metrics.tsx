@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React, { useEffect, useState } from "react";
 import { useWorkspace } from "../context/WorkspaceContext";
+import { useDataset } from "../context/DatasetContext";
 import {
   AggregationType,
   MetricDefinition,
@@ -27,27 +28,20 @@ import {
   Tag,
   Trash2,
 } from "lucide-react";
+import { AnalyticalWorkspaceHeader } from "@/components/layout/AnalyticalWorkspaceHeader";
+import { SecondaryInfoPanel } from "@/components/layout/SecondaryInfoPanel";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/metrics")({
   head: () => ({
     meta: [
-      { title: "KPI & Metric Library — AnalyzaX" },
+      { title: "Governed Semantic Metrics — AnalyzaX" },
       {
         name: "description",
         content:
-          "Define standardized company KPIs and business formulas once so everyone on your team measures success the exact same way.",
+          "Define, govern, and monitor standardized business and operational metrics.",
       },
-      { property: "og:title", content: "KPI & Metric Library — AnalyzaX" },
-      {
-        property: "og:description",
-        content:
-          "Define standardized company KPIs and business formulas once for team-wide consistency.",
-      },
-      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
+      { property: "og:title", content: "Governed Semantic Metrics — AnalyzaX" },
     ],
   }),
   component: MetricsPage,
@@ -55,11 +49,13 @@ export const Route = createFileRoute("/metrics")({
 
 function MetricsPage() {
   const { activeWorkspace, activeProject } = useWorkspace();
+  const { activeDataset } = useDataset();
 
   const [metrics, setMetrics] = useState<MetricDefinition[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [mode, setMode] = useState<"beginner" | "advanced">("beginner");
 
   // Create / Edit modal state
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -197,6 +193,13 @@ function MetricsPage() {
     }
   };
 
+  const workflowSteps = [
+    { id: "catalog", label: "Catalog", status: metrics.length > 0 ? ("completed" as const) : ("current" as const) },
+    { id: "validation", label: "Formula Validation", status: "completed" as const },
+    { id: "governance", label: "Governance & Synonyms", status: "completed" as const },
+    { id: "lineage", label: "Lineage & Versions", status: "completed" as const },
+  ];
+
   const filteredMetrics = metrics.filter((m) =>
     m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     m.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -204,26 +207,29 @@ function MetricsPage() {
   );
 
   return (
-    <div className="flex flex-col h-full overflow-hidden p-6 space-y-6 text-zinc-100">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-zinc-800">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2.5">
-            <Calculator className="w-6 h-6 text-blue-400" />
-            Governed Semantic Metrics
-          </h1>
-          <p className="text-sm text-zinc-400 mt-1">
-            Standardized business definitions with AST formula validation, version history, and cycle detection.
-          </p>
-        </div>
-
-        <button
-          onClick={handleOpenCreate}
-          className="flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-lg shadow-blue-900/20"
-        >
-          <Plus className="w-4 h-4" />
-          Define Metric
-        </button>
-      </div>
+    <div className="flex flex-col min-h-[calc(100vh-100px)] space-y-4">
+      <AnalyticalWorkspaceHeader
+        title="Metrics"
+        description="Define, govern, and monitor standardized business and operational metrics."
+        badgeText="AST Formula Engine"
+        steps={workflowSteps}
+        currentStepId="catalog"
+        status={loading ? "loading" : "idle"}
+        mode={mode}
+        onModeChange={setMode}
+        primaryAction={
+          <Button
+            size="sm"
+            onClick={handleOpenCreate}
+            className="h-9 px-3 bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs gap-1.5 shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Define Metric</span>
+          </Button>
+        }
+        onRefresh={() => fetchMetrics()}
+        isRefreshing={loading}
+      />
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -474,6 +480,64 @@ function MetricsPage() {
           </div>
         </div>
       )}
+
+      {/* Secondary Information */}
+      <SecondaryInfoPanel
+        metadata={{
+          datasetName: activeDataset?.name || "No dataset selected",
+          versionName: activeDataset?.version_id ? `v${activeDataset.version_id}` : "v1",
+          engine: "AST Semantic Engine & Cycle Detector",
+          customFields: {
+            "Total Metrics": metrics.length,
+            "Active": metrics.filter((m) => m.status === "ACTIVE").length,
+            "Draft": metrics.filter((m) => m.status === "DRAFT").length,
+            "Workspace": activeWorkspace?.workspace_id ? "Connected" : "Default",
+          },
+        }}
+        recommendations={[
+          {
+            id: "sql-verify",
+            title: "Test Formulas in SQL Workbench",
+            description: "Run test evaluations of calculated metrics against current dataset tables in DuckDB.",
+            actionLabel: "Open SQL",
+            onAction: () => { window.location.href = "/sql"; },
+            impact: "high" as const,
+          },
+          {
+            id: "quality-audit",
+            title: "Audit Referenced Columns in Quality Check",
+            description: "Verify completeness and validity of columns referenced by metric AST expressions.",
+            actionLabel: "Data Quality",
+            onAction: () => { window.location.href = "/data-quality"; },
+            impact: "medium" as const,
+          },
+        ]}
+        detailsContent={
+          <div className="space-y-3 text-xs text-slate-300">
+            <p>
+              Governed semantic metrics enforce pure AST formula validation, preventing division by zero, cycles, and arbitrary code injection.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                <span className="text-slate-400 block text-[10px] uppercase">Parser</span>
+                <span className="font-semibold text-slate-200">Safe Python AST</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                <span className="text-slate-400 block text-[10px] uppercase">Cycle Detection</span>
+                <span className="font-semibold text-slate-200">Tarjan SCC</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                <span className="text-slate-400 block text-[10px] uppercase">Execution Mode</span>
+                <span className="font-semibold text-slate-200">DuckDB Aggregation</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                <span className="text-slate-400 block text-[10px] uppercase">Versioning</span>
+                <span className="font-semibold text-slate-200">Immutable Audit Trail</span>
+              </div>
+            </div>
+          </div>
+        }
+      />
 
       {isHistoryOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">

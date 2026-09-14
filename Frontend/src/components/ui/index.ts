@@ -32,3 +32,7 @@ export * from "./dropdown-menu";
 export * from "./select";
 export * from "./separator";
 export * from "./command";
+export * from "./VersionSelector";
+export * from "./AnalysisStatus";
+export * from "./ResultCard";
+export * from "./HistoryPanel";

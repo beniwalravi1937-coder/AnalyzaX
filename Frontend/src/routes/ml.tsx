@@ -30,16 +30,8 @@ export const Route = createFileRoute("/ml")({
 
 function MachineLearningPage() {
   return (
-    <div className="ax-stack">
-      <PageHeader
-        title="Machine Learning Studio & Workspace"
-        description="Deterministic, version-aware machine learning powered by scikit-learn. Automated suitability diagnostics, leakage-free preprocessing, multi-model evaluation, and live inference."
-        badge={{ text: "Predictive Machine Learning", variant: "indigo" }}
-      />
-
-      <div style={{ marginTop: "1rem" }}>
-        <MLWorkspace />
-      </div>
+    <div className="flex flex-col min-h-[calc(100vh-100px)]">
+      <MLWorkspace />
     </div>
   );
 }

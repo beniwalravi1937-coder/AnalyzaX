@@ -14,6 +14,8 @@ import { Route as AiAnalystRouteImport } from './routes/ai-analyst'
 import { Route as CleaningRouteImport } from './routes/cleaning'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DataRouteImport } from './routes/data'
+import { Route as DataQualityRouteImport } from './routes/data-quality'
+import { Route as DatasetRouteImport } from './routes/dataset'
 import { Route as EdaRouteImport } from './routes/eda'
 import { Route as ExportsRouteImport } from './routes/exports'
 import { Route as ForecastingRouteImport } from './routes/forecasting'
@@ -59,6 +61,16 @@ const DashboardRoute = DashboardRouteImport.update({
 const DataRoute = DataRouteImport.update({
   id: '/data',
   path: '/data',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DataQualityRoute = DataQualityRouteImport.update({
+  id: '/data-quality',
+  path: '/data-quality',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DatasetRoute = DatasetRouteImport.update({
+  id: '/dataset',
+  path: '/dataset',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EdaRoute = EdaRouteImport.update({
@@ -173,6 +185,8 @@ export interface FileRoutesByFullPath {
   '/cleaning': typeof CleaningRoute
   '/dashboard': typeof DashboardRoute
   '/data': typeof DataRoute
+  '/data-quality': typeof DataQualityRoute
+  '/dataset': typeof DatasetRoute
   '/eda': typeof EdaRoute
   '/exports': typeof ExportsRoute
   '/forecasting': typeof ForecastingRoute
@@ -201,6 +215,8 @@ export interface FileRoutesByTo {
   '/cleaning': typeof CleaningRoute
   '/dashboard': typeof DashboardRoute
   '/data': typeof DataRoute
+  '/data-quality': typeof DataQualityRoute
+  '/dataset': typeof DatasetRoute
   '/eda': typeof EdaRoute
   '/exports': typeof ExportsRoute
   '/forecasting': typeof ForecastingRoute
@@ -230,6 +246,8 @@ export interface FileRoutesById {
   '/cleaning': typeof CleaningRoute
   '/dashboard': typeof DashboardRoute
   '/data': typeof DataRoute
+  '/data-quality': typeof DataQualityRoute
+  '/dataset': typeof DatasetRoute
   '/eda': typeof EdaRoute
   '/exports': typeof ExportsRoute
   '/forecasting': typeof ForecastingRoute
@@ -260,6 +278,8 @@ export interface FileRouteTypes {
     | '/cleaning'
     | '/dashboard'
     | '/data'
+    | '/data-quality'
+    | '/dataset'
     | '/eda'
     | '/exports'
     | '/forecasting'
@@ -288,6 +308,8 @@ export interface FileRouteTypes {
     | '/cleaning'
     | '/dashboard'
     | '/data'
+    | '/data-quality'
+    | '/dataset'
     | '/eda'
     | '/exports'
     | '/forecasting'
@@ -316,6 +338,8 @@ export interface FileRouteTypes {
     | '/cleaning'
     | '/dashboard'
     | '/data'
+    | '/data-quality'
+    | '/dataset'
     | '/eda'
     | '/exports'
     | '/forecasting'
@@ -345,6 +369,8 @@ export interface RootRouteChildren {
   CleaningRoute: typeof CleaningRoute
   DashboardRoute: typeof DashboardRoute
   DataRoute: typeof DataRoute
+  DataQualityRoute: typeof DataQualityRoute
+  DatasetRoute: typeof DatasetRoute
   EdaRoute: typeof EdaRoute
   ExportsRoute: typeof ExportsRoute
   ForecastingRoute: typeof ForecastingRoute
@@ -403,6 +429,20 @@ declare module '@tanstack/react-router' {
       path: '/data'
       fullPath: '/data'
       preLoaderRoute: typeof DataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/data-quality': {
+      id: '/data-quality'
+      path: '/data-quality'
+      fullPath: '/data-quality'
+      preLoaderRoute: typeof DataQualityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dataset': {
+      id: '/dataset'
+      path: '/dataset'
+      fullPath: '/dataset'
+      preLoaderRoute: typeof DatasetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/eda': {
@@ -561,6 +601,8 @@ const rootRouteChildren: RootRouteChildren = {
   CleaningRoute: CleaningRoute,
   DashboardRoute: DashboardRoute,
   DataRoute: DataRoute,
+  DataQualityRoute: DataQualityRoute,
+  DatasetRoute: DatasetRoute,
   EdaRoute: EdaRoute,
   ExportsRoute: ExportsRoute,
   ForecastingRoute: ForecastingRoute,

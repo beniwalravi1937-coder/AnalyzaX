@@ -22,6 +22,12 @@ import {
 import { GitCommit, Archive } from "lucide-react";
 import { DatasetVersionBrowser } from "@/components/workspace/DatasetVersionBrowser";
 import { workspaceApi } from "@/services/workspaceApi";
+import { AnalyticalWorkspaceHeader } from "@/components/layout/AnalyticalWorkspaceHeader";
+import { SecondaryInfoPanel } from "@/components/layout/SecondaryInfoPanel";
+import { DatasetSelector } from "@/components/ui/DatasetSelector";
+import { VersionSelector } from "@/components/ui/VersionSelector";
+import { Button } from "@/components/ui/button";
+import { UploadCloud, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/data")({
   head: () => ({
@@ -71,7 +77,7 @@ function formatDate(dateStr: string): string {
   }
 }
 
-function DataPage() {
+export function DataPage() {
   const {
     datasets,
     activeDataset,
@@ -156,24 +162,52 @@ function DataPage() {
     }
   };
 
+  const workflowSteps = [
+    { id: "catalog", label: "Catalog", status: datasets.length > 0 ? ("completed" as const) : ("current" as const) },
+    { id: "profile", label: "Profile", status: profile ? ("completed" as const) : ("pending" as const) },
+    { id: "columns", label: "Columns", status: profile?.columns?.length ? ("completed" as const) : ("pending" as const) },
+    { id: "versions", label: "Lineage DAG", status: "completed" as const, onClick: () => setShowVersionBrowser(true) },
+  ];
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
-      <PageHeader
-        title="Dataset Management & Intelligence"
-        description="Ingest, validate, and catalog datasets with automated deterministic DuckDB structural profiling and semantic understanding."
-        badge={{ text: "Automated Profiling", variant: "emerald" }}
-        actions={
-          <button
-            type="button"
-            onClick={() => refreshDatasets()}
-            className="btn btn-secondary btn-sm"
-            style={{ gap: "0.4rem" }}
-            title="Refresh dataset list"
+    <div className="flex flex-col min-h-[calc(100vh-100px)]">
+      <AnalyticalWorkspaceHeader
+        title="Dataset Inspector"
+        description="Explore, preview, and manage governed datasets and schema versions."
+        badgeText="DuckDB Engine"
+        steps={workflowSteps}
+        currentStepId={profile ? "columns" : "catalog"}
+        status={isProfileLoading ? "loading" : isDatasetsLoading ? "running" : "idle"}
+        durationMs={profile?.execution_time_ms}
+        rowCount={profile?.total_rows}
+        primaryAction={
+          <Button
+            size="sm"
+            onClick={() => {
+              const el = document.getElementById("file-dropzone-section");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="h-9 px-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs gap-1.5 shadow-sm"
           >
-            <RefreshIcon size={14} />
-            <span>Refresh</span>
-          </button>
+            <UploadCloud className="w-3.5 h-3.5" />
+            <span>Upload Dataset</span>
+          </Button>
         }
+        secondaryActions={
+          activeDataset && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowVersionBrowser(true)}
+              className="h-9 px-2.5 text-xs border-white/10 bg-slate-900/60 hover:bg-slate-850 hover:border-white/20 text-indigo-300 gap-1.5"
+            >
+              <GitCommit className="w-3.5 h-3.5" />
+              <span>Lineage DAG</span>
+            </Button>
+          )
+        }
+        onRefresh={() => refreshDatasets()}
+        isRefreshing={isDatasetsLoading}
       />
 
       {/* Active Dataset Banner */}
@@ -745,6 +779,75 @@ function DataPage() {
         )}
       </SectionCard>
 
+      {/* Secondary Information */}
+      <SecondaryInfoPanel
+        metadata={{
+          datasetName: activeDataset?.original_filename || "No dataset selected",
+          versionName: activeDataset?.version_id ? `v${activeDataset.version_id}` : "v1",
+          rowCount: profile?.total_rows,
+          columnCount: profile?.total_columns,
+          storageSize: activeDataset?.file_size_bytes ? formatBytes(activeDataset.file_size_bytes) : undefined,
+          engine: "DuckDB In-Memory & Parquet",
+          executionTimeMs: profile?.execution_time_ms,
+          customFields: {
+            "Catalog Datasets": datasets.length,
+            "Quality Score": profile?.quality_score ? `${Math.round(profile.quality_score * 100)}%` : "N/A",
+            "Missing Rate": profile?.missing_percentage !== undefined ? `${profile.missing_percentage.toFixed(1)}%` : "0%",
+          },
+        }}
+        recommendations={[
+          {
+            id: "eda",
+            title: "Explore Distributions & Correlations",
+            description: "Deep dive into univariate histograms, bivariate scatter plots, and correlation heatmaps.",
+            actionLabel: "Open EDA",
+            onAction: () => { window.location.href = "/eda"; },
+            impact: "high",
+          },
+          {
+            id: "quality",
+            title: "Audit Data Completeness & Schema",
+            description: "Review column-level missing values, uniqueness, and consistency scores.",
+            actionLabel: "View Quality",
+            onAction: () => { window.location.href = "/data-quality"; },
+            impact: "medium",
+          },
+          {
+            id: "cleaning",
+            title: "Clean Outliers & Missing Values",
+            description: "Create an immutable version snapshot with deterministic imputations.",
+            actionLabel: "Cleaning Studio",
+            onAction: () => { window.location.href = "/cleaning"; },
+            impact: "medium",
+          },
+        ]}
+        detailsContent={
+          <div className="space-y-3 text-xs text-slate-300">
+            <p>
+              Dataset <strong>{activeDataset?.original_filename || "None"}</strong> is ingested into DuckDB with read-only query isolation.
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                <span className="text-slate-400 block text-[10px] uppercase">Engine</span>
+                <span className="font-semibold text-slate-200">DuckDB columnar</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                <span className="text-slate-400 block text-[10px] uppercase">Storage Mode</span>
+                <span className="font-semibold text-slate-200">Immutable Arrow/Parquet</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                <span className="text-slate-400 block text-[10px] uppercase">Profiling Engine</span>
+                <span className="font-semibold text-slate-200">Polars Vectorized</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                <span className="text-slate-400 block text-[10px] uppercase">Lineage Node</span>
+                <span className="font-semibold text-slate-200">v{activeDataset?.version_id || 1} (Root)</span>
+              </div>
+            </div>
+          </div>
+        }
+      />
+
       {activeDataset && (
         <DatasetVersionBrowser
           datasetId={activeDataset.id}
@@ -756,3 +859,4 @@ function DataPage() {
     </div>
   );
 }
+

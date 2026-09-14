@@ -23,6 +23,12 @@ import {
   SavedVisualization,
   VisualizationValidationResult,
 } from "@/types";
+import { AnalyticalWorkspaceHeader } from "@/components/layout/AnalyticalWorkspaceHeader";
+import { SecondaryInfoPanel } from "@/components/layout/SecondaryInfoPanel";
+import { DatasetSelector } from "@/components/ui/DatasetSelector";
+import { VersionSelector } from "@/components/ui/VersionSelector";
+import { Button } from "@/components/ui/button";
+import { Save, Sparkles, BarChart3, Plus, ArrowRight, RefreshCw } from "lucide-react";
 import { ChartContainer } from "@/components/visualization/ChartContainer";
 import { ChartBuilder } from "@/components/visualization/ChartBuilder";
 import { VisualizationGrid } from "@/components/visualization/VisualizationGrid";
@@ -279,90 +285,93 @@ function VisualizationsPage() {
     hydrateChart(updatedSpec);
   };
 
+  const [mode, setMode] = useState<"beginner" | "advanced">("beginner");
+
+  const currentDataset = datasets.find((d) => d.id === selectedDatasetId);
+
+  const workflowSteps = [
+    { id: "data", label: "Data", status: selectedDatasetId ? ("completed" as const) : ("current" as const) },
+    { id: "intent", label: "Intent", status: recommendations.length > 0 ? ("completed" as const) : ("current" as const), onClick: () => setActiveTab("recommendations") },
+    { id: "chart", label: "Chart", status: activeSpec ? ("completed" as const) : ("pending" as const), onClick: () => setActiveTab("recommendations") },
+    { id: "customize", label: "Customize", status: activeSpec ? ("completed" as const) : ("pending" as const), onClick: () => setActiveTab("studio") },
+    { id: "save", label: "Save", status: savedCharts.length > 0 ? ("completed" as const) : ("pending" as const), onClick: () => setSaveModalOpen(true) },
+  ];
+
   return (
-    <div className="ax-stack">
-      {/* Page Header */}
-      <PageHeader
-        title="Visualization Intelligence & Studio"
-        description="Deterministic, semantic, version-aware visualizations and automated chart intelligence."
-      />
-
-      {/* Dataset & Version Bar */}
-      <div
-        className="card"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0.75rem 1.25rem",
-          marginBottom: "1.25rem",
-          backgroundColor: "var(--bg-surface)",
-          border: "1px solid var(--border-subtle)",
-          flexWrap: "wrap",
-          gap: "1rem",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap" }}>
-          {/* Dataset Selector */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <DatabaseIcon size={16} className="text-brand" />
-            <span style={{ fontSize: "0.825rem", fontWeight: 600, color: "var(--text-secondary)" }}>
-              Dataset:
-            </span>
-            <select
-              value={selectedDatasetId}
-              onChange={(e) => setSelectedDatasetId(e.target.value)}
-              className="input input-sm"
-              style={{ minWidth: "180px", fontSize: "0.825rem" }}
-            >
-              {datasets.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Version Selector */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span style={{ fontSize: "0.825rem", fontWeight: 600, color: "var(--text-secondary)" }}>
-              Version:
-            </span>
-            <select
-              value={selectedVersionId}
-              onChange={(e) => setSelectedVersionId(e.target.value)}
-              className="input input-sm"
-              style={{ minWidth: "100px", fontSize: "0.825rem" }}
-            >
-              {versions.map((v) => (
-                <option key={v.version_id} value={v.version_id}>
-                  {v.version_id} ({v.version_label || "Base"})
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Right side status / reload */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          {saveSuccessMsg && (
-            <span style={{ fontSize: "0.8rem", color: "var(--status-success, #10b981)", fontWeight: 600 }}>
-              ✓ {saveSuccessMsg}
-            </span>
-          )}
-          <button
+    <div className="flex flex-col min-h-[calc(100vh-100px)]">
+      <AnalyticalWorkspaceHeader
+        title="Visualization Studio"
+        description="Build interactive charts, customize encodings, and generate presentation graphics."
+        badgeText="ChartSpec Engine"
+        steps={workflowSteps}
+        currentStepId={activeTab === "studio" ? "customize" : activeSpec ? "chart" : "intent"}
+        mode={mode}
+        onToggleMode={setMode}
+        status={isHydrating ? "loading" : isRecsLoading ? "running" : activeSpec ? "success" : "idle"}
+        durationMs={activeData ? activeData.length : undefined}
+        primaryAction={
+          <Button
+            size="sm"
+            onClick={() => {
+              if (activeSpec) setSaveModalOpen(true);
+              else setActiveTab("recommendations");
+            }}
+            className="h-9 px-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs gap-1.5 shadow-sm"
+          >
+            <Save className="w-3.5 h-3.5" />
+            <span>{activeSpec ? "Save Visualization" : "Explore Charts"}</span>
+          </Button>
+        }
+        secondaryActions={
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => {
               loadRecommendations();
               loadSavedCharts();
             }}
-            className="btn btn-secondary btn-sm"
-            style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}
+            disabled={isRecsLoading}
+            className="h-9 px-2.5 text-xs border-white/10 bg-slate-900/60 hover:bg-slate-850 hover:border-white/20 text-slate-300 gap-1"
           >
-            <RefreshIcon size={14} className={isRecsLoading ? "spin" : ""} />
-            Refresh Intelligence
-          </button>
-        </div>
-      </div>
+            <RefreshCw className={`w-3.5 h-3.5 ${isRecsLoading ? "animate-spin text-indigo-400" : ""}`} />
+            <span>Refresh</span>
+          </Button>
+        }
+        customDatasetSelector={
+          <div className="flex items-center gap-1.5 bg-slate-900/60 p-1 rounded-lg border border-white/10">
+            <span className="text-[11px] font-medium text-slate-400 pl-2 pr-0.5 uppercase tracking-wider hidden sm:inline">
+              Dataset:
+            </span>
+            <DatasetSelector
+              datasets={datasets.map((d) => ({
+                id: d.id,
+                name: d.name,
+                rowCount: (d as any).row_count,
+                versionName: (d as any).current_version_name || "V1",
+              }))}
+              activeDatasetId={selectedDatasetId}
+              onSelectDataset={(id) => {
+                setSelectedDatasetId(id);
+                setSelectedVersionId("");
+              }}
+              size="sm"
+            />
+            {versions.length > 0 && (
+              <VersionSelector
+                versions={versions.map((v) => ({
+                  id: v.version_id,
+                  version_number: parseInt(v.version_id.replace(/\D/g, "") || "1"),
+                  row_count: v.row_count,
+                  is_current: v.version_id === selectedVersionId,
+                }))}
+                activeVersionId={selectedVersionId || versions[0]?.version_id}
+                onSelectVersion={(vid) => setSelectedVersionId(vid)}
+                size="sm"
+              />
+            )}
+          </div>
+        }
+      />
 
       {datasets.length === 0 ? (
         <GuidedOnboarding
@@ -748,6 +757,47 @@ function VisualizationsPage() {
           </div>
         </div>
       )}
+
+      {/* Secondary Information: History, Details, Metadata, Recommendations */}
+      <SecondaryInfoPanel
+        metadata={{
+          datasetName: currentDataset?.name || "Active Dataset",
+          versionName: selectedVersionId || "V1",
+          engine: "Recharts + Vega-Lite ChartSpec",
+          customFields: {
+            "Active Chart Mark": activeSpec?.chart_type || "None selected",
+            "X Dimension": (activeSpec?.encoding as any)?.x?.field || "None",
+            "Y Measure": (activeSpec?.encoding as any)?.y?.field || "None",
+            "Sample Records Rendered": activeData.length,
+            "Saved Visualizations": savedCharts.length,
+          },
+        }}
+        historyEntries={savedCharts.map((s) => ({
+          id: s.id,
+          title: s.title || s.name || "Untitled Chart",
+          timestamp: s.created_at,
+          status: "success" as const,
+          summary: `${s.spec?.chart_type?.toUpperCase() || "Chart"} · ${s.description || "Saved graphic"}`,
+        }))}
+        onSelectHistoryEntry={(entry) => {
+          const chart = savedCharts.find((s) => s.id === entry.id);
+          if (chart) {
+            handleSelectSpec(chart.spec);
+            setActiveTab("studio");
+          }
+        }}
+        recommendations={recommendations.slice(0, 4).map((rec, i) => ({
+          id: `chart-rec-${i}`,
+          title: rec.title,
+          description: rec.rationale || `Recommended ${rec.spec.chart_type} chart based on column metrics.`,
+          impact: "medium" as const,
+          actionLabel: "Load Chart",
+          onAction: () => {
+            handleSelectSpec(rec.spec);
+            setActiveTab("recommendations");
+          },
+        }))}
+      />
     </div>
   );
 }

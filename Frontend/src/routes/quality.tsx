@@ -7,15 +7,18 @@ import {
   QualityDimension,
   QualitySeverity,
 } from "@/types";
-import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
-import { DataQualityIcon, UploadIcon, RefreshIcon, AlertCircleIcon } from "@/components/icons";
+import { RefreshIcon, AlertCircleIcon } from "@/components/icons";
 import { QualityScoreCard } from "@/components/quality/QualityScoreCard";
 import { DimensionCards } from "@/components/quality/DimensionCards";
 import { IssueSummaryBar } from "@/components/quality/IssueSummaryBar";
 import { QualityIssuesTable } from "@/components/quality/QualityIssuesTable";
 import { ColumnQualityTable } from "@/components/quality/ColumnQualityTable";
+import { AnalyticalWorkspaceHeader } from "@/components/layout/AnalyticalWorkspaceHeader";
+import { SecondaryInfoPanel } from "@/components/layout/SecondaryInfoPanel";
+import { Button } from "@/components/ui/button";
+import { ShieldAlert, Sparkles, RefreshCw, Wand2, CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/quality")({
   head: () => ({
@@ -24,31 +27,22 @@ export const Route = createFileRoute("/quality")({
       {
         name: "description",
         content:
-          "Audit your dataset health in seconds. Spot missing cells, duplicate records, and invalid values with an automated quality score and fix tips.",
+          "Audit completeness, validity, uniqueness, and consistency across dataset versions.",
       },
       { property: "og:title", content: "Data Quality Health Check — AnalyzaX" },
-      {
-        property: "og:description",
-        content:
-          "Audit your dataset health in seconds. Spot missing cells and duplicate records with an automated quality score.",
-      },
-      { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-quality.png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://analyzaxab-vp.vercel.app/og-quality.png" },
     ],
   }),
   component: DataQualityPage,
 });
 
-function DataQualityPage() {
+export function DataQualityPage() {
   const { activeDataset, isLoading: isDatasetLoading } = useDataset();
 
   const [report, setReport] = useState<DataQualityReportResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<"beginner" | "power">("beginner");
 
   // Filters for issues table
   const [selectedSeverity, setSelectedSeverity] = useState<QualitySeverity | null>(null);
@@ -103,33 +97,53 @@ function DataQualityPage() {
     }
   };
 
+  const workflowSteps = [
+    { id: "score", label: "Health Score", status: report ? ("completed" as const) : ("current" as const) },
+    { id: "dimensions", label: "Dimensions", status: report?.dimension_scores ? ("completed" as const) : ("pending" as const) },
+    { id: "issues", label: "Issues Catalog", status: report?.issues?.length ? ("completed" as const) : ("pending" as const) },
+    { id: "columns", label: "Column Health", status: report?.column_summaries?.length ? ("completed" as const) : ("pending" as const) },
+  ];
+
   return (
-    <div className="ax-stack">
-      <PageHeader
-        title="Data Quality Assessment"
-        description="Deterministic auditing of completeness, uniqueness, domain validity, category consistency, and anomaly risk."
-        badge={{
-          text: activeDataset ? activeDataset.name : "Awaiting Dataset",
-          variant: activeDataset ? "emerald" : "neutral",
-        }}
-        actions={
-          activeDataset && report ? (
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              onClick={() => fetchQualityReport(true)}
-              disabled={isRefreshing || isLoading}
-            >
-              <RefreshIcon
-                size={14}
-                style={{
-                  animation: isRefreshing ? "spin 1s linear infinite" : "none",
-                }}
-              />
-              <span>{isRefreshing ? "Auditing..." : "Re-audit"}</span>
-            </button>
-          ) : undefined
+    <div className="flex flex-col min-h-[calc(100vh-100px)]">
+      <AnalyticalWorkspaceHeader
+        title="Data Quality"
+        description="Audit completeness, validity, uniqueness, and consistency across dataset versions."
+        badgeText="Deterministic Rule Engine"
+        steps={workflowSteps}
+        currentStepId={report ? "issues" : "score"}
+        status={isLoading ? "loading" : isRefreshing ? "running" : report ? "success" : "idle"}
+        durationMs={report?.execution_time_ms}
+        rowCount={report?.total_rows}
+        mode={mode === "beginner" ? "beginner" : "advanced"}
+        onModeChange={(m) => setMode(m === "beginner" ? "beginner" : "power")}
+        primaryAction={
+          <Button
+            size="sm"
+            onClick={() => fetchQualityReport(true)}
+            disabled={!activeDataset || isLoading || isRefreshing}
+            className="h-9 px-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs gap-1.5 shadow-sm"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+            <span>{isRefreshing ? "Auditing Rules..." : "Run Quality Audit"}</span>
+          </Button>
         }
+        secondaryActions={
+          report && (
+            <Link to="/cleaning">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 px-2.5 text-xs border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 gap-1.5"
+              >
+                <Wand2 className="w-3.5 h-3.5" />
+                <span>Auto-Fix in Cleaning</span>
+              </Button>
+            </Link>
+          )
+        }
+        onRefresh={() => fetchQualityReport(true)}
+        isRefreshing={isRefreshing || isLoading}
       />
 
       {/* State 1: No Dataset Connected */}
@@ -279,6 +293,72 @@ function DataQualityPage() {
           </div>
         </div>
       )}
+
+      {/* Secondary Information */}
+      <SecondaryInfoPanel
+        metadata={{
+          datasetName: activeDataset?.name || "No dataset selected",
+          versionName: activeDataset?.version_id ? `v${activeDataset.version_id}` : "v1",
+          rowCount: report?.total_rows,
+          columnCount: report?.total_columns,
+          engine: "DuckDB Vectorized Rule Engine",
+          executionTimeMs: report?.execution_time_ms,
+          customFields: {
+            "Overall Score": report?.overall_score !== undefined ? `${Math.round(report.overall_score)}/100` : "N/A",
+            "Total Issues": report?.total_issues ?? 0,
+            "Critical Issues": report?.critical_issues ?? 0,
+            "High Issues": report?.high_issues ?? 0,
+          },
+        }}
+        recommendations={[
+          ...(report && (report.critical_issues > 0 || report.high_issues > 0)
+            ? [
+                {
+                  id: "fix-issues",
+                  title: "Fix Detected Quality Issues in Cleaning Studio",
+                  description: `Found ${report.critical_issues + report.high_issues} high-priority issues that can be auto-resolved with reproducible cleaning operations.`,
+                  actionLabel: "Open Cleaning Studio",
+                  onAction: () => { window.location.href = "/cleaning"; },
+                  impact: "high" as const,
+                },
+              ]
+            : []),
+          {
+            id: "eda-inspect",
+            title: "Inspect Column Distributions",
+            description: "Analyze skewness, missingness maps, and outliers visually in the EDA workspace.",
+            actionLabel: "Launch EDA",
+            onAction: () => { window.location.href = "/eda"; },
+            impact: "medium" as const,
+          },
+          {
+            id: "sql-verify",
+            title: "Verify Anomaly Records via SQL",
+            description: "Write read-only queries against anomaly flags in DuckDB SQL Workbench.",
+            actionLabel: "Open SQL",
+            onAction: () => { window.location.href = "/sql"; },
+            impact: "low" as const,
+          },
+        ]}
+        detailsContent={
+          <div className="space-y-3 text-xs text-slate-300">
+            <p>
+              Auditing methodology executes deterministic DuckDB SQL checks across six mathematical data quality dimensions.
+            </p>
+            {report?.dimension_scores && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2">
+                {Object.entries(report.dimension_scores).map(([dim, score]) => (
+                  <div key={dim} className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5">
+                    <span className="text-slate-400 block text-[10px] uppercase">{dim}</span>
+                    <span className="font-semibold text-slate-200">{Math.round(score)}/100</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        }
+      />
     </div>
   );
 }
+

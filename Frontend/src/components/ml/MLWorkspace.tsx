@@ -35,6 +35,12 @@ import { FeatureImportanceView } from "./FeatureImportanceView";
 import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
 import { PredictionRunner } from "./PredictionRunner";
 import { MLExperimentHistory } from "./MLExperimentHistory";
+import { AnalyticalWorkspaceHeader } from "@/components/layout/AnalyticalWorkspaceHeader";
+import { SecondaryInfoPanel } from "@/components/layout/SecondaryInfoPanel";
+import { DatasetSelector } from "@/components/ui/DatasetSelector";
+import { VersionSelector } from "@/components/ui/VersionSelector";
+import { Button } from "@/components/ui/button";
+import { Play, Sparkles } from "lucide-react";
 
 export const MLWorkspace: React.FC = () => {
   const { activeDataset, datasets: contextDatasets } = useDataset();
@@ -421,116 +427,90 @@ export const MLWorkspace: React.FC = () => {
     );
   }
 
+  const currentDataset = datasets.find((d) => d.id === selectedDatasetId);
+
+  const workflowSteps = [
+    { id: "dataset", label: "Dataset", status: selectedDatasetId ? ("completed" as const) : ("current" as const) },
+    { id: "task", label: "Task", status: taskType ? ("completed" as const) : ("current" as const) },
+    { id: "target", label: "Target", status: targetColumn ? ("completed" as const) : ("current" as const) },
+    { id: "features", label: "Features", status: selectedFeatures.length > 0 ? ("completed" as const) : ("pending" as const) },
+    { id: "validation", label: "Validation", status: "completed" as const },
+    { id: "model", label: "Model", status: selectedModelIds.length > 0 ? ("completed" as const) : ("pending" as const) },
+    { id: "evaluation", label: "Evaluation", status: result ? ("completed" as const) : ("pending" as const) },
+  ];
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-      {/* Top Header Bar with Mode Toggle & History Tab */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "1rem",
-          padding: "0.875rem 1.25rem",
-          borderRadius: "8px",
-          background: "var(--bg-surface)",
-          border: "1px solid var(--border-subtle)",
-        }}
-      >
-        {/* Dataset & Version Selectors */}
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
-          <div>
-            <label htmlFor="ml-dataset-select" style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Dataset</label>
-            <select
-              id="ml-dataset-select"
-              aria-label="Select Dataset"
-              value={selectedDatasetId}
-              onChange={(e) => setSelectedDatasetId(e.target.value)}
-              className="input"
-              style={{ fontSize: "0.8125rem", padding: "0.3rem 0.6rem" }}
-            >
-              {datasets.map((ds) => (
-                <option key={ds.id} value={ds.id}>
-                  {ds.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="ml-version-select" style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Dataset Version</label>
-            <select
-              id="ml-version-select"
-              aria-label="Select Dataset Version"
-              value={selectedVersionId}
-              onChange={(e) => {
-                setSelectedVersionId(e.target.value);
-                runSuitabilityCheck(selectedDatasetId, e.target.value);
-                loadHistory(selectedDatasetId, e.target.value);
-              }}
-              className="input"
-              style={{ fontSize: "0.8125rem", padding: "0.3rem 0.6rem" }}
-            >
-              {versions.map((v) => (
-                <option key={v.version_id} value={v.version_id}>
-                  {v.version_id} ({v.version_label || "Base"})
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Mode Toggle & Workspace Navigation */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          {/* Beginner vs Advanced Mode Toggle */}
-          <div
-            style={{
-              display: "flex",
-              borderRadius: "6px",
-              background: "var(--bg-subtle)",
-              padding: "2px",
-              border: "1px solid var(--border-subtle)",
-            }}
+    <div className="flex flex-col min-h-[calc(100vh-100px)]">
+      <AnalyticalWorkspaceHeader
+        title="ML Studio"
+        description="Deterministic, version-aware machine learning powered by scikit-learn. Automated suitability diagnostics, leakage-free preprocessing, multi-model evaluation, and live inference."
+        badgeText="Predictive ML"
+        steps={workflowSteps}
+        currentStepId={result ? "evaluation" : selectedModelIds.length > 0 ? "model" : targetColumn ? "features" : "task"}
+        mode={mode}
+        onToggleMode={setMode}
+        status={isTraining ? "running" : result ? "success" : "idle"}
+        durationMs={result?.total_training_time_ms}
+        primaryAction={
+          <Button
+            size="sm"
+            onClick={handleTrainModels}
+            disabled={isTraining || !targetColumn || selectedFeatures.length === 0 || selectedModelIds.length === 0}
+            className="h-9 px-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs gap-1.5 shadow-sm"
           >
-            <button
-              type="button"
-              onClick={() => setMode("beginner")}
-              className={`btn btn-sm ${mode === "beginner" ? "btn-primary" : "btn-secondary"}`}
-              style={{ fontSize: "0.75rem", padding: "0.25rem 0.5rem" }}
-            >
-              Standard Mode
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("advanced")}
-              className={`btn btn-sm ${mode === "advanced" ? "btn-primary" : "btn-secondary"}`}
-              style={{ fontSize: "0.75rem", padding: "0.25rem 0.5rem" }}
-            >
-              Advanced Mode
-            </button>
+            <Play className="w-3.5 h-3.5 fill-current" />
+            <span>{isTraining ? "Training Models..." : "Train Models"}</span>
+          </Button>
+        }
+        secondaryActions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setActiveTab(activeTab === "studio" ? "history" : "studio")}
+            className={`h-9 px-2.5 text-xs border-white/10 ${activeTab === "history" ? "bg-indigo-600/20 text-white border-indigo-500/40" : "bg-slate-900/60 text-slate-300"}`}
+          >
+            <span>History ({history.length})</span>
+          </Button>
+        }
+        customDatasetSelector={
+          <div className="flex items-center gap-1.5 bg-slate-900/60 p-1 rounded-lg border border-white/10">
+            <span className="text-[11px] font-medium text-slate-400 pl-2 pr-0.5 uppercase tracking-wider hidden sm:inline">
+              Dataset:
+            </span>
+            <DatasetSelector
+              datasets={datasets.map((d) => ({
+                id: d.id,
+                name: d.name,
+                rowCount: (d as any).row_count,
+                versionName: (d as any).current_version_name || "V1",
+              }))}
+              activeDatasetId={selectedDatasetId}
+              onSelectDataset={(id) => {
+                setSelectedDatasetId(id);
+                loadDatasetDetails();
+              }}
+              size="sm"
+            />
+            {versions.length > 0 && (
+              <VersionSelector
+                versions={versions.map((v) => ({
+                  id: v.version_id,
+                  version_number: parseInt(v.version_id.replace(/\D/g, "") || "1"),
+                  row_count: (v as any).row_count,
+                  is_current: v.version_id === selectedVersionId,
+                }))}
+                activeVersionId={selectedVersionId || versions[0]?.version_id}
+                onSelectVersion={(vid) => {
+                  setSelectedVersionId(vid);
+                  runSuitabilityCheck(selectedDatasetId, vid);
+                  loadHistory(selectedDatasetId, vid);
+                }}
+                size="sm"
+              />
+            )}
           </div>
-
-          {/* Navigation Tabs */}
-          <div style={{ display: "flex", gap: "0.375rem" }}>
-            <button
-              type="button"
-              onClick={() => setActiveTab("studio")}
-              className={`btn btn-sm ${activeTab === "studio" ? "btn-primary" : "btn-secondary"}`}
-              style={{ fontSize: "0.75rem" }}
-            >
-              ML Studio
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("history")}
-              className={`btn btn-sm ${activeTab === "history" ? "btn-primary" : "btn-secondary"}`}
-              style={{ fontSize: "0.75rem" }}
-            >
-              History ({history.length})
-            </button>
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Error Alert */}
       {errorMsg && (
@@ -807,6 +787,53 @@ export const MLWorkspace: React.FC = () => {
           isLoading={isHistoryLoading}
         />
       )}
+
+      {/* Secondary Information: History, Details, Metadata, Recommendations */}
+      <SecondaryInfoPanel
+        metadata={{
+          datasetName: currentDataset?.name || "Active Dataset",
+          versionName: selectedVersionId || "V1",
+          engine: "Scikit-Learn (Leakage-Free Validation)",
+          executionTimeMs: result?.total_training_time_ms,
+          customFields: {
+            "Task Type": taskType.toUpperCase(),
+            "Target Column": targetColumn || "Not selected",
+            "Features Count": selectedFeatures.length,
+            "Models Evaluated": result?.model_runs?.length || selectedModelIds.length,
+            "Best Model": result?.best_model_name || "None yet",
+            "Split Stratification": splitConfig.stratify ? "Enabled" : "Disabled",
+          },
+        }}
+        historyEntries={history.map((exp) => ({
+          id: exp.experiment_id,
+          title: `${exp.task_type.toUpperCase()}: ${exp.target_column} (${exp.best_model_name || "Experiment"})`,
+          timestamp: exp.created_at,
+          status: "success" as const,
+          durationMs: exp.duration_ms,
+          summary: `Trained on ${exp.feature_columns.length} features · Best: ${exp.best_model_name || "N/A"}`,
+        }))}
+        onSelectHistoryEntry={(entry) => {
+          handleLoadHistoricResult(entry.id);
+        }}
+        recommendations={[
+          {
+            id: "rec-ml-cv",
+            title: "5-Fold Stratified Cross-Validation",
+            description: "Cross-validation mitigates variance in small test sets and provides leakage-free out-of-fold generalization metrics.",
+            impact: "high" as const,
+            actionLabel: "Enable CV",
+            onAction: () => setCVConfig((prev) => ({ ...prev, enabled: true })),
+          },
+          {
+            id: "rec-ml-scale",
+            title: "Standard Feature Scaling",
+            description: "Centering and scaling features prevents gradient domination in linear models and neural estimators.",
+            impact: "medium" as const,
+            actionLabel: "Review Preprocessing",
+            onAction: () => setMode("advanced"),
+          },
+        ]}
+      />
     </div>
   );
 };

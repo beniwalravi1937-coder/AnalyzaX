@@ -24,6 +24,11 @@ import { ForecastDiagnosticsView } from "./ForecastDiagnosticsView";
 import { ForecastFutureInference } from "./ForecastFutureInference";
 import { ForecastingHistory } from "./ForecastingHistory";
 import { GuidedOnboarding } from "@/components/ui/GuidedOnboarding";
+import { AnalyticalWorkspaceHeader } from "@/components/layout/AnalyticalWorkspaceHeader";
+import { SecondaryInfoPanel } from "@/components/layout/SecondaryInfoPanel";
+import { DatasetSelector } from "@/components/ui/DatasetSelector";
+import { VersionSelector } from "@/components/ui/VersionSelector";
+import { Button } from "@/components/ui/button";
 import {
   LineChart,
   History,
@@ -341,100 +346,82 @@ export const ForecastingWorkspace: React.FC = () => {
     );
   }
 
+  const currentDataset = datasets.find((d) => d.id === selectedDatasetId);
+
+  const workflowSteps = [
+    { id: "series", label: "Series", status: targetColumn ? ("completed" as const) : ("current" as const) },
+    { id: "time", label: "Time configuration", status: timeColumn ? ("completed" as const) : ("current" as const) },
+    { id: "model", label: "Model", status: selectedModelIds.length > 0 ? ("completed" as const) : ("pending" as const) },
+    { id: "backtest", label: "Backtest", status: "completed" as const },
+    { id: "forecast", label: "Forecast", status: activeResult ? ("completed" as const) : ("pending" as const) },
+    { id: "diagnostics", label: "Diagnostics", status: activeResult ? ("completed" as const) : ("pending" as const) },
+  ];
+
   return (
-    <div className="space-y-8 pb-16">
-      {/* Top Bar: Dataset Version, Mode Toggle, History Switch */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        {/* Dataset & Version Pickers */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center space-x-2 bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
-            <Database className="w-4 h-4 text-indigo-400" />
-            <select
-              value={selectedDatasetId}
-              onChange={(e) => setSelectedDatasetId(e.target.value)}
-              className="bg-transparent text-xs font-semibold text-slate-200 focus:outline-none cursor-pointer"
-            >
-              {datasets.map((d) => (
-                <option key={d.id} value={d.id} className="bg-slate-900">
-                  {d.name}
-                </option>
-              ))}
-            </select>
+    <div className="flex flex-col min-h-[calc(100vh-100px)]">
+      <AnalyticalWorkspaceHeader
+        title="Forecasting"
+        description="Deterministic, version-aware temporal forecasting with rolling-origin backtesting."
+        badgeText="Time-Series Intelligence"
+        steps={workflowSteps}
+        currentStepId={activeResult ? "forecast" : selectedModelIds.length > 0 ? "model" : timeColumn ? "time" : "series"}
+        mode={mode}
+        onToggleMode={setMode}
+        status={isTraining ? "running" : activeResult ? "success" : "idle"}
+        durationMs={activeResult?.duration_ms}
+        primaryAction={
+          <Button
+            size="sm"
+            onClick={handleRunForecast}
+            disabled={isTraining || !timeColumn || !targetColumn || selectedModelIds.length === 0}
+            className="h-9 px-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs gap-1.5 shadow-sm"
+          >
+            <Play className="w-3.5 h-3.5 fill-current" />
+            <span>{isTraining ? "Forecasting..." : "Generate Forecast"}</span>
+          </Button>
+        }
+        secondaryActions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setActiveTab(activeTab === "studio" ? "history" : "studio")}
+            className={`h-9 px-2.5 text-xs border-white/10 ${activeTab === "history" ? "bg-indigo-600/20 text-white border-indigo-500/40" : "bg-slate-900/60 text-slate-300"}`}
+          >
+            <span>History ({history.length})</span>
+          </Button>
+        }
+        customDatasetSelector={
+          <div className="flex items-center gap-1.5 bg-slate-900/60 p-1 rounded-lg border border-white/10">
+            <span className="text-[11px] font-medium text-slate-400 pl-2 pr-0.5 uppercase tracking-wider hidden sm:inline">
+              Dataset:
+            </span>
+            <DatasetSelector
+              datasets={datasets.map((d) => ({
+                id: d.id,
+                name: d.name,
+                rowCount: (d as any).row_count,
+                versionName: (d as any).current_version_name || "V1",
+              }))}
+              activeDatasetId={selectedDatasetId}
+              onSelectDataset={(id) => setSelectedDatasetId(id)}
+              size="sm"
+            />
+            {versions.length > 0 && (
+              <VersionSelector
+                versions={versions.map((v) => ({
+                  id: v.version_id,
+                  version_number: parseInt(v.version_id.replace(/\D/g, "") || "1"),
+                  row_count: v.row_count,
+                  is_current: v.version_id === selectedVersionId,
+                }))}
+                activeVersionId={selectedVersionId || versions[0]?.version_id}
+                onSelectVersion={(vid) => setSelectedVersionId(vid)}
+                size="sm"
+              />
+            )}
           </div>
-
-          <div className="flex items-center space-x-2 bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
-            <span className="text-[11px] text-slate-400 font-medium">Version:</span>
-            <select
-              value={selectedVersionId}
-              onChange={(e) => setSelectedVersionId(e.target.value)}
-              className="bg-transparent text-xs font-mono font-semibold text-indigo-300 focus:outline-none cursor-pointer"
-            >
-              {versions.map((v) => (
-                <option
-                  key={v.version_id}
-                  value={v.version_id}
-                  className="bg-slate-900 font-mono"
-                >
-                  {v.version_id} ({v.row_count.toLocaleString()} rows)
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Beginner vs Advanced Mode + Tabs */}
-        <div className="flex items-center gap-3 self-end md:self-auto">
-          <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
-            <button
-              onClick={() => setMode("beginner")}
-              className={`flex items-center space-x-1 px-3 py-1.5 rounded-md font-medium transition-colors ${
-                mode === "beginner"
-                  ? "bg-indigo-600 text-white"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Beginner</span>
-            </button>
-            <button
-              onClick={() => setMode("advanced")}
-              className={`flex items-center space-x-1 px-3 py-1.5 rounded-md font-medium transition-colors ${
-                mode === "advanced"
-                  ? "bg-indigo-600 text-white"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              <Sliders className="w-3.5 h-3.5" />
-              <span>Advanced</span>
-            </button>
-          </div>
-
-          <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
-            <button
-              onClick={() => setActiveTab("studio")}
-              className={`flex items-center space-x-1 px-3 py-1.5 rounded-md font-medium transition-colors ${
-                activeTab === "studio"
-                  ? "bg-indigo-600 text-white"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              <LineChart className="w-3.5 h-3.5" />
-              <span>Studio</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("history")}
-              className={`flex items-center space-x-1 px-3 py-1.5 rounded-md font-medium transition-colors ${
-                activeTab === "history"
-                  ? "bg-indigo-600 text-white"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              <History className="w-3.5 h-3.5" />
-              <span>History</span>
-            </button>
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {errorMessage && (
         <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-300 flex items-center space-x-3">
@@ -611,6 +598,45 @@ export const ForecastingWorkspace: React.FC = () => {
           activeExperimentId={activeExperiment?.experiment_id}
         />
       )}
+
+      {/* Secondary Information: History, Details, Metadata, Recommendations */}
+      <SecondaryInfoPanel
+        metadata={{
+          datasetName: currentDataset?.name || "Active Dataset",
+          versionName: selectedVersionId || "V1",
+          engine: "Statistical Time-Series (Deterministic)",
+          executionTimeMs: activeResult?.duration_ms,
+          customFields: {
+            "Time Column": timeColumn || "Not detected",
+            "Target Series": targetColumn || "Not selected",
+            "Forecast Horizon": `${horizon} steps`,
+            "Detected Frequency": detectedFreq || "Auto",
+            "Models Evaluated": selectedModelIds.length,
+            "Best Model": activeResult?.best_model_name || "N/A",
+          },
+        }}
+        historyEntries={history.map((h) => ({
+          id: h.experiment_id,
+          title: `Forecast ${h.target_column} (${h.best_model_name || "Run"})`,
+          timestamp: h.created_at,
+          status: "success" as const,
+          durationMs: h.duration_ms,
+          summary: `Horizon: ${h.horizon} · Frequency: ${h.frequency}`,
+        }))}
+        onSelectHistoryEntry={(entry) => {
+          handleSelectHistoryExperiment(entry.id);
+        }}
+        recommendations={[
+          {
+            id: "rec-forecast-freq",
+            title: "Strict Temporal Regularity",
+            description: "Uniform frequency spacing ensures accurate autoregressive lag estimation and uncorrupted seasonal decomposition.",
+            impact: "medium" as const,
+            actionLabel: "Verify Frequency",
+            onAction: () => setMode("advanced"),
+          },
+        ]}
+      />
     </div>
   );
 };

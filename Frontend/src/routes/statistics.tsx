@@ -30,16 +30,8 @@ export const Route = createFileRoute("/statistics")({
 
 function StatisticsPage() {
   return (
-    <div className="ax-stack">
-      <PageHeader
-        title="Statistical Intelligence Engine"
-        description="Rigorous hypothesis testing, parametric and non-parametric tests, descriptive metrics, effect sizes, confidence intervals, and regression diagnostics calculated deterministically with SciPy and statsmodels."
-        badge={{ text: "Statistical Intelligence", variant: "indigo" }}
-      />
-
-      <div style={{ marginTop: "1rem" }}>
-        <StatisticsWorkspace />
-      </div>
+    <div className="flex flex-col min-h-[calc(100vh-100px)]">
+      <StatisticsWorkspace />
     </div>
   );
 }
