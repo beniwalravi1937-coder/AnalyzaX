@@ -2,8 +2,13 @@ import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { CheckCircle2, Circle, ChevronDown, ChevronRight, Sparkles, X } from "lucide-react";
 import { useDataset } from "@/context/DatasetContext";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-export function GettingStartedChecklist() {
+interface GettingStartedChecklistProps {
+  isCollapsed?: boolean;
+}
+
+export function GettingStartedChecklist({ isCollapsed = false }: GettingStartedChecklistProps) {
   const { datasets, activeDataset } = useDataset();
   const [isDismissed, setIsDismissed] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
@@ -38,7 +43,7 @@ export function GettingStartedChecklist() {
       id: "copilot",
       title: "Inquire with AI Copilot",
       to: "/ai-analyst",
-      completed: false, // Completes upon active inquiry or user visit
+      completed: false,
     },
   ];
 
@@ -47,19 +52,62 @@ export function GettingStartedChecklist() {
 
   if (isDismissed) return null;
 
+  // Collapsed icon-only mode with accessible tooltip
+  if (isCollapsed) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            role="region"
+            aria-label={`Getting Started Checklist: ${completedCount} of ${steps.length} completed`}
+            className="flex items-center justify-center h-9 w-9 mx-auto rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 cursor-pointer relative"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-indigo-600 text-white text-[9px] font-bold flex items-center justify-center">
+              {completedCount}/{steps.length}
+            </span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right" className="bg-slate-900 border-slate-700 text-xs text-white">
+          <span>Getting Started: {completedCount}/{steps.length} tasks completed</span>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  const handleHeaderKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setIsExpanded((prev) => !prev);
+    }
+  };
+
   return (
     <div
+      role="region"
+      aria-label="Getting Started Onboarding Checklist"
       style={{
+        display: "block",
+        visibility: "visible",
+        opacity: 1,
+        position: "relative",
+        zIndex: 10,
         margin: "0.75rem 0.5rem 1rem 0.5rem",
-        background: "linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9))",
+        background: "linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.95))",
         border: "1px solid rgba(99, 102, 241, 0.25)",
         borderRadius: "10px",
         overflow: "hidden",
         boxShadow: "0 4px 12px rgba(0, 0, 0, 0.25)",
       }}
     >
+      {/* Header trigger */}
       <div
+        role="button"
+        tabIndex={0}
+        aria-expanded={isExpanded}
+        aria-controls="getting-started-steps"
         onClick={() => setIsExpanded(!isExpanded)}
+        onKeyDown={handleHeaderKeyDown}
         style={{
           padding: "0.6rem 0.75rem",
           display: "flex",
@@ -68,6 +116,7 @@ export function GettingStartedChecklist() {
           cursor: "pointer",
           userSelect: "none",
           background: "rgba(99, 102, 241, 0.08)",
+          outline: "none",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
@@ -91,7 +140,9 @@ export function GettingStartedChecklist() {
 
         <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
           <button
+            type="button"
             onClick={handleDismiss}
+            aria-label="Dismiss Getting Started checklist"
             title="Dismiss checklist"
             style={{
               background: "transparent",
@@ -114,9 +165,14 @@ export function GettingStartedChecklist() {
       </div>
 
       {isExpanded && (
-        <div style={{ padding: "0.5rem 0.75rem 0.65rem" }}>
+        <div id="getting-started-steps" style={{ padding: "0.5rem 0.75rem 0.65rem" }}>
           {/* Progress bar */}
           <div
+            role="progressbar"
+            aria-valuenow={completedCount}
+            aria-valuemin={0}
+            aria-valuemax={steps.length}
+            aria-valuetext={`${completedCount} of ${steps.length} onboarding tasks completed`}
             style={{
               height: "4px",
               width: "100%",
@@ -142,6 +198,7 @@ export function GettingStartedChecklist() {
               <Link
                 key={step.id}
                 to={step.to}
+                aria-label={`${step.title} (${step.completed ? "Completed" : "Incomplete"})`}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -153,9 +210,9 @@ export function GettingStartedChecklist() {
                 }}
               >
                 {step.completed ? (
-                  <CheckCircle2 style={{ width: "13px", height: "13px", color: "#34d399", shrink: 0 }} />
+                  <CheckCircle2 style={{ width: "13px", height: "13px", color: "#34d399", flexShrink: 0 }} />
                 ) : (
-                  <Circle style={{ width: "13px", height: "13px", color: "#64748b", shrink: 0 }} />
+                  <Circle style={{ width: "13px", height: "13px", color: "#64748b", flexShrink: 0 }} />
                 )}
                 <span>{step.title}</span>
               </Link>
@@ -166,3 +223,5 @@ export function GettingStartedChecklist() {
     </div>
   );
 }
+
+export default GettingStartedChecklist;

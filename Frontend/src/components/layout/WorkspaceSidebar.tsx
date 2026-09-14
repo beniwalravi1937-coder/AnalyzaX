@@ -30,6 +30,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { GettingStartedChecklist } from "./GettingStartedChecklist";
 
 export interface NavEntry {
   label: string;
@@ -158,6 +159,11 @@ export const WorkspaceSidebar: React.FC<WorkspaceSidebarProps> = ({
       {/* Navigation Body */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-4 no-scrollbar">
         <TooltipProvider delayDuration={150}>
+          {/* Getting Started Onboarding Checklist */}
+          <div className="mb-2 relative z-10 block opacity-100 visible">
+            <GettingStartedChecklist isCollapsed={isCollapsed} />
+          </div>
+
           {SIDEBAR_CATEGORIES.map((category) => (
             <div key={category.title} className="space-y-0.5">
               {!isCollapsed ? (
