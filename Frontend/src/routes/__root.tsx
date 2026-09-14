@@ -20,6 +20,7 @@ import { WorkspaceProvider } from "@/context/WorkspaceContext";
 import { WorkspaceSidebar } from "@/components/layout/WorkspaceSidebar";
 import { WorkspaceTopBar } from "@/components/layout/WorkspaceTopBar";
 import { GlobalSearchModal } from "@/components/workspace/GlobalSearchModal";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 function NotFoundComponent() {
   return (
@@ -122,7 +123,9 @@ function RootComponent() {
       <AuthProvider>
         <WorkspaceProvider>
           <DatasetProvider>
-            <AppShell />
+            <TooltipProvider delayDuration={150}>
+              <AppShell />
+            </TooltipProvider>
           </DatasetProvider>
         </WorkspaceProvider>
       </AuthProvider>
