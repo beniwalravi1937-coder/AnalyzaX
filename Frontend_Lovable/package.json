@@ -1,0 +1,8 @@
+{
+  "name": "analyzax-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm install --prefix ../Frontend && npm run build --prefix ../Frontend && node -e \"const fs=require('fs'); if (!fs.existsSync('dist')) fs.mkdirSync('dist'); if (fs.existsSync('../Frontend/.output/public')) fs.cpSync('../Frontend/.output/public', 'dist', {recursive: true}); if (fs.existsSync('../Frontend/dist')) fs.cpSync('../Frontend/dist', 'dist', {recursive: true});\""
+  }
+}
