@@ -847,6 +847,61 @@ body {
 .icon-btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.4rem; border-radius: var(--ax-radius-sm); color: var(--text-muted); background: transparent; border: none; cursor: pointer; }
 .icon-btn:hover { background-color: rgba(255,255,255,0.06); color: var(--text-primary); }
 
+/* Unified Landing Page Button System (reduces distinct styles to 3 variants) */
+.landing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+}
+.landing-btn-sm {
+  font-size: 0.875rem;
+  padding: 0.5rem 1.15rem;
+}
+.landing-btn-lg {
+  font-size: 1rem;
+  padding: 0.8rem 1.85rem;
+  border-radius: 10px;
+}
+.landing-btn-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.landing-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.55);
+  color: #ffffff !important;
+}
+.landing-btn-secondary {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+}
+.landing-btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff !important;
+}
+.landing-btn-ghost {
+  background: transparent;
+  color: #cbd5e1 !important;
+  border: 1px solid transparent;
+}
+.landing-btn-ghost:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
 /* Badges & alerts */
 .badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.6875rem; font-weight: 600; padding: 0.2rem 0.55rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.04em; }
 .badge-neutral { background-color: rgba(255,255,255,0.07); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.1); }

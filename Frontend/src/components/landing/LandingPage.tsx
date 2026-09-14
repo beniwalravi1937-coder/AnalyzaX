@@ -65,50 +65,19 @@ export function LandingPage() {
             </nav>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <Link
               to="/login"
-              style={{
-                color: "#cbd5e1",
-                textDecoration: "none",
-                fontSize: "0.875rem",
-                fontWeight: 500,
-                padding: "0.5rem 1rem",
-                borderRadius: "8px",
-                transition: "all 0.2s",
-              }}
-              onMouseOver={(e) => (e.currentTarget.style.color = "#ffffff")}
-              onMouseOut={(e) => (e.currentTarget.style.color = "#cbd5e1")}
+              className="landing-btn landing-btn-sm landing-btn-ghost"
             >
               Sign in
             </Link>
             <Link
               to="/register"
-              style={{
-                background: "linear-gradient(135deg, #6366f1 0%, #a855f7 100%)",
-                color: "#ffffff",
-                textDecoration: "none",
-                fontSize: "0.875rem",
-                fontWeight: 600,
-                padding: "0.55rem 1.25rem",
-                borderRadius: "8px",
-                boxShadow: "0 0 20px rgba(99, 102, 241, 0.4)",
-                transition: "all 0.2s",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.boxShadow = "0 0 30px rgba(168, 85, 247, 0.6)";
-                e.currentTarget.style.transform = "translateY(-1px)";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.boxShadow = "0 0 20px rgba(99, 102, 241, 0.4)";
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
+              className="landing-btn landing-btn-sm landing-btn-primary"
             >
               Create an account
-              <ArrowRight style={{ width: "16px", height: "16px" }} />
+              <ArrowRight style={{ width: "15px", height: "15px" }} />
             </Link>
           </div>
         </div>
@@ -217,28 +186,7 @@ export function LandingPage() {
           >
             <Link
               to="/register"
-              style={{
-                background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-                color: "#ffffff",
-                textDecoration: "none",
-                fontSize: "1.0625rem",
-                fontWeight: 600,
-                padding: "0.85rem 2rem",
-                borderRadius: "10px",
-                boxShadow: "0 10px 30px rgba(99, 102, 241, 0.45)",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.6rem",
-                transition: "all 0.2s ease-in-out",
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow = "0 15px 40px rgba(99, 102, 241, 0.6)";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 10px 30px rgba(99, 102, 241, 0.45)";
-              }}
+              className="landing-btn landing-btn-lg landing-btn-primary"
             >
               Create Free Account
               <ArrowRight style={{ width: "18px", height: "18px" }} />
@@ -246,28 +194,7 @@ export function LandingPage() {
 
             <Link
               to="/login"
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                color: "#e2e8f0",
-                textDecoration: "none",
-                fontSize: "1.0625rem",
-                fontWeight: 500,
-                padding: "0.85rem 1.85rem",
-                borderRadius: "10px",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                transition: "all 0.2s",
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.09)";
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.25)";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.12)";
-              }}
+              className="landing-btn landing-btn-lg landing-btn-secondary"
             >
               Sign In to Workspace
             </Link>
@@ -695,35 +622,14 @@ export function LandingPage() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
             <Link
               to="/register"
-              style={{
-                background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-                color: "#ffffff",
-                textDecoration: "none",
-                fontSize: "1rem",
-                fontWeight: 600,
-                padding: "0.85rem 2rem",
-                borderRadius: "10px",
-                boxShadow: "0 10px 25px rgba(99, 102, 241, 0.5)",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
+              className="landing-btn landing-btn-lg landing-btn-primary"
             >
               Get Started for Free
               <ArrowRight style={{ width: "16px", height: "16px" }} />
             </Link>
             <Link
               to="/login"
-              style={{
-                backgroundColor: "rgba(15, 23, 42, 0.6)",
-                color: "#cbd5e1",
-                textDecoration: "none",
-                fontSize: "1rem",
-                fontWeight: 500,
-                padding: "0.85rem 1.75rem",
-                borderRadius: "10px",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-              }}
+              className="landing-btn landing-btn-lg landing-btn-secondary"
             >
               Sign In to Workspace
             </Link>
