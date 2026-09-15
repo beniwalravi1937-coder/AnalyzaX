@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { AlertCircle, CheckCircle, Eye, EyeOff } from "lucide-react";
+import { AlertCircle, CheckCircle, Eye, EyeOff, Sparkles } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export const Route = createFileRoute("/register")({
@@ -9,17 +9,17 @@ export const Route = createFileRoute("/register")({
   }),
   head: () => ({
     meta: [
-      { title: "Create an Account — AnalyzaX" },
+      { title: "Turn RAW Data Into Insightful Decisions — AnalyzaX" },
       {
         name: "description",
         content:
-          "Create your free AnalyzaX account. Upload spreadsheets, run automated quality audits, and discover insights in seconds without coding.",
+          "Turn RAW data into insightful decisions. Upload spreadsheets, run automated quality audits, and discover insights in seconds without coding.",
       },
-      { property: "og:title", content: "Create an Account — AnalyzaX" },
+      { property: "og:title", content: "Turn RAW Data Into Insightful Decisions — AnalyzaX" },
       {
         property: "og:description",
         content:
-          "Create your free AnalyzaX account to upload data, run quality checks, and discover insights without coding.",
+          "Turn RAW data into insightful decisions, automated quality checks, and predictive intelligence.",
       },
       { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
       { property: "og:image:width", content: "1200" },
@@ -111,10 +111,24 @@ function RegisterPage() {
             />
           </Link>
           <div className="auth-brand-badge">
-            <span>Secure Analytical Workspace</span>
+            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Turn RAW data into insightful analytics</span>
           </div>
-          <h1 className="auth-title">Create your workspace</h1>
-          <p className="auth-subtitle">Full access to automated data analytics, instant profiling, ML & AI Copilot.</p>
+          <h1 className="auth-title" style={{ fontSize: "1.45rem", lineHeight: 1.25 }}>
+            Turn RAW data into{" "}
+            <span
+              style={{
+                background: "linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #38bdf8 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              insightful decisions
+            </span>
+          </h1>
+          <p className="auth-subtitle">
+            Turn raw data into insightful, executive decisions and charts in seconds.
+          </p>
         </div>
 
         {error && (
