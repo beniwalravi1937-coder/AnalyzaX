@@ -19,13 +19,53 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 import { AnalyzaXLogo } from "@/components/brand/AnalyzaXLogo";
+import { DotField } from "./DotField";
 
 export function LandingPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"profiling" | "cleaning" | "analyst" | "forecasting">("profiling");
 
   return (
-    <div className="landing-page" style={{ minHeight: "100vh", backgroundColor: "#0b0f19", color: "#f8fafc", fontFamily: "var(--font-sans)" }}>
+    <div
+      className="landing-page"
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#0b0f19",
+        color: "#f8fafc",
+        fontFamily: "var(--font-sans)",
+        position: "relative",
+        overflowX: "hidden",
+      }}
+    >
+      {/* Background Interactive DotField */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "920px",
+          pointerEvents: "none",
+          zIndex: 0,
+          overflow: "hidden",
+          maskImage: "linear-gradient(to bottom, black 65%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black 65%, transparent 100%)",
+        }}
+        aria-hidden="true"
+      >
+        <DotField
+          dotRadius={1.5}
+          dotSpacing={14}
+          bulgeStrength={67}
+          glowRadius={160}
+          sparkle={false}
+          waveAmplitude={0}
+          gradientFrom="rgba(168, 85, 247, 0.35)"
+          gradientTo="rgba(180, 151, 207, 0.25)"
+          glowColor="#120F17"
+        />
+      </div>
+
       {/* 1. Global Navigation Bar */}
       <header
         style={{
