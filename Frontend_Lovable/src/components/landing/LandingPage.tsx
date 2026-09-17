@@ -169,7 +169,7 @@ export function LandingPage() {
         {/* Interactive 3D Draggable Lanyard Card at top-right corner */}
         <div className="lanyard-hero-anchor" aria-label="AnalyzaX Interactive 3D Lanyard Pass">
           <Lanyard
-            position={[0, 0, 26]}
+            position={[0, 0, 23]}
             gravity={[0, -40, 0]}
             frontImage="/lanyard-card-front.png"
             backImage="/lanyard-card-back.png"

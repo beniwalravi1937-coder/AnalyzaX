@@ -27,7 +27,7 @@ const FRONT_UV_RECT = { x: 0, y: 0, w: 0.5, h: 0.755 };
 const BACK_UV_RECT = { x: 0.5, y: 0, w: 0.5, h: 0.757 };
 
 export default function Lanyard({
-  position = [0, 0, 30],
+  position = [0, 0, 24],
   gravity = [0, -40, 0],
   fov = 20,
   transparent = true,
@@ -35,7 +35,7 @@ export default function Lanyard({
   backImage = null,
   imageFit = 'cover',
   lanyardImage = null,
-  lanyardWidth = 1
+  lanyardWidth = 1.1
 }) {
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
@@ -54,53 +54,53 @@ export default function Lanyard({
   return (
     <div className="lanyard-wrapper">
       <Canvas
-        camera={{ position: position, fov: fov }}
+        camera={{ position: position, fov: fov, near: 0.1, far: 1000 }}
         dpr={[1, isMobile ? 1.5 : 2]}
-        gl={{ alpha: transparent }}
+        gl={{ alpha: transparent, antialias: true }}
         onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)}
       >
         <Suspense fallback={null}>
-          <ambientLight intensity={Math.PI} />
+          <ambientLight intensity={1.6} />
           <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
             <Band
               isMobile={isMobile}
               frontImage={frontImage}
-            backImage={backImage}
-            imageFit={imageFit}
-            lanyardImage={lanyardImage}
-            lanyardWidth={lanyardWidth}
-          />
-        </Physics>
-        <Environment blur={0.75}>
-          <Lightformer
-            intensity={2}
-            color="white"
-            position={[0, -1, 5]}
-            rotation={[0, 0, Math.PI / 3]}
-            scale={[100, 0.1, 1]}
-          />
-          <Lightformer
-            intensity={3}
-            color="white"
-            position={[-1, -1, 1]}
-            rotation={[0, 0, Math.PI / 3]}
-            scale={[100, 0.1, 1]}
-          />
-          <Lightformer
-            intensity={3}
-            color="white"
-            position={[1, 1, 1]}
-            rotation={[0, 0, Math.PI / 3]}
-            scale={[100, 0.1, 1]}
-          />
-          <Lightformer
-            intensity={10}
-            color="white"
-            position={[-10, 0, 14]}
-            rotation={[0, Math.PI / 2, Math.PI / 3]}
-            scale={[100, 10, 1]}
-          />
-        </Environment>
+              backImage={backImage}
+              imageFit={imageFit}
+              lanyardImage={lanyardImage}
+              lanyardWidth={lanyardWidth}
+            />
+          </Physics>
+          <Environment blur={0.75}>
+            <Lightformer
+              intensity={1.2}
+              color="white"
+              position={[0, -1, 5]}
+              rotation={[0, 0, Math.PI / 3]}
+              scale={[100, 0.1, 1]}
+            />
+            <Lightformer
+              intensity={1.5}
+              color="#818cf8"
+              position={[-1, -1, 1]}
+              rotation={[0, 0, Math.PI / 3]}
+              scale={[100, 0.1, 1]}
+            />
+            <Lightformer
+              intensity={1.5}
+              color="#38bdf8"
+              position={[1, 1, 1]}
+              rotation={[0, 0, Math.PI / 3]}
+              scale={[100, 0.1, 1]}
+            />
+            <Lightformer
+              intensity={2.2}
+              color="white"
+              position={[-10, 0, 14]}
+              rotation={[0, Math.PI / 2, Math.PI / 3]}
+              scale={[100, 10, 1]}
+            />
+          </Environment>
         </Suspense>
       </Canvas>
     </div>
@@ -141,8 +141,8 @@ function Band({
     if (!frontImage && !backImage) return baseMap;
 
     const baseImg = baseMap.image;
-    const W = baseImg.width;
-    const H = baseImg.height;
+    const W = Math.max(baseImg?.width || 1024, 2048);
+    const H = Math.max(baseImg?.height || 1024, 2048);
     const canvas = document.createElement('canvas');
     canvas.width = W;
     canvas.height = H;
@@ -177,6 +177,9 @@ function Band({
     composite.colorSpace = THREE.SRGBColorSpace;
     composite.flipY = baseMap.flipY;
     composite.anisotropy = 16;
+    composite.generateMipmaps = true;
+    composite.minFilter = THREE.LinearMipmapLinearFilter;
+    composite.magFilter = THREE.LinearFilter;
     composite.needsUpdate = true;
     return composite;
   }, [frontImage, backImage, imageFit, frontTex, backTex, materials.base.map]);
@@ -208,7 +211,11 @@ function Band({
       dir.copy(vec).sub(state.camera.position).normalize();
       vec.add(dir.multiplyScalar(state.camera.position.length()));
       [card, j1, j2, j3, fixed].forEach(ref => ref.current?.wakeUp());
-      card.current?.setNextKinematicTranslation({ x: vec.x - dragged.x, y: vec.y - dragged.y, z: vec.z - dragged.z });
+      card.current?.setNextKinematicTranslation({
+        x: vec.x - dragged.x,
+        y: vec.y - dragged.y,
+        z: Math.max(vec.z - dragged.z, 0.4)
+      });
     }
     if (fixed.current) {
       [j1, j2].forEach(ref => {
@@ -247,9 +254,9 @@ function Band({
           <BallCollider args={[0.1]} />
         </RigidBody>
         <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
-          <CuboidCollider args={[0.8, 1.125, 0.01]} />
+          <CuboidCollider args={[0.95, 1.35, 0.01]} />
           <group
-            scale={2.25}
+            scale={2.7}
             position={[0, -1.2, -0.05]}
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
@@ -263,10 +270,10 @@ function Band({
               <meshPhysicalMaterial
                 map={cardMap}
                 map-anisotropy={16}
-                clearcoat={isMobile ? 0 : 1}
-                clearcoatRoughness={0.15}
-                roughness={0.9}
-                metalness={0.8}
+                clearcoat={isMobile ? 0 : 0.3}
+                clearcoatRoughness={0.2}
+                roughness={0.25}
+                metalness={0.05}
               />
             </mesh>
             <mesh geometry={nodes.clip.geometry} material={materials.metal} material-roughness={0.3} />
