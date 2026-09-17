@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AlertCircle, CheckCircle, Eye, EyeOff, Sparkles } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import BorderGlow from "../components/ui/BorderGlow";
 
 export const Route = createFileRoute("/register")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -80,7 +81,15 @@ function RegisterPage() {
   if (success) {
     return (
       <div className="auth-shell">
-        <div className="auth-card">
+        <BorderGlow
+          className="auth-card"
+          borderRadius={20}
+          glowRadius={40}
+          glowIntensity={1.0}
+          edgeSensitivity={30}
+          backgroundColor="rgba(14, 19, 38, 0.85)"
+          colors={["#c084fc", "#f472b6", "#38bdf8"]}
+        >
           <div className="auth-brand">
             <div className="auth-brand-badge" style={{ color: "var(--accent-emerald)" }}>
               <CheckCircle className="w-4 h-4 text-emerald-400" />
@@ -89,14 +98,23 @@ function RegisterPage() {
             <h1 className="auth-title">Welcome to AnalyzaX!</h1>
             <p className="auth-subtitle">Your analytical account has been created. Redirecting to workspace...</p>
           </div>
-        </div>
+        </BorderGlow>
       </div>
     );
   }
 
   return (
     <div className="auth-shell">
-      <div className="auth-card">
+      <BorderGlow
+        className="auth-card"
+        borderRadius={20}
+        glowRadius={40}
+        glowIntensity={1.0}
+        edgeSensitivity={30}
+        backgroundColor="rgba(14, 19, 38, 0.85)"
+        colors={["#c084fc", "#f472b6", "#38bdf8"]}
+        animated
+      >
         <div className="auth-brand">
           <Link to="/" className="auth-brand-logo-wrap" title="AnalyzaX Home">
             <img
@@ -216,7 +234,7 @@ function RegisterPage() {
             Sign in
           </Link>
         </p>
-      </div>
+      </BorderGlow>
     </div>
   );
 }

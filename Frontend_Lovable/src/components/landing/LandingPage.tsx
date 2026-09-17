@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { AnalyzaXLogo } from "@/components/brand/AnalyzaXLogo";
 import { DotField } from "./DotField";
+import BorderGlow from "@/components/ui/BorderGlow";
 
 export function LandingPage() {
   const navigate = useNavigate();
@@ -490,24 +491,14 @@ export function LandingPage() {
           }}
         >
           {/* Pillar 1: Automated Data Profiling */}
-          <div
-            style={{
-              padding: "2rem",
-              borderRadius: "14px",
-              backgroundColor: "rgba(255, 255, 255, 0.02)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              transition: "all 0.25s ease-in-out",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
-              e.currentTarget.style.borderColor = "rgba(99, 102, 241, 0.4)";
-              e.currentTarget.style.transform = "translateY(-3px)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
-              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
+          <BorderGlow
+            borderRadius={14}
+            glowRadius={36}
+            glowIntensity={1.0}
+            edgeSensitivity={30}
+            backgroundColor="rgba(14, 19, 38, 0.75)"
+            colors={['#10b981', '#34d399', '#38bdf8']}
+            style={{ padding: "2rem" }}
           >
             <div style={{ width: "44px", height: "44px", borderRadius: "10px", backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#10b981", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.25rem" }}>
               <ShieldCheck style={{ width: "24px", height: "24px" }} />
@@ -532,27 +523,17 @@ export function LandingPage() {
                 Automatic target & outcome detection
               </li>
             </ul>
-          </div>
+          </BorderGlow>
 
           {/* Pillar 2: Intelligent Data Cleaning */}
-          <div
-            style={{
-              padding: "2rem",
-              borderRadius: "14px",
-              backgroundColor: "rgba(255, 255, 255, 0.02)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              transition: "all 0.25s ease-in-out",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
-              e.currentTarget.style.borderColor = "rgba(168, 85, 247, 0.4)";
-              e.currentTarget.style.transform = "translateY(-3px)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
-              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
+          <BorderGlow
+            borderRadius={14}
+            glowRadius={36}
+            glowIntensity={1.0}
+            edgeSensitivity={30}
+            backgroundColor="rgba(14, 19, 38, 0.75)"
+            colors={['#c084fc', '#f472b6', '#a855f7']}
+            style={{ padding: "2rem" }}
           >
             <div style={{ width: "44px", height: "44px", borderRadius: "10px", backgroundColor: "rgba(168, 85, 247, 0.12)", color: "#c084fc", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.25rem" }}>
               <Wand2 style={{ width: "24px", height: "24px" }} />
@@ -577,27 +558,17 @@ export function LandingPage() {
                 Full audit history & version branching
               </li>
             </ul>
-          </div>
+          </BorderGlow>
 
           {/* Pillar 3: AI Analyst */}
-          <div
-            style={{
-              padding: "2rem",
-              borderRadius: "14px",
-              backgroundColor: "rgba(255, 255, 255, 0.02)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              transition: "all 0.25s ease-in-out",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
-              e.currentTarget.style.borderColor = "rgba(99, 102, 241, 0.4)";
-              e.currentTarget.style.transform = "translateY(-3px)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
-              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
+          <BorderGlow
+            borderRadius={14}
+            glowRadius={36}
+            glowIntensity={1.0}
+            edgeSensitivity={30}
+            backgroundColor="rgba(14, 19, 38, 0.75)"
+            colors={['#818cf8', '#a78bfa', '#6366f1']}
+            style={{ padding: "2rem" }}
           >
             <div style={{ width: "44px", height: "44px", borderRadius: "10px", backgroundColor: "rgba(99, 102, 241, 0.12)", color: "#818cf8", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.25rem" }}>
               <Brain style={{ width: "24px", height: "24px" }} />
@@ -622,27 +593,17 @@ export function LandingPage() {
                 Board-ready executive summaries
               </li>
             </ul>
-          </div>
+          </BorderGlow>
 
           {/* Pillar 4: Forecasting & Predictive Modeling */}
-          <div
-            style={{
-              padding: "2rem",
-              borderRadius: "14px",
-              backgroundColor: "rgba(255, 255, 255, 0.02)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              transition: "all 0.25s ease-in-out",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
-              e.currentTarget.style.borderColor = "rgba(56, 189, 248, 0.4)";
-              e.currentTarget.style.transform = "translateY(-3px)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
-              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
+          <BorderGlow
+            borderRadius={14}
+            glowRadius={36}
+            glowIntensity={1.0}
+            edgeSensitivity={30}
+            backgroundColor="rgba(14, 19, 38, 0.75)"
+            colors={['#38bdf8', '#60a5fa', '#818cf8']}
+            style={{ padding: "2rem" }}
           >
             <div style={{ width: "44px", height: "44px", borderRadius: "10px", backgroundColor: "rgba(56, 189, 248, 0.12)", color: "#38bdf8", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.25rem" }}>
               <TrendingUp style={{ width: "24px", height: "24px" }} />
@@ -667,7 +628,7 @@ export function LandingPage() {
                 Confidence intervals & scenario simulations
               </li>
             </ul>
-          </div>
+          </BorderGlow>
         </div>
       </section>
 
@@ -721,16 +682,21 @@ export function LandingPage() {
 
       {/* 6. Call To Action Banner */}
       <section style={{ padding: "4rem 1.5rem 6rem", maxWidth: "1240px", margin: "0 auto" }}>
-        <div
+        <BorderGlow
+          borderRadius={24}
+          glowRadius={50}
+          glowIntensity={1.2}
+          edgeSensitivity={30}
+          backgroundColor="rgba(15, 23, 42, 0.85)"
+          colors={['#818cf8', '#c084fc', '#38bdf8']}
+          animated
           style={{
             padding: "3.5rem 2rem",
-            borderRadius: "20px",
-            background: "linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(168, 85, 247, 0.2) 100%)",
-            border: "1px solid rgba(99, 102, 241, 0.35)",
             textAlign: "center",
             boxShadow: "0 20px 50px rgba(0, 0, 0, 0.5)",
             position: "relative",
             overflow: "hidden",
+            width: "100%",
           }}
         >
           <div
@@ -790,7 +756,7 @@ export function LandingPage() {
               Sign In to Workspace
             </Link>
           </div>
-        </div>
+        </BorderGlow>
       </section>
 
       {/* 7. Footer */}
