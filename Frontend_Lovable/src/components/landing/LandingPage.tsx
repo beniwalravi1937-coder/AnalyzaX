@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   ShieldCheck,
@@ -13,6 +13,9 @@ import {
   Layers,
   ChevronRight,
   Play,
+  Pause,
+  Volume2,
+  VolumeX,
   Zap,
   Lock,
   LineChart,
@@ -26,6 +29,26 @@ import Lanyard from "@/components/Lanyard";
 export function LandingPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"profiling" | "cleaning" | "analyst" | "forecasting">("profiling");
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const toggleVideoPlay = () => {
+    if (!videoRef.current) return;
+    if (videoRef.current.paused) {
+      videoRef.current.play();
+      setIsVideoPlaying(true);
+    } else {
+      videoRef.current.pause();
+      setIsVideoPlaying(false);
+    }
+  };
+
+  const toggleVideoMute = () => {
+    if (!videoRef.current) return;
+    videoRef.current.muted = !videoRef.current.muted;
+    setIsVideoMuted(videoRef.current.muted);
+  };
 
   return (
     <div
@@ -642,6 +665,213 @@ export function LandingPage() {
               </li>
             </ul>
           </BorderGlow>
+        </div>
+      </section>
+
+      {/* 4.5. Advertising Video Showcase Section (Directly Above "How AnalyzaX Works") */}
+      <section
+        id="video-showcase"
+        style={{
+          padding: "4.5rem 1.5rem 5rem",
+          maxWidth: "1240px",
+          margin: "0 auto",
+          position: "relative",
+          overflow: "visible",
+        }}
+      >
+        {/* Ambient Radial Glow */}
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "80%",
+            maxWidth: "900px",
+            height: "450px",
+            background: "radial-gradient(ellipse at center, rgba(99, 102, 241, 0.16) 0%, rgba(168, 85, 247, 0.08) 45%, transparent 70%)",
+            pointerEvents: "none",
+            filter: "blur(60px)",
+            zIndex: 0,
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Section Header */}
+        <div style={{ textAlign: "center", marginBottom: "3rem", position: "relative", zIndex: 1 }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              padding: "0.35rem 0.95rem",
+              borderRadius: "9999px",
+              backgroundColor: "rgba(99, 102, 241, 0.12)",
+              border: "1px solid rgba(99, 102, 241, 0.3)",
+              fontSize: "0.8125rem",
+              fontWeight: 500,
+              color: "#a5b4fc",
+              marginBottom: "1.25rem",
+            }}
+          >
+            <Sparkles style={{ width: "14px", height: "14px", color: "#818cf8" }} />
+            <span>Product Showcase</span>
+            <span style={{ backgroundColor: "rgba(99, 102, 241, 0.25)", padding: "0.1rem 0.45rem", borderRadius: "9999px", fontSize: "0.6875rem", fontWeight: 700 }}>
+              10s DEMO
+            </span>
+          </div>
+          <h2
+            style={{
+              fontSize: "clamp(2rem, 3.5vw, 2.75rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.03em",
+              marginBottom: "1rem",
+            }}
+          >
+            See AnalyzaX in Action
+          </h2>
+          <p
+            style={{
+              fontSize: "1.125rem",
+              color: "#94a3b8",
+              maxWidth: "680px",
+              margin: "0 auto",
+              lineHeight: 1.6,
+            }}
+          >
+            Watch how effortlessly raw, complex datasets transform into automated audits, visual charts, and actionable executive insights.
+          </p>
+        </div>
+
+        {/* Video Player Mockup Window */}
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1,
+            maxWidth: "1060px",
+            margin: "0 auto",
+            borderRadius: "18px",
+            border: "1px solid rgba(255, 255, 255, 0.12)",
+            background: "linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%)",
+            boxShadow: "0 25px 70px -15px rgba(0, 0, 0, 0.8), 0 0 50px rgba(99, 102, 241, 0.16)",
+            overflow: "hidden",
+            transition: "all 0.3s ease",
+          }}
+        >
+          {/* Mac-style Window Titlebar */}
+          <div
+            style={{
+              padding: "0.85rem 1.25rem",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              backgroundColor: "rgba(15, 23, 42, 0.7)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#ef4444" }} />
+              <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#f59e0b" }} />
+              <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#10b981" }} />
+              <span style={{ marginLeft: "0.75rem", fontSize: "0.75rem", color: "#94a3b8", fontFamily: "var(--font-mono)" }}>
+                analyzax_product_demo.mp4
+              </span>
+            </div>
+
+            {/* Top Quick Actions: Play/Pause & Audio Mute/Unmute */}
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+              <button
+                type="button"
+                onClick={toggleVideoPlay}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.4rem",
+                  fontSize: "0.75rem",
+                  padding: "0.25rem 0.65rem",
+                  borderRadius: "6px",
+                  backgroundColor: "rgba(255, 255, 255, 0.06)",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
+                  color: "#cbd5e1",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.12)")}
+                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.06)")}
+                aria-label={isVideoPlaying ? "Pause video" : "Play video"}
+              >
+                {isVideoPlaying ? (
+                  <>
+                    <Pause style={{ width: "12px", height: "12px", color: "#818cf8" }} />
+                    <span>Pause</span>
+                  </>
+                ) : (
+                  <>
+                    <Play style={{ width: "12px", height: "12px", color: "#818cf8" }} />
+                    <span>Play</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleVideoMute}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.4rem",
+                  fontSize: "0.75rem",
+                  padding: "0.25rem 0.65rem",
+                  borderRadius: "6px",
+                  backgroundColor: isVideoMuted ? "rgba(255, 255, 255, 0.06)" : "rgba(99, 102, 241, 0.2)",
+                  border: isVideoMuted ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(99, 102, 241, 0.4)",
+                  color: isVideoMuted ? "#cbd5e1" : "#a5b4fc",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)")}
+                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = isVideoMuted ? "rgba(255, 255, 255, 0.06)" : "rgba(99, 102, 241, 0.2)")}
+                aria-label={isVideoMuted ? "Unmute audio" : "Mute audio"}
+              >
+                {isVideoMuted ? (
+                  <>
+                    <VolumeX style={{ width: "12px", height: "12px" }} />
+                    <span>Unmute</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 style={{ width: "12px", height: "12px" }} />
+                    <span>Sound On</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Video Player Display */}
+          <div style={{ position: "relative", backgroundColor: "#060913", overflow: "hidden" }}>
+            <video
+              ref={videoRef}
+              src="/promo.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              style={{
+                width: "100%",
+                height: "auto",
+                maxHeight: "680px",
+                display: "block",
+                objectFit: "contain",
+                margin: "0 auto",
+                borderRadius: "0 0 18px 18px",
+              }}
+              onPlay={() => setIsVideoPlaying(true)}
+              onPause={() => setIsVideoPlaying(false)}
+            />
+          </div>
         </div>
       </section>
 
