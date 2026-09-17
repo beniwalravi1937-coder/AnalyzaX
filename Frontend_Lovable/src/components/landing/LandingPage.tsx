@@ -21,6 +21,7 @@ import {
 import { AnalyzaXLogo } from "@/components/brand/AnalyzaXLogo";
 import { DotField } from "./DotField";
 import BorderGlow from "@/components/ui/BorderGlow";
+import Lanyard from "@/components/Lanyard";
 
 export function LandingPage() {
   const navigate = useNavigate();
@@ -159,12 +160,23 @@ export function LandingPage() {
         style={{
           position: "relative",
           padding: "5.5rem 1.5rem 4rem",
-          overflow: "hidden",
+          overflow: "visible",
           textAlign: "center",
-          maxWidth: "1200px",
+          maxWidth: "1240px",
           margin: "0 auto",
         }}
       >
+        {/* Interactive 3D Draggable Lanyard Card at top-right corner */}
+        <div className="lanyard-hero-anchor" aria-label="AnalyzaX Interactive 3D Lanyard Pass">
+          <Lanyard
+            position={[0, 0, 26]}
+            gravity={[0, -40, 0]}
+            frontImage="/lanyard-card-front.png"
+            backImage="/lanyard-card-back.png"
+            imageFit="cover"
+            lanyardWidth={1.1}
+          />
+        </div>
         {/* Glow backdrop effects */}
         <div
           style={{

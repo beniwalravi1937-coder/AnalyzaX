@@ -18,11 +18,13 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    assetsInclude: ["**/*.glb"],
     define: {
       "process.env": {},
     },
     resolve: {
       alias: {
+        "hls.js": path.resolve(__dirname, "./src/lib/empty-mock.ts"),
         "next/link": path.resolve(__dirname, "./src/lib/next-compat.tsx"),
         "next/navigation": path.resolve(__dirname, "./src/lib/next-compat.tsx"),
         "next/image": path.resolve(__dirname, "./src/lib/next-compat.tsx"),
