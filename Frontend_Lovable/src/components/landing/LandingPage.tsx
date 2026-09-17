@@ -73,7 +73,7 @@ export function LandingPage() {
         style={{
           position: "sticky",
           top: 0,
-          zIndex: 50,
+          zIndex: 60,
           backdropFilter: "blur(16px)",
           backgroundColor: "rgba(11, 15, 25, 0.8)",
           borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
@@ -169,7 +169,8 @@ export function LandingPage() {
         {/* Interactive 3D Draggable Lanyard Card at top-right corner */}
         <div className="lanyard-hero-anchor" aria-label="AnalyzaX Interactive 3D Lanyard Pass">
           <Lanyard
-            position={[0, 0, 23]}
+            position={[0, 0, 24]}
+            anchorX={1.1}
             gravity={[0, -40, 0]}
             frontImage="/lanyard-card-front.png"
             backImage="/lanyard-card-back.png"

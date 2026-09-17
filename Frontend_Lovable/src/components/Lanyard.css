@@ -17,26 +17,26 @@
 .lanyard-hero-anchor {
   position: absolute;
   top: -85px;
-  right: -140px;
-  width: 480px;
-  height: 1100px;
+  right: -240px;
+  width: 780px;
+  height: 1150px;
   pointer-events: none;
-  z-index: 50;
+  z-index: 40;
   overflow: visible;
 }
 
 @media (max-width: 1440px) {
   .lanyard-hero-anchor {
-    right: -105px;
-    width: 440px;
+    right: -180px;
+    width: 700px;
     height: 1050px;
   }
 }
 
 @media (max-width: 1280px) {
   .lanyard-hero-anchor {
-    right: -55px;
-    width: 390px;
+    right: -100px;
+    width: 620px;
     height: 950px;
   }
 }
