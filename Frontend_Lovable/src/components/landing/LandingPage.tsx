@@ -50,6 +50,27 @@ export function LandingPage() {
     setIsVideoMuted(videoRef.current.muted);
   };
 
+  const [isVideo2Muted, setIsVideo2Muted] = useState(true);
+  const [isVideo2Playing, setIsVideo2Playing] = useState(true);
+  const videoRef2 = useRef<HTMLVideoElement>(null);
+
+  const toggleVideo2Play = () => {
+    if (!videoRef2.current) return;
+    if (videoRef2.current.paused) {
+      videoRef2.current.play();
+      setIsVideo2Playing(true);
+    } else {
+      videoRef2.current.pause();
+      setIsVideo2Playing(false);
+    }
+  };
+
+  const toggleVideo2Mute = () => {
+    if (!videoRef2.current) return;
+    videoRef2.current.muted = !videoRef2.current.muted;
+    setIsVideo2Muted(videoRef2.current.muted);
+  };
+
   return (
     <div
       className="landing-page"
@@ -665,6 +686,321 @@ export function LandingPage() {
               </li>
             </ul>
           </BorderGlow>
+        </div>
+      </section>
+
+      {/* 4.25. Source Lineage & Citation Intelligence Section (promo2.mp4) */}
+      <section
+        id="sources-citations"
+        style={{
+          padding: "5rem 1.5rem 4rem",
+          maxWidth: "1240px",
+          margin: "0 auto",
+          position: "relative",
+          overflow: "visible",
+        }}
+      >
+        {/* Ambient Radial Glow */}
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "55%",
+            transform: "translate(-50%, -50%)",
+            width: "75%",
+            maxWidth: "850px",
+            height: "420px",
+            background: "radial-gradient(ellipse at center, rgba(168, 85, 247, 0.14) 0%, rgba(99, 102, 241, 0.08) 50%, transparent 70%)",
+            pointerEvents: "none",
+            filter: "blur(65px)",
+            zIndex: 0,
+          }}
+          aria-hidden="true"
+        />
+
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1,
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+            gap: "3.5rem",
+            alignItems: "center",
+          }}
+        >
+          {/* Left Column: Content Narrative (matching reference photo) */}
+          <div style={{ maxWidth: "540px" }}>
+            {/* Asterisk / Starburst Symbol from Reference Image */}
+            <div
+              style={{
+                width: "48px",
+                height: "48px",
+                borderRadius: "12px",
+                backgroundColor: "rgba(168, 85, 247, 0.12)",
+                border: "1px solid rgba(168, 85, 247, 0.3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#c084fc",
+                marginBottom: "1.5rem",
+                boxShadow: "0 0 25px rgba(168, 85, 247, 0.2)",
+              }}
+              aria-hidden="true"
+            >
+              <svg
+                width="26"
+                height="26"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="12" y1="2" x2="12" y2="22" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                <line x1="19.07" y1="4.93" x2="4.93" y2="19.07" />
+              </svg>
+            </div>
+
+            {/* Pill Badge */}
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "0.3rem 0.85rem",
+                borderRadius: "9999px",
+                backgroundColor: "rgba(99, 102, 241, 0.12)",
+                border: "1px solid rgba(99, 102, 241, 0.3)",
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                color: "#a5b4fc",
+                marginBottom: "1.25rem",
+                letterSpacing: "0.03em",
+                textTransform: "uppercase",
+              }}
+            >
+              <Sparkles style={{ width: "13px", height: "13px", color: "#818cf8" }} />
+              <span>Verifiable Citations</span>
+            </div>
+
+            {/* Headline matching the reference image theme */}
+            <h2
+              style={{
+                fontSize: "clamp(2.1rem, 3.8vw, 3rem)",
+                fontWeight: 800,
+                letterSpacing: "-0.03em",
+                lineHeight: 1.15,
+                marginBottom: "1.25rem",
+                color: "#ffffff",
+              }}
+            >
+              See the{" "}
+              <span
+                style={{
+                  background: "linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #38bdf8 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                source
+              </span>
+              , not just the answer
+            </h2>
+
+            {/* Subtitle / Paragraph */}
+            <p
+              style={{
+                fontSize: "1.0625rem",
+                color: "#94a3b8",
+                lineHeight: 1.65,
+                marginBottom: "2rem",
+              }}
+            >
+              Gain confidence in every response because AnalyzaX provides clear citations for its work, showing you the exact rows, formulas, and data lineage behind every generated insight.
+            </p>
+
+            {/* Trust & Lineage Highlight Points */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.9rem" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "0.75rem",
+                  padding: "0.85rem 1rem",
+                  borderRadius: "10px",
+                  backgroundColor: "rgba(255, 255, 255, 0.02)",
+                  border: "1px solid rgba(255, 255, 255, 0.07)",
+                }}
+              >
+                <div style={{ marginTop: "2px", color: "#10b981" }}>
+                  <CheckCircle2 style={{ width: "16px", height: "16px" }} />
+                </div>
+                <div>
+                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "#f1f5f9" }}>
+                    Row-Level Citations & Audit Lineage
+                  </div>
+                  <div style={{ fontSize: "0.8rem", color: "#94a3b8", marginTop: "2px", lineHeight: 1.5 }}>
+                    Inspect the exact dataset rows and columns that produced each chart and AI summary.
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "0.75rem",
+                  padding: "0.85rem 1rem",
+                  borderRadius: "10px",
+                  backgroundColor: "rgba(255, 255, 255, 0.02)",
+                  border: "1px solid rgba(255, 255, 255, 0.07)",
+                }}
+              >
+                <div style={{ marginTop: "2px", color: "#38bdf8" }}>
+                  <CheckCircle2 style={{ width: "16px", height: "16px" }} />
+                </div>
+                <div>
+                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "#f1f5f9" }}>
+                    Deterministic Mathematical Engine
+                  </div>
+                  <div style={{ fontSize: "0.8rem", color: "#94a3b8", marginTop: "2px", lineHeight: 1.5 }}>
+                    Zero numerical hallucinations. All quantiles, metrics, and correlations are computed with DuckDB & Polars.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Video Player Mockup Window (promo2.mp4) */}
+          <div
+            style={{
+              position: "relative",
+              borderRadius: "18px",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              background: "linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%)",
+              boxShadow: "0 25px 70px -15px rgba(0, 0, 0, 0.8), 0 0 50px rgba(168, 85, 247, 0.16)",
+              overflow: "hidden",
+              transition: "all 0.3s ease",
+            }}
+          >
+            {/* Mac-style Window Titlebar */}
+            <div
+              style={{
+                padding: "0.75rem 1.25rem",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                backgroundColor: "rgba(15, 23, 42, 0.7)",
+                backdropFilter: "blur(12px)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#ef4444" }} />
+                <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#f59e0b" }} />
+                <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#10b981" }} />
+                <span style={{ marginLeft: "0.75rem", fontSize: "0.75rem", color: "#94a3b8", fontFamily: "var(--font-mono)" }}>
+                  analyzax.citations / source_evidence.mp4
+                </span>
+              </div>
+
+              {/* Video 2 Controls: Play/Pause & Sound */}
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <button
+                  type="button"
+                  onClick={toggleVideo2Play}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.35rem",
+                    fontSize: "0.75rem",
+                    padding: "0.25rem 0.6rem",
+                    borderRadius: "6px",
+                    backgroundColor: "rgba(255, 255, 255, 0.06)",
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    color: "#cbd5e1",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.12)")}
+                  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.06)")}
+                  aria-label={isVideo2Playing ? "Pause citations video" : "Play citations video"}
+                >
+                  {isVideo2Playing ? (
+                    <>
+                      <Pause style={{ width: "11px", height: "11px", color: "#c084fc" }} />
+                      <span>Pause</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play style={{ width: "11px", height: "11px", color: "#c084fc" }} />
+                      <span>Play</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={toggleVideo2Mute}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.35rem",
+                    fontSize: "0.75rem",
+                    padding: "0.25rem 0.6rem",
+                    borderRadius: "6px",
+                    backgroundColor: isVideo2Muted ? "rgba(255, 255, 255, 0.06)" : "rgba(168, 85, 247, 0.2)",
+                    border: isVideo2Muted ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(168, 85, 247, 0.4)",
+                    color: isVideo2Muted ? "#cbd5e1" : "#c084fc",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)")}
+                  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = isVideo2Muted ? "rgba(255, 255, 255, 0.06)" : "rgba(168, 85, 247, 0.2)")}
+                  aria-label={isVideo2Muted ? "Unmute audio" : "Mute audio"}
+                >
+                  {isVideo2Muted ? (
+                    <>
+                      <VolumeX style={{ width: "11px", height: "11px" }} />
+                      <span>Unmute</span>
+                    </>
+                  ) : (
+                    <>
+                      <Volume2 style={{ width: "11px", height: "11px" }} />
+                      <span>Sound On</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Video 2 Player Display */}
+            <div style={{ position: "relative", backgroundColor: "#060913", overflow: "hidden" }}>
+              <video
+                ref={videoRef2}
+                src="/promo2.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  maxHeight: "520px",
+                  display: "block",
+                  objectFit: "contain",
+                  margin: "0 auto",
+                  borderRadius: "0 0 18px 18px",
+                }}
+                onPlay={() => setIsVideo2Playing(true)}
+                onPause={() => setIsVideo2Playing(false)}
+              />
+            </div>
+          </div>
         </div>
       </section>
 
