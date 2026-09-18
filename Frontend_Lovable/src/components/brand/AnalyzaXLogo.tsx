@@ -36,7 +36,7 @@ export function AnalyzaXLogo({
           style={{
             fontWeight: 800,
             letterSpacing: "-0.02em",
-            color: "var(--brand-logo-text, var(--text-primary, #ffffff))",
+            color: "#ffffff",
             fontSize: "1.15rem",
             lineHeight: 1,
             fontFamily: '"Space Grotesk", sans-serif',

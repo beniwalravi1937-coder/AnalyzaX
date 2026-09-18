@@ -44,8 +44,6 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { DatasetProvider, useDataset } from "@/context/DatasetContext";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { WorkspaceProvider } from "@/context/WorkspaceContext";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { ThemeToggle } from "@/components/landing/ThemeToggle";
 import { AnalyzaXLogo } from "@/components/brand/AnalyzaXLogo";
 import { GettingStartedChecklist } from "@/components/layout/GettingStartedChecklist";
 
@@ -134,7 +132,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "author", content: "AnalyzaX" },
-      { name: "theme-color", content: "#0b0f19" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "AnalyzaX" },
       { property: "og:image", content: "https://analyzaxab-vp.vercel.app/og-image.png" },
@@ -163,14 +160,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className="dark">
       <head>
-        {/* Blocking inline script to eliminate any white/wrong-theme flash and provide instant click handler */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var k='analyzax-theme';var s=localStorage.getItem(k);var t=s||(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');var r=document.documentElement;function apply(mode){if(mode==='light'){r.classList.remove('dark');r.classList.add('light');r.setAttribute('data-theme','light');}else{r.classList.remove('light');r.classList.add('dark');r.setAttribute('data-theme','dark');}var m=document.querySelector('meta[name="theme-color"]');if(m){m.setAttribute('content',mode==='light'?'#ffffff':'#0b0f19');}}apply(t);window.__toggleTheme=function(){var isDark=r.classList.contains('dark')&&!r.classList.contains('light');var next=isDark?'light':'dark';apply(next);try{localStorage.setItem(k,next);}catch(e){}window.dispatchEvent(new CustomEvent('analyzax-theme-changed',{detail:next}));};document.addEventListener('click',function(e){var b=e.target&&e.target.closest&&(e.target.closest('#analyzax-theme-toggle')||e.target.closest('.theme-toggle-btn'));if(b){window.__toggleTheme();}},true);}catch(e){}})();`,
-          }}
-        />
         <HeadContent />
       </head>
       <body>
@@ -185,15 +176,13 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          <WorkspaceProvider>
-            <DatasetProvider>
-              <AppShell />
-            </DatasetProvider>
-          </WorkspaceProvider>
-        </AuthProvider>
-      </ThemeProvider>
+      <AuthProvider>
+        <WorkspaceProvider>
+          <DatasetProvider>
+            <AppShell />
+          </DatasetProvider>
+        </WorkspaceProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
@@ -378,14 +367,11 @@ function AppShell() {
               <span className="stat-subtext">No dataset selected</span>
             )}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginLeft: "auto" }}>
-            <span className="topbar-meta">
-              {activeDataset
-                ? `${(activeDataset.row_count ?? 0).toLocaleString()} rows · ${activeDataset.column_count ?? 0} columns`
-                : "0 datasets loaded"}
-            </span>
-            <ThemeToggle />
-          </div>
+          <span className="topbar-meta">
+            {activeDataset
+              ? `${(activeDataset.row_count ?? 0).toLocaleString()} rows · ${activeDataset.column_count ?? 0} columns`
+              : "0 datasets loaded"}
+          </span>
         </header>
         <main className="workspace-container">
           {isAuthLoading && !isAuthenticated ? (
