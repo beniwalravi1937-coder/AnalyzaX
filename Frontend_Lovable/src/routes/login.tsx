@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Eye, EyeOff, AlertCircle, Lock } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import BorderGlow from "../components/ui/BorderGlow";
+import { ThemeToggle } from "../components/landing/ThemeToggle";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -64,13 +65,16 @@ function LoginPage() {
 
   return (
     <div className="auth-shell">
+      <div style={{ position: "absolute", top: "1.5rem", right: "1.5rem", zIndex: 50 }}>
+        <ThemeToggle />
+      </div>
       <BorderGlow
         className="auth-card"
         borderRadius={20}
         glowRadius={40}
         glowIntensity={1.0}
         edgeSensitivity={30}
-        backgroundColor="rgba(14, 19, 38, 0.85)"
+        backgroundColor="var(--auth-card-bg, rgba(14, 19, 38, 0.85))"
         colors={["#c084fc", "#f472b6", "#38bdf8"]}
         animated
       >
