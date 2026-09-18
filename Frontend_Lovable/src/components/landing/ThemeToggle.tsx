@@ -9,43 +9,28 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ className = "", style = {} }: ThemeToggleProps) {
   const { theme, toggleTheme, isDark } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Until mounted, render a placeholder of the exact same 38px dimensions to prevent hydration mismatch/layout shifts
-  if (!mounted) {
-    return (
-      <div
-        style={{
-          width: "38px",
-          height: "38px",
-          borderRadius: "10px",
-          border: "1px solid transparent",
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          visibility: "hidden",
-          ...style,
-        }}
-        aria-hidden="true"
-        className={className}
-      />
-    );
-  }
 
   const nextModeText = isDark ? "light" : "dark";
   const ariaLabel = `Switch to ${nextModeText} mode`;
 
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof window !== "undefined" && (window as any).__toggleTheme) {
+      (window as any).__toggleTheme();
+    }
+    toggleTheme();
+  };
+
   return (
     <button
+      id="analyzax-theme-toggle"
       type="button"
-      onClick={toggleTheme}
+      onClick={handleClick}
       aria-label={ariaLabel}
       title={ariaLabel}
       className={`theme-toggle-btn ${className}`}
+      suppressHydrationWarning
       style={{
         width: "38px",
         height: "38px",
@@ -61,6 +46,8 @@ export function ThemeToggle({ className = "", style = {} }: ThemeToggleProps) {
         overflow: "hidden",
         padding: 0,
         outline: "none",
+        zIndex: 50,
+        pointerEvents: "auto",
         transition: "background-color 200ms ease, border-color 200ms ease, color 200ms ease, transform 150ms ease",
         ...style,
       }}
@@ -89,10 +76,12 @@ export function ThemeToggle({ className = "", style = {} }: ThemeToggleProps) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          pointerEvents: "none",
         }}
       >
         {/* Sun Icon (displayed in Dark mode to indicate switching to Light) */}
         <Sun
+          className="theme-toggle-sun"
           style={{
             position: "absolute",
             width: "18px",
@@ -108,6 +97,7 @@ export function ThemeToggle({ className = "", style = {} }: ThemeToggleProps) {
 
         {/* Moon Icon (displayed in Light mode to indicate switching to Dark) */}
         <Moon
+          className="theme-toggle-moon"
           style={{
             position: "absolute",
             width: "18px",

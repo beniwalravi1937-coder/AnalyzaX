@@ -83,8 +83,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {}
     };
 
+    // Listen for custom theme change events triggered by inline script or other components
+    const handleCustomChange = (e: any) => {
+      if (e.detail === "light" || e.detail === "dark") {
+        setThemeState(e.detail);
+      }
+    };
+    window.addEventListener("analyzax-theme-changed", handleCustomChange);
+
     mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+      window.removeEventListener("analyzax-theme-changed", handleCustomChange);
+    };
   }, []);
 
   return (

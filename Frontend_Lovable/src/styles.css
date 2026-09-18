@@ -394,6 +394,38 @@
   transition: none !important;
 }
 
+/* Theme Toggle Component Styling & CSS Fallbacks */
+.theme-toggle-btn {
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html.dark .theme-toggle-sun,
+html:not(.light) .theme-toggle-sun {
+  opacity: 1 !important;
+  transform: rotate(0deg) scale(1) !important;
+}
+
+html.dark .theme-toggle-moon,
+html:not(.light) .theme-toggle-moon {
+  opacity: 0 !important;
+  transform: rotate(-90deg) scale(0) !important;
+}
+
+html.light .theme-toggle-sun,
+[data-theme="light"] .theme-toggle-sun {
+  opacity: 0 !important;
+  transform: rotate(90deg) scale(0) !important;
+}
+
+html.light .theme-toggle-moon,
+[data-theme="light"] .theme-toggle-moon {
+  opacity: 1 !important;
+  transform: rotate(0deg) scale(1) !important;
+}
+
 /* Theme Selection */
 ::selection {
   background-color: var(--accent-subtle-bg);

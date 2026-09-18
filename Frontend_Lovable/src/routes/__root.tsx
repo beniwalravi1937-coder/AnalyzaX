@@ -165,10 +165,10 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
-        {/* Blocking inline script to eliminate any white/wrong-theme flash before initial paint */}
+        {/* Blocking inline script to eliminate any white/wrong-theme flash and provide instant click handler */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var k='analyzax-theme';var s=localStorage.getItem(k);var t=s||(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');var r=document.documentElement;if(t==='light'){r.classList.remove('dark');r.classList.add('light');r.setAttribute('data-theme','light');}else{r.classList.remove('light');r.classList.add('dark');r.setAttribute('data-theme','dark');}var m=document.querySelector('meta[name="theme-color"]');if(m){m.setAttribute('content',t==='light'?'#ffffff':'#0b0f19');}}catch(e){}})();`,
+            __html: `(function(){try{var k='analyzax-theme';var s=localStorage.getItem(k);var t=s||(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');var r=document.documentElement;function apply(mode){if(mode==='light'){r.classList.remove('dark');r.classList.add('light');r.setAttribute('data-theme','light');}else{r.classList.remove('light');r.classList.add('dark');r.setAttribute('data-theme','dark');}var m=document.querySelector('meta[name="theme-color"]');if(m){m.setAttribute('content',mode==='light'?'#ffffff':'#0b0f19');}}apply(t);window.__toggleTheme=function(){var isDark=r.classList.contains('dark')&&!r.classList.contains('light');var next=isDark?'light':'dark';apply(next);try{localStorage.setItem(k,next);}catch(e){}window.dispatchEvent(new CustomEvent('analyzax-theme-changed',{detail:next}));};document.addEventListener('click',function(e){var b=e.target&&e.target.closest&&(e.target.closest('#analyzax-theme-toggle')||e.target.closest('.theme-toggle-btn'));if(b){window.__toggleTheme();}},true);}catch(e){}})();`,
           }}
         />
         <HeadContent />
