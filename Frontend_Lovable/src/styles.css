@@ -130,6 +130,26 @@
   --shadow-card: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.15);
   --overlay: rgba(11, 15, 25, 0.8);
 
+  /* Secondary Button Tokens */
+  --btn-secondary-bg: rgba(255, 255, 255, 0.05);
+  --btn-secondary-color: #f8fafc;
+  --btn-secondary-border: rgba(255, 255, 255, 0.12);
+  --btn-secondary-hover-bg: rgba(255, 255, 255, 0.09);
+  --btn-secondary-hover-border: rgba(255, 255, 255, 0.25);
+  --btn-secondary-hover-color: #ffffff;
+
+  /* Hero Pill Badge Tokens */
+  --hero-pill-bg: rgba(99, 102, 241, 0.12);
+  --hero-pill-text: #c7d2fe;
+  --hero-pill-border: rgba(99, 102, 241, 0.3);
+  --hero-badge-bg: rgba(99, 102, 241, 0.25);
+  --hero-badge-text: #a5b4fc;
+
+  /* Mockup & Executive Brief Typography Tokens */
+  --mockup-card-label: #94a3b8;
+  --mockup-card-subtext: #64748b;
+  --brief-quote-text: #cbd5e1;
+
   /* Section-specific Dark Tokens */
   --hero-radial: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(168, 85, 247, 0.08) 50%, transparent 70%);
   --hero-dot-opacity: 1;
@@ -176,7 +196,7 @@
   /* One accent: low-chroma slate-teal, deep enough to hold AA as text on white. */
   --primary: oklch(0.47 0.062 213);
   --primary-foreground: oklch(0.99 0.002 247);
-  --accent: oklch(0.47 0.062 213);
+  --theme-accent: oklch(0.47 0.062 213);
   --accent-foreground: oklch(0.99 0.002 247);
 
   --secondary: oklch(0.955 0.006 250);
@@ -254,7 +274,7 @@
 
   --primary: oklch(0.74 0.055 208);
   --primary-foreground: oklch(0.16 0.02 258);
-  --accent: oklch(0.74 0.055 208);
+  --theme-accent: oklch(0.74 0.055 208);
   --accent-foreground: oklch(0.16 0.02 258);
 
   --secondary: oklch(0.26 0.016 258);
@@ -317,60 +337,87 @@
 .light,
 [data-theme="light"] {
   /* ==========================================================================
-   * AnalyzaX Light Mode Tokens — High-contrast, clean, airy SaaS aesthetic
+   * AnalyzaX Light Mode Tokens — Crisp, High-Contrast, Professional SaaS Aesthetic
    * ========================================================================== */
   --bg-base: #FFFFFF;
-  --bg-elevated: #F1F3F7;
+  --bg-elevated: #F8FAFC;
   --bg-card: #FFFFFF;
-  --bg-subtle: #F7F8FA;
-  --text-primary: #0B0F19;
-  --text-secondary: #424B5E;
-  --text-muted: #6B7484;
-  --border-default: #E3E7EE;
-  --border-subtle: #EDF0F5;
-  --accent: #4f46e5;
-  --accent-hover: #4338ca;
+  --bg-subtle: #F1F5F9;
+
+  /* Text Hierarchy - Deep, rich slates with WCAG AAA contrast */
+  --text-primary: #0B0F19;     /* Ultra-deep slate for primary titles & values */
+  --text-secondary: #1E293B;   /* Deep slate-800 for links, body text, descriptions */
+  --text-muted: #475569;       /* Slate-600 for sharp, easily legible labels & meta */
+
+  /* Borders - Clear structural contrast */
+  --border-default: #CBD5E1;   /* Slate-300 for crisp card/section borders */
+  --border-subtle: #E2E8F0;    /* Slate-200 for internal dividers */
+
+  /* Accents */
+  --accent: #4338CA;           /* Indigo-700: deep, authoritative, accessible */
+  --accent-hover: #3730A3;     /* Indigo-800 */
   --accent-foreground: #FFFFFF;
   --accent-subtle-bg: rgba(79, 70, 229, 0.08);
-  --success: #16a34a;
-  --warning: #d97706;
-  --danger: #dc2626;
-  --glow: rgba(79, 70, 229, 0.12);
-  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.05), 0 12px 32px rgba(16, 24, 40, 0.08);
-  --overlay: rgba(255, 255, 255, 0.85);
+
+  --success: #15803D;          /* Green-700 for high-contrast grade/badges */
+  --warning: #B45309;          /* Amber-700 */
+  --danger: #B91C1C;           /* Red-700 */
+  --glow: rgba(79, 70, 229, 0.08);
+  --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.05);
+  --overlay: rgba(255, 255, 255, 0.95);
+
+  /* Secondary Button Tokens (Hero & CTA) */
+  --btn-secondary-bg: #F8FAFC;
+  --btn-secondary-color: #0B0F19;
+  --btn-secondary-border: #CBD5E1;
+  --btn-secondary-hover-bg: #EDF2F7;
+  --btn-secondary-hover-border: #94A3B8;
+  --btn-secondary-hover-color: #000000;
+
+  /* Hero Pill Badge Tokens */
+  --hero-pill-bg: rgba(79, 70, 229, 0.08);
+  --hero-pill-text: #4338CA;
+  --hero-pill-border: rgba(79, 70, 229, 0.3);
+  --hero-badge-bg: #4F46E5;
+  --hero-badge-text: #FFFFFF;
+
+  /* Mockup & Executive Brief Typography Tokens */
+  --mockup-card-label: #475569;
+  --mockup-card-subtext: #334155;
+  --brief-quote-text: #1E293B;
 
   /* Section-specific Light Tokens */
-  --hero-radial: radial-gradient(circle, rgba(79, 70, 229, 0.06) 0%, rgba(168, 85, 247, 0.03) 50%, transparent 70%);
-  --hero-dot-opacity: 0.45;
+  --hero-radial: radial-gradient(circle, rgba(79, 70, 229, 0.05) 0%, rgba(168, 85, 247, 0.02) 50%, transparent 70%);
+  --hero-dot-opacity: 0.35;
   --mockup-bg: #FFFFFF;
-  --mockup-header-bg: #F7F8FA;
-  --mockup-card-bg: #FFFFFF;
-  --mockup-card-border: #E3E7EE;
-  --mockup-badge-green-bg: rgba(22, 163, 74, 0.1);
-  --mockup-badge-green-text: #16a34a;
-  --mockup-badge-green-border: rgba(22, 163, 74, 0.25);
+  --mockup-header-bg: #F8FAFC;
+  --mockup-card-bg: #F8FAFC;
+  --mockup-card-border: #E2E8F0;
+  --mockup-badge-green-bg: rgba(21, 128, 61, 0.1);
+  --mockup-badge-green-text: #15803D;
+  --mockup-badge-green-border: rgba(21, 128, 61, 0.25);
   --mockup-badge-indigo-bg: rgba(79, 70, 229, 0.1);
-  --mockup-badge-indigo-text: #4f46e5;
+  --mockup-badge-indigo-text: #4338CA;
   --mockup-badge-indigo-border: rgba(79, 70, 229, 0.25);
-  --brief-card-bg: rgba(79, 70, 229, 0.04);
-  --brief-card-border: rgba(79, 70, 229, 0.2);
+  --brief-card-bg: #F8FAFC;
+  --brief-card-border: #CBD5E1;
   --brief-icon-bg: rgba(79, 70, 229, 0.12);
   --feature-card-bg: #FFFFFF;
-  --feature-card-border: #E3E7EE;
+  --feature-card-border: #E2E8F0;
   --video-window-bg: #FFFFFF;
-  --video-window-header-bg: #F7F8FA;
-  --video-window-shadow: 0 1px 3px rgba(16, 24, 40, 0.08), 0 20px 40px rgba(16, 24, 40, 0.09);
-  --video-window-border: #E3E7EE;
-  --video-inner-bg: #F7F8FA;
-  --step-numeral-bg: rgba(79, 70, 229, 0.12);
-  --step-numeral-color: #4f46e5;
+  --video-window-header-bg: #F8FAFC;
+  --video-window-shadow: 0 4px 25px -4px rgba(15, 23, 42, 0.1), 0 1px 3px rgba(15, 23, 42, 0.05);
+  --video-window-border: #CBD5E1;
+  --video-inner-bg: #0F172A;
+  --step-numeral-bg: rgba(79, 70, 229, 0.1);
+  --step-numeral-color: #4338CA;
   --step-numeral-border: rgba(79, 70, 229, 0.25);
-  --cta-band-bg: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(168, 85, 247, 0.06) 100%);
-  --cta-band-border: #E3E7EE;
-  --footer-bg: #F7F8FA;
+  --cta-band-bg: linear-gradient(135deg, rgba(79, 70, 229, 0.06) 0%, rgba(168, 85, 247, 0.04) 100%);
+  --cta-band-border: #CBD5E1;
+  --footer-bg: #F8FAFC;
   --brand-logo-text: #0B0F19;
-  --auth-bg: #F7F8FA;
-  --auth-gradient: radial-gradient(ellipse 70% 60% at 50% 20%, rgba(79, 70, 229, 0.08) 0%, rgba(168, 85, 247, 0.04) 45%, transparent 80%), linear-gradient(180deg, #FFFFFF 0%, #F7F8FA 100%);
+  --auth-bg: #F8FAFC;
+  --auth-gradient: radial-gradient(ellipse 70% 60% at 50% 20%, rgba(79, 70, 229, 0.06) 0%, rgba(168, 85, 247, 0.03) 45%, transparent 80%), linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
   --auth-card-bg: #FFFFFF;
   --auth-input-bg: #FFFFFF;
 }

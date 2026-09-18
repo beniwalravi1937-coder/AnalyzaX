@@ -111,7 +111,7 @@ export function LandingPage() {
           waveAmplitude={0}
           gradientFrom="rgba(168, 85, 247, 0.35)"
           gradientTo="rgba(180, 151, 207, 0.25)"
-          glowColor="#120F17"
+          glowColor="rgba(168, 85, 247, 0.25)"
         />
       </div>
 
@@ -141,13 +141,28 @@ export function LandingPage() {
               <AnalyzaXLogo size={32} showText={true} />
             </Link>
             <nav style={{ display: "flex", alignItems: "center", gap: "1.75rem" }} className="md-show">
-              <a href="#features" style={{ color: "var(--text-secondary, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={(e) => (e.currentTarget.style.color = "var(--text-primary, #f8fafc)")} onMouseOut={(e) => (e.currentTarget.style.color = "var(--text-secondary, #94a3b8)")}>
+              <a
+                href="#features"
+                style={{ color: "var(--text-secondary, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", fontWeight: 600, transition: "color 0.2s" }}
+                onMouseOver={(e) => (e.currentTarget.style.color = "var(--text-primary, #0B0F19)")}
+                onMouseOut={(e) => (e.currentTarget.style.color = "var(--text-secondary, #1E293B)")}
+              >
                 Features
               </a>
-              <a href="#how-it-works" style={{ color: "var(--text-secondary, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={(e) => (e.currentTarget.style.color = "var(--text-primary, #f8fafc)")} onMouseOut={(e) => (e.currentTarget.style.color = "var(--text-secondary, #94a3b8)")}>
+              <a
+                href="#how-it-works"
+                style={{ color: "var(--text-secondary, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", fontWeight: 600, transition: "color 0.2s" }}
+                onMouseOver={(e) => (e.currentTarget.style.color = "var(--text-primary, #0B0F19)")}
+                onMouseOut={(e) => (e.currentTarget.style.color = "var(--text-secondary, #1E293B)")}
+              >
                 How It Works
               </a>
-              <a href="#preview" style={{ color: "var(--text-secondary, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={(e) => (e.currentTarget.style.color = "var(--text-primary, #f8fafc)")} onMouseOut={(e) => (e.currentTarget.style.color = "var(--text-secondary, #94a3b8)")}>
+              <a
+                href="#preview"
+                style={{ color: "var(--text-secondary, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", fontWeight: 600, transition: "color 0.2s" }}
+                onMouseOver={(e) => (e.currentTarget.style.color = "var(--text-primary, #0B0F19)")}
+                onMouseOut={(e) => (e.currentTarget.style.color = "var(--text-secondary, #1E293B)")}
+              >
                 Product Demo
               </a>
             </nav>
@@ -161,7 +176,7 @@ export function LandingPage() {
                 color: "var(--text-secondary, #cbd5e1)",
                 textDecoration: "none",
                 fontSize: "0.875rem",
-                fontWeight: 500,
+                fontWeight: 600,
                 padding: "0.5rem 1rem",
                 borderRadius: "8px",
                 transition: "all 0.2s",
@@ -251,17 +266,17 @@ export function LandingPage() {
               gap: "0.6rem",
               padding: "0.35rem 1rem",
               borderRadius: "9999px",
-              backgroundColor: "var(--accent-subtle-bg, rgba(99, 102, 241, 0.12))",
-              border: "1px solid var(--border-default, rgba(99, 102, 241, 0.3))",
+              backgroundColor: "var(--hero-pill-bg, rgba(99, 102, 241, 0.12))",
+              border: "1px solid var(--hero-pill-border, rgba(99, 102, 241, 0.3))",
               fontSize: "0.8125rem",
-              fontWeight: 500,
-              color: "var(--accent, #a5b4fc)",
+              fontWeight: 600,
+              color: "var(--hero-pill-text, #a5b4fc)",
               marginBottom: "1.75rem",
             }}
           >
-            <Sparkles style={{ width: "14px", height: "14px", color: "var(--accent, #818cf8)" }} />
+            <Sparkles style={{ width: "14px", height: "14px", color: "var(--hero-pill-text, #818cf8)" }} />
             <span>Next-Generation Intelligent Data Workspace</span>
-            <span style={{ backgroundColor: "var(--accent-subtle-bg, rgba(99, 102, 241, 0.25))", color: "var(--accent, #a5b4fc)", padding: "0.1rem 0.45rem", borderRadius: "9999px", fontSize: "0.6875rem", fontWeight: 700 }}>
+            <span style={{ backgroundColor: "var(--hero-badge-bg, rgba(99, 102, 241, 0.25))", color: "var(--hero-badge-text, #a5b4fc)", padding: "0.12rem 0.5rem", borderRadius: "9999px", fontSize: "0.6875rem", fontWeight: 700 }}>
               NEW
             </span>
           </div>
@@ -349,26 +364,28 @@ export function LandingPage() {
             <Link
               to="/login"
               style={{
-                backgroundColor: "var(--bg-card, rgba(255, 255, 255, 0.05))",
-                color: "var(--text-primary, #e2e8f0)",
+                backgroundColor: "var(--btn-secondary-bg, rgba(255, 255, 255, 0.05))",
+                color: "var(--btn-secondary-color, #f8fafc)",
                 textDecoration: "none",
                 fontSize: "1.0625rem",
-                fontWeight: 500,
+                fontWeight: 600,
                 padding: "0.85rem 1.85rem",
                 borderRadius: "10px",
-                border: "1px solid var(--border-default, rgba(255, 255, 255, 0.12))",
+                border: "1px solid var(--btn-secondary-border, rgba(255, 255, 255, 0.12))",
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "0.5rem",
                 transition: "all 0.2s",
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--bg-elevated, rgba(255, 255, 255, 0.09))";
-                e.currentTarget.style.borderColor = "var(--border-default, rgba(255, 255, 255, 0.25))";
+                e.currentTarget.style.backgroundColor = "var(--btn-secondary-hover-bg, rgba(255, 255, 255, 0.09))";
+                e.currentTarget.style.borderColor = "var(--btn-secondary-hover-border, rgba(255, 255, 255, 0.25))";
+                e.currentTarget.style.color = "var(--btn-secondary-hover-color, #ffffff)";
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--bg-card, rgba(255, 255, 255, 0.05))";
-                e.currentTarget.style.borderColor = "var(--border-default, rgba(255, 255, 255, 0.12))";
+                e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg, rgba(255, 255, 255, 0.05))";
+                e.currentTarget.style.borderColor = "var(--btn-secondary-border, rgba(255, 255, 255, 0.12))";
+                e.currentTarget.style.color = "var(--btn-secondary-color, #f8fafc)";
               }}
             >
               Sign In to Workspace
@@ -429,15 +446,15 @@ export function LandingPage() {
               <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#ef4444" }} />
               <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#f59e0b" }} />
               <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#10b981" }} />
-              <span style={{ marginLeft: "0.75rem", fontSize: "0.75rem", color: "var(--text-muted, #94a3b8)", fontFamily: "var(--font-mono)" }}>
+              <span style={{ marginLeft: "0.75rem", fontSize: "0.75rem", color: "var(--mockup-card-label, var(--text-muted, #94a3b8))", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
                 analyzax.workspace / student_exam_performance.csv
               </span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-              <span style={{ fontSize: "0.6875rem", backgroundColor: "var(--mockup-badge-green-bg, rgba(16, 185, 129, 0.15))", color: "var(--mockup-badge-green-text, #10b981)", border: "1px solid var(--mockup-badge-green-border, rgba(16, 185, 129, 0.3))", padding: "0.15rem 0.5rem", borderRadius: "4px", fontWeight: 600 }}>
+              <span style={{ fontSize: "0.6875rem", backgroundColor: "var(--mockup-badge-green-bg, rgba(16, 185, 129, 0.15))", color: "var(--mockup-badge-green-text, #10b981)", border: "1px solid var(--mockup-badge-green-border, rgba(16, 185, 129, 0.3))", padding: "0.15rem 0.5rem", borderRadius: "4px", fontWeight: 700 }}>
                 ● 100,000 ROWS AUDITED
               </span>
-              <span style={{ fontSize: "0.6875rem", backgroundColor: "var(--mockup-badge-indigo-bg, rgba(99, 102, 241, 0.15))", color: "var(--mockup-badge-indigo-text, #a5b4fc)", border: "1px solid var(--mockup-badge-indigo-border, rgba(99, 102, 241, 0.3))", padding: "0.15rem 0.5rem", borderRadius: "4px", fontWeight: 600 }}>
+              <span style={{ fontSize: "0.6875rem", backgroundColor: "var(--mockup-badge-indigo-bg, rgba(99, 102, 241, 0.15))", color: "var(--mockup-badge-indigo-text, #a5b4fc)", border: "1px solid var(--mockup-badge-indigo-border, rgba(99, 102, 241, 0.3))", padding: "0.15rem 0.5rem", borderRadius: "4px", fontWeight: 700 }}>
                 44 ATTRIBUTES
               </span>
             </div>
@@ -455,49 +472,49 @@ export function LandingPage() {
               }}
             >
               <div style={{ padding: "1.25rem", borderRadius: "10px", backgroundColor: "var(--mockup-card-bg, rgba(255, 255, 255, 0.03))", border: "1px solid var(--mockup-card-border, rgba(255, 255, 255, 0.06))", boxShadow: "var(--shadow-panel, none)" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted, #94a3b8)", marginBottom: "0.35rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <div style={{ fontSize: "0.75rem", color: "var(--mockup-card-label, var(--text-muted, #94a3b8))", marginBottom: "0.35rem", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
                   Dataset Health Score
                 </div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
                   <span style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--success, #10b981)" }}>95.5%</span>
-                  <span style={{ fontSize: "0.8125rem", color: "var(--success, #10b981)", fontWeight: 600 }}>Grade A</span>
+                  <span style={{ fontSize: "0.8125rem", color: "var(--success, #10b981)", fontWeight: 700 }}>Grade A</span>
                 </div>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted, #64748b)", marginTop: "0.35rem" }}>Clean structure ready for modelling</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--mockup-card-subtext, var(--text-muted, #64748b))", marginTop: "0.35rem", fontWeight: 500 }}>Clean structure ready for modelling</div>
               </div>
 
               <div style={{ padding: "1.25rem", borderRadius: "10px", backgroundColor: "var(--mockup-card-bg, rgba(255, 255, 255, 0.03))", border: "1px solid var(--mockup-card-border, rgba(255, 255, 255, 0.06))", boxShadow: "var(--shadow-panel, none)" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted, #94a3b8)", marginBottom: "0.35rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <div style={{ fontSize: "0.75rem", color: "var(--mockup-card-label, var(--text-muted, #94a3b8))", marginBottom: "0.35rem", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
                   Primary Outcome Target
                 </div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
                   <span style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--accent, #818cf8)" }}>exam_score</span>
-                  <span style={{ fontSize: "0.75rem", backgroundColor: "var(--accent-subtle-bg, rgba(99, 102, 241, 0.2))", color: "var(--accent, #c7d2fe)", padding: "0.1rem 0.4rem", borderRadius: "4px" }}>
+                  <span style={{ fontSize: "0.75rem", backgroundColor: "var(--accent-subtle-bg, rgba(99, 102, 241, 0.2))", color: "var(--accent, #c7d2fe)", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: 600 }}>
                     Regression
                   </span>
                 </div>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted, #64748b)", marginTop: "0.35rem" }}>Auto-detected with 94% confidence</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--mockup-card-subtext, var(--text-muted, #64748b))", marginTop: "0.35rem", fontWeight: 500 }}>Auto-detected with 94% confidence</div>
               </div>
 
               <div style={{ padding: "1.25rem", borderRadius: "10px", backgroundColor: "var(--mockup-card-bg, rgba(255, 255, 255, 0.03))", border: "1px solid var(--mockup-card-border, rgba(255, 255, 255, 0.06))", boxShadow: "var(--shadow-panel, none)" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted, #94a3b8)", marginBottom: "0.35rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <div style={{ fontSize: "0.75rem", color: "var(--mockup-card-label, var(--text-muted, #94a3b8))", marginBottom: "0.35rem", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
                   Top Predictor Identified
                 </div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
                   <span style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--accent, #38bdf8)" }}>study_hours</span>
-                  <span style={{ fontSize: "0.8125rem", color: "var(--success, #10b981)", fontWeight: 600 }}>r = +0.64</span>
+                  <span style={{ fontSize: "0.8125rem", color: "var(--success, #10b981)", fontWeight: 700 }}>r = +0.64</span>
                 </div>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted, #64748b)", marginTop: "0.35rem" }}>Strongest positive impact on scores</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--mockup-card-subtext, var(--text-muted, #64748b))", marginTop: "0.35rem", fontWeight: 500 }}>Strongest positive impact on scores</div>
               </div>
 
               <div style={{ padding: "1.25rem", borderRadius: "10px", backgroundColor: "var(--mockup-card-bg, rgba(255, 255, 255, 0.03))", border: "1px solid var(--mockup-card-border, rgba(255, 255, 255, 0.06))", boxShadow: "var(--shadow-panel, none)" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted, #94a3b8)", marginBottom: "0.35rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <div style={{ fontSize: "0.75rem", color: "var(--mockup-card-label, var(--text-muted, #94a3b8))", marginBottom: "0.35rem", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
                   Prediction Model Accuracy
                 </div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
                   <span style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--accent, #c084fc)" }}>0.91 R²</span>
-                  <span style={{ fontSize: "0.8125rem", color: "var(--accent, #c084fc)", fontWeight: 600 }}>RMSE 3.42</span>
+                  <span style={{ fontSize: "0.8125rem", color: "var(--accent, #c084fc)", fontWeight: 700 }}>RMSE 3.42</span>
                 </div>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted, #64748b)", marginTop: "0.35rem" }}>Trained automatically across 100k rows</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--mockup-card-subtext, var(--text-muted, #64748b))", marginTop: "0.35rem", fontWeight: 500 }}>Trained automatically across 100k rows</div>
               </div>
             </div>
 
@@ -519,15 +536,15 @@ export function LandingPage() {
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.4rem" }}>
-                  <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary, #f8fafc)" }}>
+                  <span style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary, #f8fafc)" }}>
                     AI Analyst Executive Brief
                   </span>
-                  <span style={{ fontSize: "0.75rem", color: "var(--accent, #818cf8)", fontFamily: "var(--font-mono)", backgroundColor: "var(--accent-subtle-bg, transparent)", padding: "0.15rem 0.5rem", borderRadius: "9999px" }}>
+                  <span style={{ fontSize: "0.75rem", color: "var(--mockup-badge-indigo-text, var(--accent, #818cf8))", fontFamily: "var(--font-mono)", backgroundColor: "var(--mockup-badge-indigo-bg, rgba(99, 102, 241, 0.15))", border: "1px solid var(--mockup-badge-indigo-border, rgba(99, 102, 241, 0.3))", padding: "0.15rem 0.5rem", borderRadius: "9999px", fontWeight: 700 }}>
                     Automated Analysis
                   </span>
                 </div>
-                <p style={{ fontSize: "0.84rem", color: "var(--text-secondary, #cbd5e1)", lineHeight: 1.55, margin: 0 }}>
-                  “Students studying <strong style={{ color: "var(--text-primary, #ffffff)" }}>&gt;4 hours daily</strong> paired with regular practice tests achieve a <strong style={{ color: "var(--success, #10b981)" }}>92.4% pass rate</strong>, compared to 54.1% for irregular study habits. Exam anxiety exhibits an inverse threshold at level 7, after which scores degrade by an average of 14.8 points.”
+                <p style={{ fontSize: "0.875rem", color: "var(--brief-quote-text, var(--text-secondary, #cbd5e1))", lineHeight: 1.6, margin: 0, fontWeight: 500 }}>
+                  “Students studying <strong style={{ color: "var(--text-primary, #ffffff)", fontWeight: 700 }}>&gt;4 hours daily</strong> paired with regular practice tests achieve a <strong style={{ color: "var(--success, #10b981)", fontWeight: 700 }}>92.4% pass rate</strong>, compared to 54.1% for irregular study habits. Exam anxiety exhibits an inverse threshold at level 7, after which scores degrade by an average of 14.8 points.”
                 </p>
               </div>
             </div>
@@ -1329,14 +1346,25 @@ export function LandingPage() {
             <Link
               to="/login"
               style={{
-                backgroundColor: "var(--bg-card, rgba(15, 23, 42, 0.6))",
-                color: "var(--text-primary, #cbd5e1)",
+                backgroundColor: "var(--btn-secondary-bg, rgba(15, 23, 42, 0.6))",
+                color: "var(--btn-secondary-color, #cbd5e1)",
                 textDecoration: "none",
                 fontSize: "1rem",
-                fontWeight: 500,
+                fontWeight: 600,
                 padding: "0.85rem 1.75rem",
                 borderRadius: "10px",
-                border: "1px solid var(--border-default, rgba(255, 255, 255, 0.12))",
+                border: "1px solid var(--btn-secondary-border, rgba(255, 255, 255, 0.12))",
+                transition: "all 0.2s",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--btn-secondary-hover-bg, rgba(255, 255, 255, 0.09))";
+                e.currentTarget.style.borderColor = "var(--btn-secondary-hover-border, rgba(255, 255, 255, 0.25))";
+                e.currentTarget.style.color = "var(--btn-secondary-hover-color, #ffffff)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--btn-secondary-bg, rgba(15, 23, 42, 0.6))";
+                e.currentTarget.style.borderColor = "var(--btn-secondary-border, rgba(255, 255, 255, 0.12))";
+                e.currentTarget.style.color = "var(--btn-secondary-color, #cbd5e1)";
               }}
             >
               Sign In to Workspace
