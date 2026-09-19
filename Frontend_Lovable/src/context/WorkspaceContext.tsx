@@ -21,49 +21,91 @@ interface WorkspaceContextType {
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
+const DEFAULT_WORKSPACE: Workspace = {
+  workspace_id: 'ws_default',
+  name: 'AnalyzaX Production Workspace',
+  slug: 'analyzax-production-workspace',
+  description: 'Primary production analytical workspace',
+  status: 'ACTIVE',
+  owner_id: 'usr_default',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  settings: {
+    enforce_two_factor: false,
+    allowed_ip_ranges: [],
+    session_timeout_minutes: 1440,
+    retention_days: 90,
+  },
+};
+
+const DEFAULT_PROJECT: Project = {
+  project_id: 'proj_default',
+  workspace_id: 'ws_default',
+  name: 'Default Analytical Project',
+  slug: 'default-analytical-project',
+  description: 'Primary project for datasets, notebooks, and models',
+  status: 'ACTIVE',
+  visibility: 'PRIVATE',
+  created_by: 'usr_default',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+};
+
 export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
-  const [activeWorkspace, setActiveWorkspaceState] = useState<Workspace | null>(null);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [activeProject, setActiveProjectState] = useState<Project | null>(null);
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([DEFAULT_WORKSPACE]);
+  const [activeWorkspace, setActiveWorkspaceState] = useState<Workspace | null>(DEFAULT_WORKSPACE);
+  const [projects, setProjects] = useState<Project[]>([DEFAULT_PROJECT]);
+  const [activeProject, setActiveProjectState] = useState<Project | null>(DEFAULT_PROJECT);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Load workspaces on initial mount
   const refreshWorkspaces = useCallback(async () => {
     try {
       const list = await workspaceApi.getWorkspaces(true);
-      setWorkspaces(list);
-
-      const savedWsId = typeof window !== 'undefined' ? localStorage.getItem('analyzax_active_workspace_id') : null;
-      let matchedWs = list.find((w) => w.workspace_id === savedWsId);
-      if (!matchedWs && list.length > 0) {
-        matchedWs = list.find((w) => w.status === 'ACTIVE') || list[0];
-      }
-      if (matchedWs) {
-        setActiveWorkspaceState(matchedWs);
+      if (!list || list.length === 0) {
+        setWorkspaces([DEFAULT_WORKSPACE]);
+        setActiveWorkspaceState(DEFAULT_WORKSPACE);
+      } else {
+        setWorkspaces(list);
+        const savedWsId = typeof window !== 'undefined' ? localStorage.getItem('analyzax_active_workspace_id') : null;
+        let matchedWs = list.find((w) => w.workspace_id === savedWsId);
+        if (!matchedWs && list.length > 0) {
+          matchedWs = list.find((w) => w.status === 'ACTIVE') || list[0];
+        }
+        if (matchedWs) {
+          setActiveWorkspaceState(matchedWs);
+        }
       }
     } catch (err) {
-      console.error('Failed to load workspaces:', err);
+      console.warn('Backend workspaces unavailable, using default workspace:', err);
+      setWorkspaces([DEFAULT_WORKSPACE]);
+      setActiveWorkspaceState(DEFAULT_WORKSPACE);
     }
   }, []);
 
   // Load projects for active workspace
   const refreshProjects = useCallback(async () => {
-    if (!activeWorkspace) return;
+    const wsId = activeWorkspace?.workspace_id || 'ws_default';
     try {
-      const list = await workspaceApi.getProjects(activeWorkspace.workspace_id, true);
-      setProjects(list);
-
-      const savedProjId = typeof window !== 'undefined' ? localStorage.getItem('analyzax_active_project_id') : null;
-      let matchedProj = list.find((p) => p.project_id === savedProjId);
-      if (!matchedProj && list.length > 0) {
-        matchedProj = list.find((p) => p.status === 'ACTIVE') || list[0];
-      }
-      if (matchedProj) {
-        setActiveProjectState(matchedProj);
+      const list = await workspaceApi.getProjects(wsId, true);
+      if (!list || list.length === 0) {
+        setProjects([DEFAULT_PROJECT]);
+        setActiveProjectState(DEFAULT_PROJECT);
+      } else {
+        setProjects(list);
+        const savedProjId = typeof window !== 'undefined' ? localStorage.getItem('analyzax_active_project_id') : null;
+        let matchedProj = list.find((p) => p.project_id === savedProjId);
+        if (!matchedProj && list.length > 0) {
+          matchedProj = list.find((p) => p.status === 'ACTIVE') || list[0];
+        }
+        if (matchedProj) {
+          setActiveProjectState(matchedProj);
+        }
       }
     } catch (err) {
-      console.error('Failed to load projects:', err);
+      console.warn('Backend projects unavailable, using default project:', err);
+      setProjects([DEFAULT_PROJECT]);
+      setActiveProjectState(DEFAULT_PROJECT);
     }
   }, [activeWorkspace]);
 

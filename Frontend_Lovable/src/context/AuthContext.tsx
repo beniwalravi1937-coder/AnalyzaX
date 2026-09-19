@@ -41,7 +41,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const refreshUser = useCallback(async () => {
     // Check if there is an existing local session or token before attempting network refresh
     const local = getLocalUser();
-    const hasToken = typeof window !== "undefined" && Boolean(localStorage.getItem("analyzax_auth_token"));
+    const hasToken =
+      typeof window !== "undefined" &&
+      Boolean(localStorage.getItem("analyzax_token") || sessionStorage.getItem("analyzax_token"));
+
     if (!local && !hasToken) {
       setUser(null);
       setIsLoading(false);
@@ -81,7 +84,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const res = await authApi.login(email, password);
       setUser(res.user);
-      await refreshUser();
+      setWorkspaceMemberships(res.workspace_memberships || []);
+      setPermissions([
+        "dataset:read",
+        "dataset:write",
+        "dataset:delete",
+        "workspace:manage",
+        "workspace:admin",
+        "sql:execute",
+        "export:data",
+        "models:train",
+      ]);
+      try {
+        await refreshUser();
+      } catch {
+        // local auth is already active
+      }
     } catch (err: any) {
       setError(err.message || "Failed to sign in");
       throw err;
@@ -96,7 +114,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const res = await authApi.register(email, password, displayName);
       setUser(res.user);
-      await refreshUser();
+      setWorkspaceMemberships(res.workspace_memberships || []);
+      setPermissions([
+        "dataset:read",
+        "dataset:write",
+        "dataset:delete",
+        "workspace:manage",
+        "workspace:admin",
+        "sql:execute",
+        "export:data",
+        "models:train",
+      ]);
+      try {
+        await refreshUser();
+      } catch {
+        // local auth is already active
+      }
     } catch (err: any) {
       setError(err.message || "Failed to create account");
       throw err;

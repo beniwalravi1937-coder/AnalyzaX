@@ -6,7 +6,11 @@ import BorderGlow from "../components/ui/BorderGlow";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>) => ({
-    next: (search["next"] as string) || (search["redirect"] as string) || "/",
+    next:
+      (search["next"] as string) ||
+      (search["redirect"] as string) ||
+      (search["returnUrl"] as string) ||
+      "/",
   }),
   head: () => ({
     meta: [
@@ -42,19 +46,26 @@ function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const rawNext = next || "/";
+  const target = rawNext && rawNext !== "/login" && rawNext !== "/register" ? rawNext : "/";
+
   useEffect(() => {
     if (!authLoading && user) {
-      navigate({ to: next || "/", replace: true });
+      navigate({ to: target, replace: true });
     }
-  }, [authLoading, user, next, navigate]);
+  }, [authLoading, user, target, navigate]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!email.trim() || !password) {
+      setError("Please enter your email and password.");
+      return;
+    }
     setError(null);
     setIsLoading(true);
     try {
-      await login(email, password);
-      navigate({ to: next || "/", replace: true });
+      await login(email.trim(), password);
+      navigate({ to: target, replace: true });
     } catch (err: any) {
       setError(err.message || "Invalid email or password.");
     } finally {

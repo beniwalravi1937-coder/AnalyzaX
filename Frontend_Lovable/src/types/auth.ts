@@ -8,12 +8,16 @@ export type RoleName = "OWNER" | "ADMIN" | "EDITOR" | "ANALYST" | "VIEWER";
 
 export interface User {
   user_id: string;
+  id?: string;
   email: string;
   display_name: string;
   status: UserStatus;
   created_at: string;
   last_login_at?: string;
   email_verified_at?: string;
+  is_active?: boolean;
+  is_verified?: boolean;
+  avatar_url?: string | null;
 }
 
 export interface SafeSession {

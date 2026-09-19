@@ -6,7 +6,11 @@ import BorderGlow from "../components/ui/BorderGlow";
 
 export const Route = createFileRoute("/register")({
   validateSearch: (search: Record<string, unknown>) => ({
-    next: (search["next"] as string) || (search["redirect"] as string) || "/",
+    next:
+      (search["next"] as string) ||
+      (search["redirect"] as string) ||
+      (search["returnUrl"] as string) ||
+      "/",
   }),
   head: () => ({
     meta: [
@@ -45,11 +49,14 @@ function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  const rawNext = next || "/";
+  const target = rawNext && rawNext !== "/login" && rawNext !== "/register" ? rawNext : "/";
+
   useEffect(() => {
     if (!authLoading && user && !success) {
-      navigate({ to: next || "/", replace: true });
+      navigate({ to: target, replace: true });
     }
-  }, [authLoading, user, next, navigate, success]);
+  }, [authLoading, user, target, navigate, success]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -66,11 +73,11 @@ function RegisterPage() {
 
     setIsLoading(true);
     try {
-      await register(email, password, displayName.trim() || email.split("@")[0]);
+      await register(email.trim(), password, displayName.trim() || email.split("@")[0]);
       setSuccess(true);
       setTimeout(() => {
-        navigate({ to: next || "/", replace: true });
-      }, 1500);
+        navigate({ to: target, replace: true });
+      }, 1200);
     } catch (err: any) {
       setError(err.message || "Registration failed. Please try again.");
     } finally {
