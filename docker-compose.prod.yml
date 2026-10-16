@@ -27,12 +27,11 @@ services:
   frontend:
     build:
       context: ./Frontend_Lovable
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
+      args:
+        VITE_API_BASE_URL: /api/v1
     container_name: analyzax-frontend
     restart: always
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://backend:8000/api/v1
     depends_on:
       - backend
     networks:
@@ -41,8 +40,8 @@ services:
   # 3. FastAPI Analytical Core & REST API
   backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: analyzax-backend
     restart: always
     env_file:
@@ -60,8 +59,8 @@ services:
   # 4. Asynchronous Background Job Worker
   worker:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: analyzax-worker
     restart: always
     command: ["python", "-m", "backend.app.engines.jobs.worker"]

@@ -1,0 +1,36 @@
+# ==============================================================================
+# AnalyzaX Frontend — Production Dockerfile
+# Builds the static TanStack/Vite bundle and serves it with nginx on port 3000.
+# (Dockerfile in this folder is the dev-server image used by docker-compose.yml.)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Stage 1: Build static bundle
+# ------------------------------------------------------------------------------
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# API is served from the same origin through the edge proxy (/api/v1 -> backend)
+ARG VITE_API_BASE_URL=/api/v1
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL} \
+    NODE_OPTIONS=--max-old-space-size=3072
+
+COPY package*.json ./
+RUN npm install --legacy-peer-deps --no-audit --no-fund
+
+COPY . .
+RUN npm run build
+
+# ------------------------------------------------------------------------------
+# Stage 2: Static file server
+# ------------------------------------------------------------------------------
+FROM nginx:1.25-alpine AS production
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget -q -O /dev/null http://127.0.0.1:3000/ || exit 1

@@ -138,3 +138,6 @@ full_prompt.txt
 scratch_prompt.txt
 backups/
 
+
+# AWS deploy state (instance id / IP / key path)
+scripts/aws/.instance
