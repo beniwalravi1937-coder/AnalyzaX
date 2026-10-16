@@ -152,8 +152,10 @@ class Settings(BaseSettings):
     EXPORT_MAX_REPORT_SECTIONS: int = 50
     EXPORT_MAX_TABLE_ROWS_IN_REPORT: int = 200
 
-    # AI Analyst Controls & Governance (Phase 13)
-    AI_PROVIDER: str = "mock"  # 'openrouter' or 'mock'
+    # AI Analyst & AI Copilot Controls (Phase 13 & Phase 25)
+    AI_PROVIDER: str = "mock"  # 'gemini', 'openrouter', or 'mock'
+    GEMINI_API_KEY: str = Field(default="", description="Google Gemini API Key")
+    GEMINI_MODEL: str = "gemini-2.5-flash"
     AI_MODEL: str = "meta-llama/llama-3.3-70b-instruct:free"
     AI_BASE_URL: str = "https://openrouter.ai/api/v1"
     AI_API_KEY: str = Field(default="", description="AI Provider API Key")

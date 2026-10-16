@@ -62,6 +62,16 @@ class ProfilingService:
                 logger.warning(f"Failed to read cached profile for {dataset_id}: {e}")
         return None
 
+    def get_profile(self, dataset_id: str) -> Optional[DatasetProfileResponse]:
+        """Convenience method to retrieve cached or computed profile."""
+        profile = self.get_cached_profile(dataset_id)
+        if profile:
+            return profile
+        try:
+            return self.profile_dataset(dataset_id)
+        except Exception:
+            return None
+
     def invalidate_profile(self, dataset_id: str) -> None:
         """Invalidates in-memory and on-disk cached profile for a dataset."""
         cache_key = self._build_cache_key(dataset_id)

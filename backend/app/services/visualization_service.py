@@ -69,11 +69,28 @@ class VisualizationService:
 
         parquet_path = version.storage_path
         if not os.path.exists(parquet_path):
-            ds = dataset_service.get_dataset(dataset_id)
-            if ds and hasattr(ds, "file_path") and os.path.exists(ds.file_path):
-                parquet_path = ds.file_path
+            # Check relative to current runtime processed directory if drive letter changed
+            candidate_path = os.path.join(
+                os.path.abspath("data/processed"),
+                dataset_id,
+                f"{version_id}.parquet"
+            )
+            if os.path.exists(candidate_path):
+                parquet_path = candidate_path
             else:
-                raise ValueError(f"Parquet file not found for dataset {dataset_id} version {version_id}")
+                ds = dataset_service.get_dataset(dataset_id)
+                if ds and hasattr(ds, "file_path") and os.path.exists(ds.file_path):
+                    parquet_path = ds.file_path
+                else:
+                    v1_candidate = os.path.join(
+                        os.path.abspath("data/processed"),
+                        dataset_id,
+                        "v1.parquet"
+                    )
+                    if os.path.exists(v1_candidate):
+                        parquet_path = v1_candidate
+                    else:
+                        raise ValueError(f"Parquet file not found for dataset {dataset_id} version {version_id}")
 
         return version_id, parquet_path
 
@@ -125,13 +142,35 @@ class VisualizationService:
         except Exception:
             pass
 
-        return self._recommender.recommend(
+        recs = self._recommender.recommend(
             columns=col_contexts,
             row_count=row_count,
             selected_fields=selected_fields,
             intent=intent,
             quality_issues=quality_issues,
         )
+
+        for rec in recs:
+            if rec.score is None:
+                rec.score = rec.confidence
+            if rec.rationale is None:
+                rec.rationale = rec.reason
+            if rec.spec is None:
+                rec.spec = ChartSpec(
+                    chart_id=f"rec_{rec.recommendation_id[:8]}",
+                    chart_type=rec.chart_type,
+                    title=rec.title,
+                    description=rec.reason,
+                    dataset_id=dataset_id,
+                    dataset_version_id=resolved_version_id,
+                    x=rec.x_field,
+                    y=rec.y_field,
+                    series=rec.series_field,
+                    color=rec.color_field,
+                    aggregation=rec.aggregation or "sum",
+                )
+
+        return recs
 
     def validate_chart_spec(
         self,
@@ -309,11 +348,32 @@ class VisualizationService:
         """
         Generates chart recommendations directly from SQL QueryResult rows/columns.
         """
-        return self._recommender.recommend_from_sql_result(
+        recs = self._recommender.recommend_from_sql_result(
             columns=columns,
             rows=rows,
             query_text=query_text,
         )
+        for rec in recs:
+            if rec.score is None:
+                rec.score = rec.confidence
+            if rec.rationale is None:
+                rec.rationale = rec.reason
+            if rec.spec is None:
+                rec.spec = ChartSpec(
+                    chart_id=f"sql_rec_{rec.recommendation_id[:8]}",
+                    chart_type=rec.chart_type,
+                    title=rec.title,
+                    description=rec.reason,
+                    dataset_id="sql_result",
+                    dataset_version_id="current",
+                    x=rec.x_field,
+                    y=rec.y_field,
+                    series=rec.series_field,
+                    color=rec.color_field,
+                    aggregation=rec.aggregation or "sum",
+                    data=rows[:500],
+                )
+        return recs
 
 
 visualization_service = VisualizationService()

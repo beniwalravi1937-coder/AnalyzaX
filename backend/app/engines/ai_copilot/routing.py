@@ -54,28 +54,39 @@ class ModelRouter:
     """Policy-based model selector optimizing for accuracy, context capacity, and cost."""
 
     def __init__(self) -> None:
+        from backend.app.core.config import settings
+
+        use_gemini = (settings.AI_PROVIDER == "gemini" or bool(settings.GEMINI_API_KEY))
+        default_provider = "gemini" if use_gemini else "openrouter"
+        default_model = (settings.GEMINI_MODEL or "gemini-2.5-flash") if use_gemini else "anthropic/claude-3.5-sonnet"
+        fast_model = (settings.GEMINI_MODEL or "gemini-2.5-flash") if use_gemini else "anthropic/claude-3-haiku"
+
         self._policies: Dict[TaskComplexity, AIModelPolicy] = {
             TaskComplexity.SIMPLE_CLASSIFICATION: AIModelPolicy(
                 task_complexity=TaskComplexity.SIMPLE_CLASSIFICATION,
-                target_model="anthropic/claude-3-haiku",
+                target_model=fast_model,
+                provider=default_provider,
                 max_tokens=512,
                 temperature=0.0,
             ),
             TaskComplexity.ROUTINE_ANALYSIS: AIModelPolicy(
                 task_complexity=TaskComplexity.ROUTINE_ANALYSIS,
-                target_model="anthropic/claude-3.5-sonnet",
+                target_model=default_model,
+                provider=default_provider,
                 max_tokens=2048,
                 temperature=0.0,
             ),
             TaskComplexity.COMPLEX_SYNTHESIS: AIModelPolicy(
                 task_complexity=TaskComplexity.COMPLEX_SYNTHESIS,
-                target_model="anthropic/claude-3.5-sonnet",
+                target_model=default_model,
+                provider=default_provider,
                 max_tokens=4096,
                 temperature=0.0,
             ),
             TaskComplexity.STORY_GENERATION: AIModelPolicy(
                 task_complexity=TaskComplexity.STORY_GENERATION,
-                target_model="anthropic/claude-3.5-sonnet",
+                target_model=default_model,
+                provider=default_provider,
                 max_tokens=4096,
                 temperature=0.2,
             ),

@@ -59,7 +59,7 @@ services:
   # Frontend Service (Vite / TanStack / Tailwind CSS / Radix UI)
   frontend:
     build:
-      context: ./Frontend
+      context: ./Frontend_Lovable
       dockerfile: Dockerfile
     container_name: analyzax-frontend
     restart: unless-stopped
@@ -71,7 +71,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./Frontend:/app
+      - ./Frontend_Lovable:/app
       - /app/node_modules
 
 volumes:

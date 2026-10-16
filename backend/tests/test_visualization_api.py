@@ -60,6 +60,25 @@ async def test_visualization_api_endpoints(mock_dataset_environment):
         recs = sql_rec_resp.json()
         assert len(recs) > 0
         assert any(r["chart_type"] == "bar" for r in recs)
+        assert recs[0]["spec"] is not None
+        assert recs[0]["score"] is not None
+
+        # 1b. POST /recommend
+        post_rec_resp = await client.post(
+            "/api/v1/visualizations/recommend",
+            json={"dataset_id": "mock_ds", "version_id": "v1"},
+        )
+        assert post_rec_resp.status_code == 200
+        post_recs = post_rec_resp.json()
+        assert isinstance(post_recs, list)
+
+        # 1c. GET /recommend
+        get_rec_resp = await client.get(
+            "/api/v1/visualizations/recommend?dataset_id=mock_ds&version_id=v1",
+        )
+        assert get_rec_resp.status_code == 200
+        get_recs = get_rec_resp.json()
+        assert isinstance(get_recs, list)
 
         # 2. POST /validate
         val_resp = await client.post(

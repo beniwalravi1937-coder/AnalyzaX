@@ -244,6 +244,9 @@ class VisualizationRecommendation(BaseModel):
     priority: int = 1
     tier: int = 1
     intent: Optional[str] = None
+    spec: Optional["ChartSpec"] = None
+    score: Optional[float] = None
+    rationale: Optional[str] = None
 
 
 class SavedVisualization(BaseModel):

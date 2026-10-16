@@ -81,6 +81,31 @@ async def recommend_visualizations(req: RecommendRequest):
         )
 
 
+@router.get(
+    "/recommend",
+    response_model=List[VisualizationRecommendation],
+    summary="Generate deterministic chart recommendations for a dataset version via GET",
+)
+async def get_recommended_visualizations(
+    dataset_id: str = Query(..., description="ID of the dataset to generate recommendations for"),
+    version_id: Optional[str] = Query(None, description="Optional dataset version ID"),
+    selected_fields: Optional[List[str]] = Query(None, description="Optional column names to prioritize"),
+    intent: Optional[VisualizationIntent] = Query(None, description="Optional visualization intent"),
+):
+    try:
+        return visualization_service.recommend_visualizations(
+            dataset_id=dataset_id,
+            version_id=version_id,
+            selected_fields=selected_fields,
+            intent=intent,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to generate recommendations: {str(e)}",
+        )
+
+
 @router.post(
     "/validate",
     response_model=VisualizationValidationResult,

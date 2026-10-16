@@ -22,7 +22,7 @@ services:
 
   frontend:
     build:
-      context: ./Frontend
+      context: ./Frontend_Lovable
       dockerfile: Dockerfile
     container_name: analyzax-staging-frontend
     restart: always

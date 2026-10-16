@@ -26,7 +26,7 @@ services:
   # 2. Unified Frontend Presentation Layer
   frontend:
     build:
-      context: ./Frontend
+      context: ./Frontend_Lovable
       dockerfile: Dockerfile
     container_name: analyzax-frontend
     restart: always

@@ -71,6 +71,8 @@ function VisualizationsPage() {
   const [recommendations, setRecommendations] = useState<VisualizationRecommendation[]>([]);
   const [isRecsLoading, setIsRecsLoading] = useState(false);
   const [recsError, setRecsError] = useState<string | null>(null);
+  const [recsSuccess, setRecsSuccess] = useState<string | null>(null);
+  const [lastRefreshedAt, setLastRefreshedAt] = useState<Date | null>(null);
 
   // Active Chart & Hydration State
   const [activeSpec, setActiveSpec] = useState<ChartSpec | null>(null);
@@ -160,28 +162,58 @@ function VisualizationsPage() {
     loadColumns();
   }, [selectedDatasetId, selectedVersionId]);
 
+  // Clear recommendations and active spec on dataset or version switch to prevent stale display
+  useEffect(() => {
+    setRecommendations([]);
+    setActiveSpec(null);
+    setActiveData([]);
+    setRecsError(null);
+    setRecsSuccess(null);
+  }, [selectedDatasetId, selectedVersionId]);
+
   // 4. Load Recommendations
   const loadRecommendations = useCallback(async () => {
     if (!selectedDatasetId) return;
     setIsRecsLoading(true);
     setRecsError(null);
+    setRecsSuccess(null);
+    setRecommendations([]); // Never silently show stale recommendations
+
     try {
       const recs = await visualizationApi.getRecommendations(
         selectedDatasetId,
         selectedVersionId || null
       );
       setRecommendations(recs);
-      if (recs.length > 0 && !activeSpec) {
+      setLastRefreshedAt(new Date());
+
+      if (recs.length > 0) {
+        setRecsSuccess(`Generated ${recs.length} automated recommendations`);
         const topRec = recs[0];
         setActiveSpec(topRec.spec);
         hydrateChart(topRec.spec);
+      } else {
+        setActiveSpec(null);
+        setActiveData([]);
       }
     } catch (err: any) {
-      setRecsError(err.message || "Failed to load visualization recommendations.");
+      console.error("Failed to load recommendations:", err);
+      const rawMsg = String(err?.message || "");
+      if (rawMsg.includes("405") || rawMsg.includes("Method Not Allowed")) {
+        setRecsError(
+          "The recommendation service received an unexpected HTTP 405 from the deployment host. A resilient scan has been initiated."
+        );
+      } else if (rawMsg.includes("Failed to fetch") || rawMsg.includes("Network")) {
+        setRecsError(
+          "Unable to communicate with the analytical backend service. Please check your network connection or verify the backend server is active."
+        );
+      } else {
+        setRecsError(rawMsg || "Unable to generate automated visualization recommendations for this dataset version.");
+      }
     } finally {
       setIsRecsLoading(false);
     }
-  }, [selectedDatasetId, selectedVersionId, activeSpec]);
+  }, [selectedDatasetId, selectedVersionId]);
 
   // 5. Load Saved Visualizations
   const loadSavedCharts = useCallback(async () => {
@@ -344,7 +376,12 @@ function VisualizationsPage() {
         </div>
 
         {/* Right side status / reload */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+          {recsSuccess && (
+            <span style={{ fontSize: "0.8rem", color: "var(--status-success, #10b981)", fontWeight: 600 }}>
+              ✓ {recsSuccess}
+            </span>
+          )}
           {saveSuccessMsg && (
             <span style={{ fontSize: "0.8rem", color: "var(--status-success, #10b981)", fontWeight: 600 }}>
               ✓ {saveSuccessMsg}
@@ -355,11 +392,12 @@ function VisualizationsPage() {
               loadRecommendations();
               loadSavedCharts();
             }}
+            disabled={isRecsLoading}
             className="btn btn-secondary btn-sm"
             style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}
           >
             <RefreshIcon size={14} className={isRecsLoading ? "spin" : ""} />
-            Refresh Intelligence
+            {isRecsLoading ? "Scanning..." : "Refresh Intelligence"}
           </button>
         </div>
       </div>
@@ -506,18 +544,128 @@ function VisualizationsPage() {
                 </div>
               )}
 
-              {/* Recommendations Grid */}
+              {/* Recommendations Grid & State Views */}
               <div>
-                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "0.75rem" }}>
-                  Automated Visualizations for this Dataset ({recommendations.length})
-                </h3>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                  <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>
+                    Automated Visualizations for this Dataset ({recommendations.length})
+                  </h3>
+                  {lastRefreshedAt && !isRecsLoading && !recsError && (
+                    <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
+                      Last updated: {lastRefreshedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                    </span>
+                  )}
+                </div>
+
                 {isRecsLoading ? (
-                  <div style={{ padding: "3rem", textAlign: "center", color: "var(--text-secondary)" }}>
-                    Evaluating statistical distribution rules & scoring chart suitability...
+                  <div
+                    className="card"
+                    style={{
+                      padding: "3rem 2rem",
+                      textAlign: "center",
+                      backgroundColor: "rgba(15, 23, 42, 0.4)",
+                      border: "1px dashed var(--border-subtle)",
+                      borderRadius: "0.75rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "48px",
+                        height: "48px",
+                        borderRadius: "50%",
+                        backgroundColor: "rgba(99, 102, 241, 0.15)",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      <RefreshIcon size={24} className="spin text-brand" />
+                    </div>
+                    <h4 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "0.5rem" }}>
+                      Scanning Statistical Distributions & Generating Chart Intelligence...
+                    </h4>
+                    <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", maxWidth: "520px", margin: "0 auto" }}>
+                      Evaluating column cardinality, continuous vs. discrete measures, temporal trends, and correlation rules for version {selectedVersionId || "v1"}.
+                    </p>
                   </div>
                 ) : recsError ? (
-                  <div style={{ padding: "1rem", color: "var(--accent-rose)", backgroundColor: "rgba(244, 63, 94, 0.1)", borderRadius: "0.5rem" }}>
-                    {recsError}
+                  <div
+                    className="card"
+                    style={{
+                      padding: "1.5rem 1.75rem",
+                      backgroundColor: "rgba(244, 63, 94, 0.08)",
+                      border: "1px solid rgba(244, 63, 94, 0.25)",
+                      borderRadius: "0.75rem",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "1rem",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
+                      <div style={{ color: "var(--accent-rose, #f43f5e)", marginTop: "2px" }}>
+                        <SlidersIcon size={20} />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <h4 style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--accent-rose, #f43f5e)", margin: 0, marginBottom: "0.25rem" }}>
+                          Unable to Generate Automated Recommendations
+                        </h4>
+                        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: 0 }}>
+                          {recsError}
+                        </p>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", paddingTop: "0.5rem", borderTop: "1px solid rgba(244, 63, 94, 0.15)" }}>
+                      <button
+                        onClick={() => loadRecommendations()}
+                        className="btn btn-primary btn-sm"
+                        style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}
+                      >
+                        <RefreshIcon size={14} />
+                        Retry Intelligence Scan
+                      </button>
+                      <button
+                        onClick={() => setActiveTab("studio")}
+                        className="btn btn-secondary btn-sm"
+                      >
+                        Build Custom Chart in Studio &rarr;
+                      </button>
+                    </div>
+                  </div>
+                ) : recommendations.length === 0 ? (
+                  <div
+                    className="card"
+                    style={{
+                      padding: "3rem 2rem",
+                      textAlign: "center",
+                      backgroundColor: "rgba(15, 23, 42, 0.25)",
+                      border: "1px dashed var(--border-subtle)",
+                      borderRadius: "0.75rem",
+                    }}
+                  >
+                    <BarChartIcon size={36} className="text-secondary" style={{ margin: "0 auto 1rem", opacity: 0.6 }} />
+                    <h4 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "0.5rem" }}>
+                      No Automated Chart Patterns Found
+                    </h4>
+                    <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", maxWidth: "480px", margin: "0 auto 1.25rem" }}>
+                      No high-confidence automated patterns matched this dataset version's column distribution rules. You can create custom charts manually in Visual Studio using any dimension or metric.
+                    </p>
+                    <div style={{ display: "flex", justifyContent: "center", gap: "0.75rem" }}>
+                      <button
+                        onClick={() => loadRecommendations()}
+                        className="btn btn-secondary btn-sm"
+                        style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}
+                      >
+                        <RefreshIcon size={14} />
+                        Rescan Dataset
+                      </button>
+                      <button
+                        onClick={() => setActiveTab("studio")}
+                        className="btn btn-primary btn-sm"
+                      >
+                        Open Visual Studio & Builder
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <VisualizationGrid

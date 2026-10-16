@@ -105,16 +105,16 @@ class SemanticEngine:
         workspace_id: Optional[str] = None,
         project_id: Optional[str] = None,
     ) -> Optional[MetricDefinition]:
-        if metrics:
-            clean = query_term.lower().strip()
-            for m in metrics:
-                if m.name.lower().strip() == clean or any(s.lower().strip() == clean for s in m.synonyms):
-                    return m
-                if clean in m.name.lower() or any(clean in s.lower() for s in m.synonyms):
-                    return m
+        if not query_term or not query_term.strip():
             return None
-        res, _, _ = semantic_engine.resolve_term(query_term, workspace_id, project_id)
-        return res
+        clean = query_term.lower().strip()
+        metric_list = metrics if metrics is not None else semantic_repo.list_metrics(workspace_id=workspace_id, project_id=project_id, status=MetricStatus.ACTIVE)
+        for m in metric_list:
+            if m.name.lower().strip() == clean or any(s.lower().strip() == clean for s in m.synonyms):
+                return m
+            if clean in m.name.lower() or any(clean in s.lower() for s in m.synonyms):
+                return m
+        return None
 
     @classmethod
     def calculate_metric(

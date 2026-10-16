@@ -356,13 +356,14 @@ class ExportService:
             job.provenance = report_def.provenance
 
             # Dispatch REPORT_EXPORTED event
+            user_id = getattr(request, "options", {}).get("user_id") if hasattr(request, "options") and isinstance(request.options, dict) else None
             event_dispatcher.create_and_dispatch(
                 event_type=ApplicationEventType.REPORT_EXPORTED,
-                actor_user_id=request.options.get("user_id"),
+                actor_user_id=user_id,
                 resource_type="REPORT",
                 resource_id=job.job_id,
                 metadata={
-                    "recipient_user_id": request.options.get("user_id"),
+                    "recipient_user_id": user_id,
                     "resource_name": report_def.title or "Analytical Report",
                     "file_name": file_name,
                     "format": request.format.value,
@@ -378,14 +379,15 @@ class ExportService:
             job.error_message = str(e)
             job.completed_at = datetime.now(timezone.utc).isoformat()
 
+            user_id = getattr(request, "options", {}).get("user_id") if hasattr(request, "options") and isinstance(request.options, dict) else None
             # Dispatch EXPORT_FAILED event
             event_dispatcher.create_and_dispatch(
                 event_type=ApplicationEventType.EXPORT_FAILED,
-                actor_user_id=request.options.get("user_id"),
+                actor_user_id=user_id,
                 resource_type="REPORT",
                 resource_id=job.job_id,
                 metadata={
-                    "recipient_user_id": request.options.get("user_id"),
+                    "recipient_user_id": user_id,
                     "resource_name": f"{request.format.value} Report",
                     "error_summary": str(e)[:150],
                     "dataset_id": request.dataset_id,

@@ -4,10 +4,13 @@ The central intelligence orchestrator connecting Context Engine, Governed Metric
 Proactive Insights, Multi-Step Agentic Workflows, Dashboard Planning, and Memory.
 """
 
+import json
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
+from backend.app.core.logging import logger
+from backend.app.engines.ai_analyst.providers.factory import get_llm_provider
 from backend.app.engines.ai_copilot.context import ContextEngine
 from backend.app.engines.ai_copilot.dashboard_builder import DashboardBuilderEngine
 from backend.app.engines.ai_copilot.evaluation import (
@@ -37,6 +40,7 @@ from backend.app.engines.insights.repository import insight_repository
 from backend.app.engines.semantic.engine import SemanticEngine
 from backend.app.engines.semantic.models import MetricStatus
 from backend.app.engines.semantic.repository import semantic_repo
+
 
 
 class AICopilot:
@@ -128,8 +132,29 @@ class AICopilot:
                 created_at=now_str,
             )
 
-        # 6. Assemble context
-        assembled_context = ContextEngine.build_context(context)
+        # 6. Assemble context with real dataset metadata and profile summary
+        dataset_meta = None
+        profile_summary = None
+        if context.dataset_id:
+            try:
+                from backend.app.services.dataset_service import dataset_service
+                from backend.app.services.profiling_service import profiling_service
+
+                ds_obj = dataset_service.get_dataset(context.dataset_id)
+                if ds_obj:
+                    dataset_meta = ds_obj
+                prof_obj = profiling_service.get_cached_profile(context.dataset_id)
+                if prof_obj:
+                    profile_summary = prof_obj.model_dump() if hasattr(prof_obj, "model_dump") else prof_obj
+            except Exception as e:
+                logger.debug(f"AI Copilot context fetch note: {e}")
+
+        assembled_context = ContextEngine.build_context(
+            context=context,
+            dataset_meta=dataset_meta,
+            profile_summary=profile_summary,
+            conversation_history=recent_memory,
+        )
 
         # 7. Intent Dispatch
         lower_msg = message.lower()
@@ -211,20 +236,67 @@ class AICopilot:
             if workflow.status == "WAITING_FOR_APPROVAL":
                 response_text += " A consequential transformation step requires your explicit approval."
 
-        # Intent D: General Question / Semantic Query
+        # Intent D: General Question / Semantic Query / Conversational Intelligence
         else:
             intent = "general_query"
             if resolved_metric:
-                response_text = (
+                base_text = (
                     f"Resolved term to governed metric '{resolved_metric.name}' "
                     f"({resolved_metric.expression}, unit: {resolved_metric.unit or 'units'}). "
                     "Deterministic calculation can be queried against the active dataset."
                 )
             else:
-                response_text = (
+                base_text = (
                     f"I analyzed your inquiry against dataset '{context.dataset_id or 'current'}'. "
                     "What specific segment, trend, or statistical test would you like to explore?"
                 )
+
+            # Invoke configured LLM provider (Google Gemini) if active
+            provider = get_llm_provider()
+            if provider and getattr(provider, "provider_id", "") != "mock":
+                try:
+                    system_prompt = (
+                        "You are AnalyzaX AI Copilot, an elite data intelligence assistant powered by Google Gemini. "
+                        "You assist data analysts, engineers, and executives with dataset exploration, exploratory data analysis (EDA), "
+                        "SQL queries, statistical tests, predictive modeling, and data cleaning.\n\n"
+                        "Mandatory Constitutional Rules:\n"
+                        "1. Rely strictly on the dataset schema, column names, data types, and statistical profile provided in the context.\n"
+                        "2. Never fabricate numbers or perform manual unverified arithmetic. All calculations in AnalyzaX are computed deterministically.\n"
+                        "3. Do not make unsupported causal claims (e.g. avoid 'caused by', 'proves that'). Use observational terminology ('associated with', 'correlated with').\n"
+                        "4. Format your output in clean, elegant Markdown with concise bullet points, bold key terms, and SQL or Python code snippets where helpful.\n"
+                        f"5. Maintain an analytical tone suited for an {tone.value} audience."
+                    )
+                    prompt_parts = [
+                        f"User Message: {message}",
+                        f"Analytical Context: {json.dumps(assembled_context, default=str)}",
+                    ]
+                    if resolved_metric:
+                        prompt_parts.append(
+                            f"Governed Metric: {resolved_metric.name} ({resolved_metric.expression}, unit: {resolved_metric.unit or 'units'})"
+                        )
+
+                    llm_output = await provider.generate(
+                        prompt="\n\n".join(prompt_parts),
+                        system_prompt=system_prompt,
+                        temperature=0.2,
+                        max_tokens=2048,
+                    )
+                    if llm_output and len(llm_output.strip()) > 5:
+                        if resolved_metric and resolved_metric.name.lower() not in llm_output.lower():
+                            response_text = (
+                                f"Resolved term to governed metric '{resolved_metric.name}' "
+                                f"({resolved_metric.expression}, unit: {resolved_metric.unit or 'units'}).\n\n"
+                                f"{llm_output.strip()}"
+                            )
+                        else:
+                            response_text = llm_output.strip()
+                    else:
+                        response_text = base_text
+                except Exception as exc:
+                    logger.warning(f"AI Copilot LLM generation error: {exc}. Gracefully falling back to deterministic response.")
+                    response_text = base_text
+            else:
+                response_text = base_text
 
         # 8. Generate Contextual Recommendations
         recommendations = RecommendationEngine.generate_recommendations(
@@ -242,9 +314,16 @@ class AICopilot:
             response_text += f"\n[System Note: {'; '.join(validation.violations)}]"
 
         # 10. Record Provenance
+        provider_name = route_decision.provider
+        model_name = route_decision.model
+        active_provider = get_llm_provider()
+        if active_provider and getattr(active_provider, "provider_id", "") != "mock":
+            provider_name = active_provider.provider_id
+            model_name = active_provider.model_id
+
         provenance = ProvenanceEngine.create_provenance(
-            provider=route_decision.provider,
-            model=route_decision.model,
+            provider=provider_name,
+            model=model_name,
             dataset_id=context.dataset_id,
             dataset_version_id=context.dataset_version_id,
             tool_references=[s.tool_id for s in (workflow.steps if workflow else [])],
