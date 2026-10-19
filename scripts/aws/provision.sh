@@ -42,8 +42,10 @@ if aws_ ec2 describe-key-pairs --key-names "$NAME" >/dev/null 2>&1; then
 else
   echo "==> Creating key pair $NAME -> $KEY_FILE"
   mkdir -p "$HOME/.ssh"
-  aws_ ec2 create-key-pair --key-name "$NAME" --key-type ed25519 \
-    --query KeyMaterial > "$KEY_FILE"
+  # OpenSSH rejects the key ("invalid format") without a trailing newline,
+  # which --output text omits; also strip any CRLF from Windows aws.exe
+  { aws_ ec2 create-key-pair --key-name "$NAME" --key-type ed25519 \
+      --query KeyMaterial; echo; } | tr -d '\r' | sed '/^$/d' > "$KEY_FILE"
   chmod 600 "$KEY_FILE"
 fi
 
