@@ -24,6 +24,11 @@ INSTANCE_TYPE="${INSTANCE_TYPE:-t3.small}"
 KEY_FILE="$HOME/.ssh/${NAME}.pem"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 STATE_FILE="$SCRIPT_DIR/.instance"
+# Git Bash on Windows: stop MSYS rewriting args like /dev/sda1 into Windows
+# paths, and hand native aws.exe a Windows path for file://
+export MSYS_NO_PATHCONV=1
+USER_DATA_FILE="$SCRIPT_DIR/user-data.sh"
+command -v cygpath >/dev/null 2>&1 && USER_DATA_FILE="$(cygpath -m "$USER_DATA_FILE")"
 
 aws_() { aws --region "$REGION" --output text "$@"; }
 
@@ -76,7 +81,7 @@ if [ "$INSTANCE_ID" = "None" ] || [ -z "$INSTANCE_ID" ]; then
     --key-name "$NAME" --security-group-ids "$SG_ID" \
     --block-device-mappings 'DeviceName=/dev/sda1,Ebs={VolumeSize=30,VolumeType=gp3,DeleteOnTermination=true}' \
     --metadata-options HttpTokens=required \
-    --user-data "file://$SCRIPT_DIR/user-data.sh" \
+    --user-data "file://$USER_DATA_FILE" \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$NAME},{Key=app,Value=analyzax}]" \
     --query 'Instances[0].InstanceId')
 else
