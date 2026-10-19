@@ -6,20 +6,21 @@
 #   - EC2 key pair "analyzax-prod"  -> private key saved to ~/.ssh/analyzax-prod.pem
 #   - Security group "analyzax-prod-sg": SSH (22) from your current IP only,
 #     HTTP (80) and HTTPS (443) from anywhere
-#   - Ubuntu 24.04 t3.medium instance tagged Name=analyzax-prod, 40 GB gp3 disk
+#   - Ubuntu 24.04 t3.small instance tagged Name=analyzax-prod, 30 GB gp3 disk
 #   - Elastic IP associated with the instance (stable public address)
 #
-# Usage:  scripts/aws/provision.sh                (defaults to ap-south-1)
+# Usage:  scripts/aws/provision.sh                (defaults to ap-southeast-2)
 #         ANALYZAX_REGION=us-east-1 scripts/aws/provision.sh
 # Requires: AWS CLI v2 with credentials (aws configure, aws login, or CloudShell).
 # Note: AWS_REGION is deliberately not used — CloudShell sets it to whatever
-# region the console happens to be showing.
+# region the console happens to be showing. Projects on the "new AWS
+# experience" may only create resources in their assigned Region.
 # ==============================================================================
 set -euo pipefail
 
-REGION="${ANALYZAX_REGION:-ap-south-1}"
+REGION="${ANALYZAX_REGION:-ap-southeast-2}"
 NAME="analyzax-prod"
-INSTANCE_TYPE="${INSTANCE_TYPE:-t3.medium}"
+INSTANCE_TYPE="${INSTANCE_TYPE:-t3.small}"
 KEY_FILE="$HOME/.ssh/${NAME}.pem"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 STATE_FILE="$SCRIPT_DIR/.instance"
@@ -63,14 +64,17 @@ INSTANCE_ID=$(aws_ ec2 describe-instances \
   --filters Name=tag:Name,Values="$NAME" Name=instance-state-name,Values=pending,running,stopping,stopped \
   --query 'Reservations[0].Instances[0].InstanceId')
 if [ "$INSTANCE_ID" = "None" ] || [ -z "$INSTANCE_ID" ]; then
-  AMI_ID=$(aws_ ssm get-parameter \
-    --name /aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id \
-    --query Parameter.Value)
+  # Latest Canonical Ubuntu 24.04 image (describe-images, since managed
+  # projects may deny ssm:GetParameters on the public AMI parameters)
+  AMI_ID=$(aws_ ec2 describe-images --owners 099720109477 \
+    --filters 'Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*' \
+              'Name=state,Values=available' \
+    --query 'sort_by(Images,&CreationDate)[-1].ImageId')
   echo "==> Launching $INSTANCE_TYPE from $AMI_ID"
   INSTANCE_ID=$(aws_ ec2 run-instances \
     --image-id "$AMI_ID" --instance-type "$INSTANCE_TYPE" \
     --key-name "$NAME" --security-group-ids "$SG_ID" \
-    --block-device-mappings 'DeviceName=/dev/sda1,Ebs={VolumeSize=40,VolumeType=gp3,DeleteOnTermination=true}' \
+    --block-device-mappings 'DeviceName=/dev/sda1,Ebs={VolumeSize=30,VolumeType=gp3,DeleteOnTermination=true}' \
     --metadata-options HttpTokens=required \
     --user-data "file://$SCRIPT_DIR/user-data.sh" \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$NAME},{Key=app,Value=analyzax}]" \

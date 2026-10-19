@@ -2,24 +2,29 @@
 
 Runs the full `docker-compose.prod.yml` stack — nginx edge proxy, static
 frontend, FastAPI backend, job worker, PostgreSQL and Redis — on one Ubuntu
-24.04 EC2 instance in `ap-south-1` (Mumbai).
+24.04 EC2 instance in `ap-southeast-2` (Sydney).
+
+The AWS project uses the "new AWS experience": every resource must live in the
+project's assigned Region (`ap-southeast-2`), and some actions (e.g. reading the
+public SSM AMI parameters) are denied by the managed service control policy.
+Override the Region with `ANALYZAX_REGION` and the size with `INSTANCE_TYPE`.
 
 | Script | What it does |
 |---|---|
-| `provision.sh` | Creates key pair, security group (SSH from your IP only; 80/443 public), a `t3.medium` with 40 GB gp3, and an Elastic IP. Idempotent. Writes `scripts/aws/.instance`. |
+| `provision.sh` | Creates key pair, security group (SSH from your IP only; 80/443 public), a `t3.small` with 30 GB gp3, and an Elastic IP. Idempotent. Writes `scripts/aws/.instance`. |
 | `user-data.sh` | First-boot bootstrap: Docker Engine + Compose/Buildx from Docker's apt repo, 4 GB swap. |
 | `deploy.sh` | Packs `git HEAD`, uploads it to `/opt/analyzax`, creates `.env` with generated secrets on first deploy, runs `docker compose up -d --build`, checks `/health/live`. |
 
-## Deploy from AWS CloudShell
+## Deploy
+
+Sign in first (`aws login --region ap-southeast-2`), then from Git Bash or AWS CloudShell:
 
 ```bash
-git clone https://github.com/beniwalravi1937-coder/AnalyzaX.git
-cd AnalyzaX
 bash scripts/aws/provision.sh && bash scripts/aws/deploy.sh
 ```
 
-Re-deploy after pushing new commits: `git pull && bash scripts/aws/provision.sh && bash scripts/aws/deploy.sh`
-(re-running `provision.sh` is safe and refreshes the SSH rule for CloudShell's current IP).
+Re-deploy after committing new changes: `bash scripts/aws/provision.sh && bash scripts/aws/deploy.sh`
+(re-running `provision.sh` is safe and refreshes the SSH rule for your current IP).
 
 ## After the first deploy
 
@@ -33,7 +38,9 @@ Re-deploy after pushing new commits: `git pull && bash scripts/aws/provision.sh 
 - **Backups:** Postgres and dataset files live in Docker volumes on the instance's EBS disk;
   snapshot the volume (or add `pg_dump` cron) — nothing is backed up automatically.
 
-## Cost (ap-south-1, approx.)
+## Cost (ap-southeast-2, approx.)
 
-t3.medium ~$30/month + 40 GB gp3 ~$4 + public IPv4 ~$4. To stop billing for compute:
-`aws ec2 stop-instances --region ap-south-1 --instance-ids <id>` (disk and IP still bill).
+t3.small ~$19/month + 30 GB gp3 ~$3 + public IPv4 ~$3.65 ≈ $26/month, paid from the
+project's Free plan credits. To pause compute billing:
+`aws ec2 stop-instances --region ap-southeast-2 --instance-ids <id>` (disk and IP still bill).
+Resize: stop the instance, `aws ec2 modify-instance-attribute --instance-type t3.medium ...`, start it.
