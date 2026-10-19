@@ -17,7 +17,7 @@ import {
 } from "@/types/ml";
 import { getLocalProfile, STUDENT_EXAM_PERFORMANCE_COLUMNS } from "./localDatasetEngine";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api/v1";
 const LOCAL_ML_EXPERIMENTS_KEY = "analyzax_local_ml_experiments";
 
 export const DEFAULT_ML_MODELS: MLModelDefinition[] = [

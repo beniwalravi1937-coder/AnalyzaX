@@ -44,7 +44,7 @@ export const DatasetVersionBrowser: React.FC<DatasetVersionBrowserProps> = ({
       setIsLoading(true);
       setError(null);
       try {
-        const res = await fetch(`http://localhost:8000/api/v1/datasets/${datasetId}/versions`);
+        const res = await fetch(`/api/v1/datasets/${datasetId}/versions`);
         if (!res.ok) throw new Error('Failed to load version history');
         const data = await res.json();
         setVersions(data || []);

@@ -1,36 +1,50 @@
 # ==============================================================================
 # AnalyzaX Frontend — Production Dockerfile
-# Builds the static TanStack/Vite bundle and serves it with nginx on port 3000.
+# TanStack Start app (SSR + server functions) built with Nitro's node-server
+# preset and served by its own Node server on port 3000.
 # (Dockerfile in this folder is the dev-server image used by docker-compose.yml.)
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Stage 1: Build static bundle
+# Stage 1: Build
 # ------------------------------------------------------------------------------
-FROM node:20-alpine AS builder
+# Node 22: several dependencies (ai@7, camera-controls@3) declare engines node>=22
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# API is served from the same origin through the edge proxy (/api/v1 -> backend)
-ARG VITE_API_BASE_URL=/api/v1
+# API is served from the same origin through the edge proxy (/api/v1 -> backend).
+# VITE_API_BASE_URL is an origin (clients append /api/v1 themselves): empty =
+# same origin.
+# NITRO_PRESET overrides the Lovable config's cloudflare-module default so the
+# output is a self-contained Node server in .output/.
+ARG VITE_API_BASE_URL=
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL} \
+    NITRO_PRESET=node-server \
     NODE_OPTIONS=--max-old-space-size=3072
 
 COPY package*.json ./
 RUN npm install --legacy-peer-deps --no-audit --no-fund
 
 COPY . .
-RUN npm run build
+RUN npx vite build
 
 # ------------------------------------------------------------------------------
-# Stage 2: Static file server
+# Stage 2: Runtime (non-root)
 # ------------------------------------------------------------------------------
-FROM nginx:1.25-alpine AS production
+FROM node:22-alpine AS production
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /app
+ENV NODE_ENV=production \
+    HOST=0.0.0.0 \
+    PORT=3000
 
+COPY --from=builder --chown=node:node /app/.output ./.output
+
+USER node
 EXPOSE 3000
 
-HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=15s --timeout=3s --start-period=10s --retries=3 \
     CMD wget -q -O /dev/null http://127.0.0.1:3000/ || exit 1
+
+CMD ["node", ".output/server/index.mjs"]

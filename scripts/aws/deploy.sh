@@ -6,7 +6,7 @@
 #   2. Uploads and unpacks it into /opt/analyzax on the host
 #   3. On first deploy, creates /opt/analyzax/.env from .env.production.example
 #      with freshly generated secrets (generated on the host, never printed)
-#   4. Builds and starts docker-compose.prod.yml, then checks /health/live
+#   4. Builds and starts docker-compose.prod.yml, then checks /health/live and /
 #
 # Usage:  scripts/aws/deploy.sh            (reads scripts/aws/.instance)
 # ==============================================================================
@@ -65,16 +65,19 @@ fi
 sed -i "s#^RELEASE_COMMIT_SHA=.*#RELEASE_COMMIT_SHA=\"${SHA}\"#" .env
 
 docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
+# nginx resolves upstream container IPs only at startup; recreated containers
+# get new IPs, so restart the edge proxy to avoid 502s
+docker compose -f docker-compose.prod.yml restart proxy
 docker image prune -f >/dev/null
 
-echo "==> Waiting for backend health"
+echo "==> Waiting for backend and frontend health"
 for _ in $(seq 1 30); do
-  if curl -fsS http://127.0.0.1/health/live >/dev/null 2>&1; then
-    echo "==> Backend healthy"; docker compose -f docker-compose.prod.yml ps; exit 0
+  if curl -fsS http://127.0.0.1/health/live >/dev/null 2>&1 && curl -fsS http://127.0.0.1/ >/dev/null 2>&1; then
+    echo "==> Backend and frontend healthy"; docker compose -f docker-compose.prod.yml ps; exit 0
   fi
   sleep 5
 done
-echo "ERROR: backend did not become healthy" >&2
+echo "ERROR: backend or frontend did not become healthy" >&2
 docker compose -f docker-compose.prod.yml ps
 docker compose -f docker-compose.prod.yml logs --tail=60 backend
 exit 1

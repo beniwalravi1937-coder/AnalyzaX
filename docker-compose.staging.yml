@@ -25,7 +25,7 @@ services:
       context: ./Frontend_Lovable
       dockerfile: Dockerfile.prod
       args:
-        VITE_API_BASE_URL: /api/v1
+        VITE_API_BASE_URL: ""
     container_name: analyzax-staging-frontend
     restart: always
     depends_on:

@@ -1,7 +1,8 @@
 # AnalyzaX on AWS (single EC2 host)
 
-Runs the full `docker-compose.prod.yml` stack — nginx edge proxy, static
-frontend, FastAPI backend, job worker, PostgreSQL and Redis — on one Ubuntu
+Runs the full `docker-compose.prod.yml` stack — nginx edge proxy, the
+TanStack Start frontend (Node SSR server), FastAPI backend (with its in-process
+job worker pool), PostgreSQL and Redis — on one Ubuntu
 24.04 EC2 instance in `ap-southeast-2` (Sydney).
 
 The AWS project uses the "new AWS experience": every resource must live in the
